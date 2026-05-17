@@ -1,0 +1,861 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Molaly Mekonen – AI Portfolio</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#080810;--sur:#0f0f1a;--sur2:#16162a;--sur3:#1e1e35;--bor:rgba(255,255,255,0.06);--bor2:rgba(255,255,255,0.12);--ac:#7c6af7;--ac2:#4ecca3;--ac3:#f7a26a;--tx:#eeeef5;--tx2:#8888aa;--tx3:#44445a;--gr:#4ecca3;--ye:#f7c948;--re:#f76a6a;--sidebar:290px}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:'Space Grotesk',sans-serif;background:var(--bg);color:var(--tx);min-height:100vh;direction:rtl;display:flex}
+
+/* ── SIDEBAR ── */
+.sidebar{width:var(--sidebar);min-width:var(--sidebar);height:100vh;position:sticky;top:0;background:var(--sur);border-left:1px solid var(--bor);overflow-y:auto;padding:24px 18px;display:flex;flex-direction:column;gap:18px;scrollbar-width:thin;scrollbar-color:var(--bor2) transparent}
+.profile-img-wrap{position:relative;width:76px;height:76px;margin:0 auto 4px}
+.profile-img{width:76px;height:76px;border-radius:50%;object-fit:cover;border:2px solid var(--bor2);display:block;background:var(--sur2)}
+.profile-img-overlay{position:absolute;inset:0;border-radius:50%;background:rgba(124,106,247,.75);display:none;align-items:center;justify-content:center;cursor:pointer;font-size:16px}
+.profile-img-wrap:hover .profile-img-overlay{display:flex}
+.profile-name{font-family:'DM Serif Display',serif;font-size:17px;text-align:center;line-height:1.2;margin-bottom:3px}
+.profile-name span{color:var(--ac);font-style:italic}
+.profile-role{font-size:11px;color:var(--tx2);text-align:center;line-height:1.5}
+.avail-badge{display:flex;align-items:center;justify-content:center;gap:6px;font-size:10px;font-weight:600;padding:4px 12px;border-radius:20px;cursor:pointer;border:1px solid;transition:all .2s;margin:0 auto;width:fit-content}
+.avail-badge.open{color:var(--gr);border-color:rgba(78,204,163,.3);background:rgba(78,204,163,.08)}
+.avail-badge.open::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--gr);animation:pu 2s infinite}
+.avail-badge.busy{color:var(--ye);border-color:rgba(247,201,72,.3);background:rgba(247,201,72,.08)}
+.avail-badge.busy::before{content:'';width:5px;height:5px;border-radius:50%;background:var(--ye)}
+@keyframes pu{0%,100%{opacity:1}50%{opacity:.3}}
+.sb-section{border-top:1px solid var(--bor);padding-top:14px}
+.sb-label{font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--tx3);margin-bottom:9px;display:flex;align-items:center;justify-content:space-between}
+.sb-btn{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:11px;padding:2px 6px;border-radius:6px;transition:all .2s;font-family:inherit}
+.sb-btn:hover{color:var(--ac);background:rgba(124,106,247,.1)}
+.stats-grid{display:grid;grid-template-columns:1fr 1fr;gap:7px}
+.stat-card{background:var(--sur2);border:1px solid var(--bor);border-radius:9px;padding:9px;text-align:center;transition:border-color .2s}
+.stat-card.manual{cursor:pointer}
+.stat-card.manual:hover{border-color:var(--ac)}
+.stat-num{font-family:'DM Serif Display',serif;font-size:20px;color:var(--ac);line-height:1;margin-bottom:2px}
+.stat-lbl{font-size:9px;color:var(--tx3);text-transform:uppercase;letter-spacing:.7px}
+.stat-auto{font-size:8px;color:var(--ac2);margin-top:1px}
+.skills-list{display:flex;flex-wrap:wrap;gap:5px}
+.skill-tag{font-size:10px;padding:3px 8px;border-radius:12px;background:var(--sur2);border:1px solid var(--bor);color:var(--tx2);display:inline-flex;align-items:center;gap:3px}
+.skill-tag .rm{background:none;border:none;color:var(--tx3);cursor:pointer;font-size:11px;padding:0;line-height:1;display:none}
+.skill-tag:hover .rm{display:inline}
+.add-tag-btn{font-size:10px;padding:3px 8px;border-radius:12px;background:rgba(124,106,247,.1);border:1px dashed rgba(124,106,247,.3);color:var(--ac);cursor:pointer;font-family:inherit;transition:all .2s}
+.add-tag-btn:hover{background:rgba(124,106,247,.2)}
+.contact-list{display:flex;flex-direction:column;gap:5px}
+.contact-item{display:flex;align-items:center;gap:7px;font-size:11px;color:var(--tx2);padding:5px 7px;border-radius:7px;transition:all .2s;text-decoration:none}
+.contact-item:hover{background:var(--sur2);color:var(--tx)}
+.c-icon{font-size:14px;width:20px;text-align:center;flex-shrink:0}
+
+/* ── MAIN ── */
+.main{flex:1;min-width:0;padding:28px 24px;overflow-y:auto}
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:24px;flex-wrap:wrap;gap:10px}
+.greeting{font-size:13px;color:var(--tx2)}
+.greeting strong{color:var(--tx)}
+
+/* ── HERO BANNER ── */
+.hero-banner{background:linear-gradient(135deg,var(--sur2) 0%,var(--sur3) 100%);border:1px solid var(--bor);border-radius:18px;padding:26px;margin-bottom:24px;position:relative;overflow:hidden}
+.hero-banner::before{content:'';position:absolute;top:-60px;left:-60px;width:200px;height:200px;border-radius:50%;background:radial-gradient(circle,var(--ac) 0%,transparent 70%);opacity:.08;pointer-events:none}
+.hero-banner::after{content:'';position:absolute;bottom:-40px;right:40px;width:160px;height:160px;border-radius:50%;background:radial-gradient(circle,var(--ac2) 0%,transparent 70%);opacity:.06;pointer-events:none}
+.hb-top{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px;position:relative;z-index:1}
+.hb-title{font-family:'DM Serif Display',serif;font-size:clamp(20px,3.5vw,34px);line-height:1.15}
+.hb-title span{color:var(--ac);font-style:italic}
+.hb-badge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--ac)}
+.hb-sub{font-size:13px;color:var(--tx2);line-height:1.7;max-width:560px;margin-bottom:16px;position:relative;z-index:1}
+.hb-ctas{display:flex;gap:10px;direction:rtl;position:relative;z-index:2}
+.cta-p{display:inline-flex;align-items:center;gap:5px;background:var(--ac);color:#fff;border:none;padding:8px 18px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer !important;font-family:inherit;text-decoration:none;transition:opacity .2s;position:relative;z-index:2}
+.cta-p:hover{opacity:.85}
+.cta-s{display:inline-flex;align-items:center;gap:5px;background:transparent;color:var(--tx);border:1px solid var(--bor2);padding:8px 16px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .2s;position:relative;z-index:2}
+.cta-s:hover{border-color:var(--ac);color:var(--ac)}
+
+/* ── NAV TABS ── */
+.nav-tabs{display:flex;gap:4px;margin-bottom:20px;border-bottom:1px solid var(--bor);padding-bottom:0}
+.nav-tab{font-size:13px;font-weight:600;padding:8px 16px;border:none;background:transparent;color:var(--tx2);cursor:pointer;font-family:inherit;border-bottom:2px solid transparent;margin-bottom:-1px;transition:all .2s;display:flex;align-items:center;gap:6px}
+.nav-tab:hover{color:var(--tx)}
+.nav-tab.on{color:var(--ac);border-bottom-color:var(--ac)}
+.tab-count{font-size:10px;background:var(--sur2);border:1px solid var(--bor);padding:1px 6px;border-radius:10px;color:var(--tx3)}
+.nav-tab.on .tab-count{background:rgba(124,106,247,.15);border-color:rgba(124,106,247,.3);color:var(--ac)}
+
+/* ── SECTION HEADER ── */
+.sec-hdr{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:10px}
+.sec-title{font-family:'DM Serif Display',serif;font-size:18px}
+.ftabs{display:flex;gap:5px;flex-wrap:wrap}
+.ftab{font-size:10px;font-weight:600;padding:4px 11px;border-radius:14px;border:1px solid var(--bor);background:transparent;color:var(--tx2);cursor:pointer;transition:all .2s;font-family:inherit}
+.ftab:hover,.ftab.on{background:var(--ac);border-color:var(--ac);color:#fff}
+.btn-new{display:inline-flex;align-items:center;gap:5px;background:var(--ac);color:#fff;border:none;padding:7px 14px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.btn-new:hover{opacity:.85}
+
+/* ── PROJECT CARDS ── */
+.bento{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.card{background:var(--sur);border:1px solid var(--bor);border-radius:15px;overflow:hidden;transition:transform .2s,box-shadow .2s,border-color .2s;position:relative;animation:fi .3s ease both;direction:rtl}
+@keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.card:hover{transform:translateY(-3px);box-shadow:0 14px 40px rgba(0,0,0,.5);border-color:rgba(255,255,255,.12)}
+.card-img-wrap{width:100%;height:130px;position:relative;overflow:hidden;cursor:pointer}
+.card-img{width:100%;height:100%;object-fit:cover;display:block}
+.card-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:36px;background:linear-gradient(135deg,var(--sur2),var(--sur3));position:relative}
+.card-img-ph::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,var(--cc,var(--ac)),transparent 65%);opacity:.15;pointer-events:none}
+.card-img-edit{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;font-size:12px;color:#fff;gap:4px;font-weight:600}
+.card-img-wrap:hover .card-img-edit{display:flex}
+.card-body{padding:15px}
+.card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:7px}
+.card-cat{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--cc,var(--ac))}
+.card-acts{display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.card:hover .card-acts{opacity:1}
+.bico{width:24px;height:24px;border-radius:6px;border:1px solid var(--bor);background:var(--sur2);color:var(--tx2);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:11px;transition:all .15s;font-family:inherit}
+.bico:hover{background:var(--ac);border-color:var(--ac);color:#fff}
+.bico.del:hover{background:var(--re);border-color:var(--re)}
+.card-title{font-size:13px;font-weight:700;margin-bottom:5px;line-height:1.3;text-align:right;direction:rtl;unicode-bidi:embed}
+.card-desc{font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:10px;text-align:right;direction:rtl;unicode-bidi:embed;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-tags{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:10px;justify-content:flex-end}
+.ctag{font-size:9px;padding:2px 7px;border-radius:10px;background:var(--sur2);color:var(--tx2);border:1px solid var(--bor)}
+
+/* ROI SECTION */
+.roi-section{background:var(--sur2);border-radius:8px;padding:9px 11px;margin-bottom:10px;display:grid;gap:5px}
+.roi-item{display:flex;align-items:flex-start;gap:6px;font-size:10px}
+.roi-icon{font-size:12px;flex-shrink:0;margin-top:1px}
+.roi-content{}
+.roi-label{font-size:9px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:.8px}
+.roi-val{color:var(--tx2);direction:rtl;unicode-bidi:embed}
+
+.card-footer{display:flex;align-items:center;justify-content:space-between}
+.sbadge{display:inline-flex;align-items:center;gap:4px;font-size:9px;font-weight:700;padding:3px 8px;border-radius:10px}
+.sbadge::before{content:'';width:4px;height:4px;border-radius:50%;background:currentColor}
+.s-done{color:var(--gr);background:rgba(78,204,163,.1)}
+.s-wip{color:var(--ye);background:rgba(247,201,72,.1)}
+.s-plan{color:var(--tx3);background:rgba(255,255,255,.04)}
+.clinks{display:flex;gap:6px}
+.clink{font-size:9px;color:var(--tx2);text-decoration:none;display:inline-flex;align-items:center;gap:2px;transition:color .15s}
+.clink:hover{color:var(--ac)}
+
+/* ── SERVICES ── */
+.services-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(260px,1fr));gap:14px}
+.svc-card{background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:18px;transition:transform .2s,border-color .2s;animation:fi .3s ease both;direction:rtl;cursor:pointer}
+.svc-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.12)}
+.svc-icon{font-size:28px;margin-bottom:10px}
+.svc-cat{font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ac);margin-bottom:5px}
+.svc-name{font-size:14px;font-weight:700;margin-bottom:6px;line-height:1.3;direction:rtl;text-align:right}
+.svc-desc{font-size:11px;color:var(--tx2);line-height:1.6;margin-bottom:10px;direction:rtl;text-align:right}
+.svc-footer{display:flex;align-items:center;justify-content:space-between}
+.svc-price{font-size:11px;font-weight:700;color:var(--ac)}
+.svc-who{font-size:9px;color:var(--tx3);direction:rtl;text-align:right}
+.svc-acts{display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.svc-card:hover .svc-acts{opacity:1}
+
+/* ── ARTICLES ── */
+.articles-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(290px,1fr));gap:14px}
+.art-card{background:var(--sur);border:1px solid var(--bor);border-radius:14px;padding:18px;transition:transform .2s,border-color .2s;animation:fi .3s ease both;direction:rtl}
+.art-card:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.12)}
+.art-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:8px}
+.art-lang{font-size:9px;font-weight:700;padding:2px 8px;border-radius:10px;border:1px solid var(--bor);color:var(--tx3);flex-shrink:0}
+.art-lang.he{color:var(--ac2);border-color:rgba(78,204,163,.3);background:rgba(78,204,163,.08)}
+.art-lang.en{color:var(--ac3);border-color:rgba(247,162,106,.3);background:rgba(247,162,106,.08)}
+.art-lang.both{color:var(--ac);border-color:rgba(124,106,247,.3);background:rgba(124,106,247,.08)}
+.art-date{font-size:9px;color:var(--tx3)}
+.art-title{font-size:14px;font-weight:700;margin-bottom:7px;line-height:1.35;direction:rtl;text-align:right}
+.art-summary{font-size:11px;color:var(--tx2);line-height:1.65;margin-bottom:12px;direction:rtl;text-align:right;unicode-bidi:embed}
+.art-footer{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:6px}
+.art-tags{display:flex;gap:4px;flex-wrap:wrap}
+.art-link{display:inline-flex;align-items:center;gap:4px;font-size:10px;font-weight:600;color:var(--ac);text-decoration:none;transition:opacity .2s}
+.art-link:hover{opacity:.7}
+.art-acts{display:flex;gap:4px;opacity:0;transition:opacity .2s}
+.art-card:hover .art-acts{opacity:1}
+
+.empty{grid-column:1/-1;text-align:center;padding:50px;color:var(--tx3);font-size:13px;line-height:1.8}
+
+/* ── MODALS ── */
+.ov{position:fixed;inset:0;background:rgba(0,0,0,.85);backdrop-filter:blur(8px);z-index:500;display:none;align-items:center;justify-content:center;padding:20px}
+.ov.open{display:flex}
+.modal{background:var(--sur);border:1px solid rgba(255,255,255,.1);border-radius:20px;padding:26px;width:100%;max-width:520px;max-height:88vh;overflow-y:auto;animation:mi .2s ease;direction:rtl}
+.modal-sm{max-width:360px}
+@keyframes mi{from{opacity:0;transform:scale(.96)}to{opacity:1;transform:scale(1)}}
+.mtitle{font-family:'DM Serif Display',serif;font-size:19px;margin-bottom:18px}
+.fg{display:grid;gap:11px}
+.fr{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+.fld{display:flex;flex-direction:column;gap:4px}
+.fld label{font-size:10px;font-weight:700;color:var(--tx2);text-transform:uppercase;letter-spacing:.8px}
+.fld input,.fld textarea,.fld select{background:var(--sur2);border:1px solid var(--bor);border-radius:8px;padding:8px 11px;color:var(--tx);font-size:12px;font-family:inherit;direction:rtl;text-align:right;outline:none;transition:border-color .2s;width:100%}
+.fld input:focus,.fld textarea:focus,.fld select:focus{border-color:var(--ac)}
+.fld select option{background:var(--sur2)}
+.fld textarea{resize:vertical;min-height:68px}
+.ltr{direction:ltr !important;text-align:left !important}
+.roi-fields{background:var(--sur2);border:1px solid var(--bor);border-radius:10px;padding:12px;display:grid;gap:9px}
+.roi-field-title{font-size:10px;font-weight:700;color:var(--tx3);text-transform:uppercase;letter-spacing:1px;margin-bottom:2px}
+.roi-row{display:grid;grid-template-columns:auto 1fr;gap:8px;align-items:center}
+.roi-row-icon{font-size:16px;text-align:center;width:24px}
+.img-drop{border:2px dashed var(--bor);border-radius:9px;padding:16px;text-align:center;cursor:pointer;transition:all .2s;background:var(--sur2);position:relative;overflow:hidden}
+.img-drop:hover,.img-drop.drag{border-color:var(--ac);background:rgba(124,106,247,.06)}
+.img-drop input{position:absolute;inset:0;opacity:0;cursor:pointer;width:100%;height:100%}
+.img-prev{width:100%;height:110px;object-fit:cover;border-radius:7px;margin-bottom:7px;display:none}
+.img-prev.show{display:block}
+.img-ph-el .img-ph{font-size:22px;margin-bottom:5px}
+.img-txt{font-size:11px;color:var(--tx2)}
+.img-txt strong{color:var(--ac)}
+.img-clr{display:none;background:rgba(247,106,106,.12);border:1px solid rgba(247,106,106,.25);color:var(--re);font-size:10px;padding:3px 10px;border-radius:14px;cursor:pointer;font-family:inherit;margin-top:6px;transition:all .2s}
+.img-clr.show{display:inline-flex;align-items:center;gap:3px}
+.img-clr:hover{background:var(--re);color:#fff}
+.sep-or{display:flex;align-items:center;gap:8px;color:var(--tx3);font-size:10px;margin:2px 0}
+.sep-or::before,.sep-or::after{content:'';flex:1;border-top:1px solid var(--bor)}
+.tw{background:var(--sur2);border:1px solid var(--bor);border-radius:8px;padding:6px 9px;display:flex;flex-wrap:wrap;gap:5px;align-items:center;min-height:36px;cursor:text;transition:border-color .2s}
+.tw:focus-within{border-color:var(--ac)}
+.tt{display:inline-flex;align-items:center;gap:3px;background:rgba(124,106,247,.18);border:1px solid rgba(124,106,247,.3);color:var(--ac);font-size:10px;padding:2px 7px;border-radius:12px}
+.tt button{background:none;border:none;color:var(--ac);cursor:pointer;font-size:12px;line-height:1;padding:0}
+.ti{background:none;border:none;outline:none;color:var(--tx);font-size:11px;font-family:inherit;min-width:60px;flex:1;direction:rtl}
+.ti-h{font-size:9px;color:var(--tx3);margin-top:3px}
+.mf{display:flex;gap:8px;margin-top:18px}
+.bsave{background:var(--ac);color:#fff;border:none;padding:8px 20px;border-radius:8px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;transition:opacity .2s}
+.bsave:hover{opacity:.85}
+.bcancel{background:transparent;color:var(--tx2);border:1px solid var(--bor);padding:8px 15px;border-radius:8px;font-size:12px;cursor:pointer;font-family:inherit;transition:all .2s}
+.bcancel:hover{border-color:var(--tx2);color:var(--tx)}
+
+/* ── EDIT MODE ── */
+.edit-only{display:none !important}
+body.edit-mode .edit-only{display:flex !important}
+.edit-only-i{display:none !important}
+body.edit-mode .edit-only-i{display:inline-flex !important}
+[contenteditable]{pointer-events:none;cursor:default}
+body.edit-mode [contenteditable]{pointer-events:auto;cursor:text;border-radius:4px;transition:background .15s}
+body.edit-mode [contenteditable]:hover{background:rgba(124,106,247,.07)}
+body.edit-mode [contenteditable]:focus{background:rgba(124,106,247,.1);box-shadow:0 0 0 1px rgba(124,106,247,.3);outline:none}
+.fab{position:fixed;bottom:22px;left:22px;z-index:999;width:42px;height:42px;border-radius:50%;background:var(--sur2);border:1px solid var(--bor2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:17px;box-shadow:0 4px 18px rgba(0,0,0,.4);transition:all .2s}
+.fab:hover{background:var(--ac);border-color:var(--ac);transform:scale(1.06)}
+body.edit-mode .fab{background:var(--ac);border-color:var(--ac)}
+.edit-banner{position:fixed;top:0;left:0;right:0;z-index:998;background:rgba(124,106,247,.95);backdrop-filter:blur(8px);padding:7px 20px;display:none;align-items:center;justify-content:space-between;font-size:11px;font-weight:600;color:white;direction:rtl}
+body.edit-mode .edit-banner{display:flex}
+body.edit-mode .main,body.edit-mode .sidebar{padding-top:46px}
+.pin-modal{background:var(--sur);border:1px solid rgba(255,255,255,.1);border-radius:16px;padding:26px;width:100%;max-width:320px;animation:mi .2s ease;direction:rtl;text-align:center}
+.pin-input{width:100%;background:var(--sur2);border:1px solid var(--bor);border-radius:8px;padding:11px;color:var(--tx);font-size:18px;font-family:monospace;text-align:center;outline:none;letter-spacing:5px;margin:14px 0;transition:border-color .2s}
+.pin-input:focus{border-color:var(--ac)}
+.pin-err{color:var(--re);font-size:11px;margin-top:-8px;margin-bottom:8px;min-height:16px}
+
+::-webkit-scrollbar{width:4px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:var(--bor2);border-radius:2px}
+@media(max-width:700px){body{flex-direction:column}.sidebar{width:100%;min-width:unset;height:auto;position:static}.bento,.services-grid,.articles-grid{grid-template-columns:1fr}.fr{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar">
+  <div style="text-align:center">
+    <div class="profile-img-wrap" onclick="if(isEdit())triggerProfileImg()">
+      <img class="profile-img" id="profile-img" src="https://ui-avatars.com/api/?name=Molaly+Mekonen&background=7c6af7&color=fff&size=160" alt="profile">
+      <div class="profile-img-overlay edit-only">📷</div>
+    </div>
+    <input type="file" accept="image/*" id="profile-img-input" onchange="handleProfileImg(this)" style="display:none">
+    <div class="profile-name" id="prof-name-disp">Molaly <span>Mekonen</span></div>
+    <div class="profile-role" id="prof-role-disp" contenteditable="true" onblur="saveAll()">AI Solutions Architect<br>Production Engineer @ Intel</div>
+    <div style="margin-top:9px"><div class="avail-badge open" id="avail-badge" onclick="if(isEdit())toggleAvail()">פתוח לפרויקטים</div></div>
+    <button class="add-tag-btn edit-only" style="margin-top:8px" onclick="openProfile()">✎ ערוך פרופיל</button>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">סטטיסטיקות</div>
+    <div class="stats-grid">
+      <div class="stat-card"><div class="stat-num" id="s-total">0</div><div class="stat-lbl">פרויקטים</div><div class="stat-auto">⟳ אוטו</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-done">0</div><div class="stat-lbl">הושלמו</div><div class="stat-auto">⟳ אוטו</div></div>
+      <div class="stat-card"><div class="stat-num" id="s-wip">0</div><div class="stat-lbl">בפיתוח</div><div class="stat-auto">⟳ אוטו</div></div>
+      <div class="stat-card manual" onclick="if(isEdit())editStat(0)"><div class="stat-num" id="ms-0">7</div><div class="stat-lbl" id="ml-0">שנות ניסיון</div></div>
+      <div class="stat-card manual" onclick="if(isEdit())editStat(1)"><div class="stat-num" id="ms-1">12+</div><div class="stat-lbl" id="ml-1">לקוחות</div></div>
+      <div class="stat-card manual" onclick="if(isEdit())editStat(2)"><div class="stat-num" id="ms-2">4</div><div class="stat-lbl" id="ml-2">שפות</div></div>
+    </div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">טכנולוגיות<button class="sb-btn edit-only" onclick="openAdd('skill')">+ הוסף</button></div>
+    <div class="skills-list" id="skills-list"></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">שפות<button class="sb-btn edit-only" onclick="openAdd('lang')">+ הוסף</button></div>
+    <div class="skills-list" id="langs-list"></div>
+  </div>
+
+  <div class="sb-section">
+    <div class="sb-label">קשר<button class="sb-btn edit-only" onclick="openContact()">✎ ערוך</button></div>
+    <div class="contact-list" id="contact-list"></div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <div class="greeting">שלום 👋 <strong id="greeting-name" contenteditable="true" onblur="saveAll()">Molaly</strong>, בואו נבנה משהו מדהים</div>
+    <button class="cta-s edit-only-i" onclick="openContact()" style="display:none">✉ צור קשר</button>
+  </div>
+
+  <div class="hero-banner">
+    <div class="hb-top">
+      <div class="hb-title" id="hb-title" contenteditable="true" onblur="saveAll()">Molaly <span>Mekonen</span></div>
+      <div class="hb-badge">⬡ AI &amp; Automation Portfolio</div>
+    </div>
+    <div class="hb-sub" id="hb-sub" contenteditable="true" onblur="saveAll()" dir="auto">מומחה אוטומציה עם פריסות פרודקשן אמיתיות לעסקים. בנה ופרס פתרונות אוטומציה מקצה לקצה. שבע שנים באינטל בנו תשתית חזקה של חשיבה תהליכית ועבודה בתוך ארגונים גדולים.</div>
+    <div class="hb-ctas">
+      <a class="cta-p" id="cta-cv" href="./CV.pdf" download="Moti_Mekonen_CV.pdf">📄 הורד CV</a>
+      <a class="cta-s" id="cta-li" href="https://www.linkedin.com/in/molaly-mekonen-416a57111/" target="_blank" rel="noopener">💼 LinkedIn</a>
+    </div>
+  </div>
+
+  <!-- NAV TABS -->
+  <div class="nav-tabs">
+    <button class="nav-tab on" data-tab="projects" onclick="switchTab('projects')">📂 פרויקטים <span class="tab-count" id="tc-projects">0</span></button>
+    <button class="nav-tab" data-tab="services" onclick="switchTab('services')">🛠️ שירותים <span class="tab-count" id="tc-services">0</span></button>
+    <button class="nav-tab" data-tab="articles" onclick="switchTab('articles')">✍️ מאמרים <span class="tab-count" id="tc-articles">0</span></button>
+  </div>
+
+  <!-- PROJECTS TAB -->
+  <div id="tab-projects">
+    <div class="sec-hdr">
+      <div class="ftabs" id="ftabs"></div>
+      <button class="btn-new edit-only-i" onclick="openProject()" style="display:none">+ פרויקט חדש</button>
+    </div>
+    <div class="bento" id="grid"></div>
+  </div>
+
+  <!-- SERVICES TAB -->
+  <div id="tab-services" style="display:none">
+    <div class="sec-hdr">
+      <h2 class="sec-title">השירותים שלי</h2>
+      <button class="btn-new edit-only-i" onclick="openService()" style="display:none">+ שירות חדש</button>
+    </div>
+    <div class="services-grid" id="svc-grid"></div>
+  </div>
+
+  <!-- ARTICLES TAB -->
+  <div id="tab-articles" style="display:none">
+    <div class="sec-hdr">
+      <h2 class="sec-title">מאמרים ותובנות</h2>
+      <button class="btn-new edit-only-i" onclick="openArticle()" style="display:none">+ מאמר חדש</button>
+    </div>
+    <div class="articles-grid" id="art-grid"></div>
+  </div>
+</div>
+
+<!-- PROJECT MODAL -->
+<div class="ov" id="ov-proj" onclick="if(event.target===this)closeProject()">
+<div class="modal">
+  <div class="mtitle" id="ptitle">פרויקט חדש</div>
+  <div class="fg">
+    <div class="fld"><label>תמונת פרויקט</label>
+      <div class="img-drop" id="img-drop" ondragover="ev(event,true)" ondragleave="ev(event,false)" ondrop="evDrop(event)">
+        <input type="file" accept="image/*" onchange="handleProjImg(this)">
+        <img class="img-prev" id="img-prev" src="" alt="">
+        <div id="img-ph-el"><div class="img-ph">🖼️</div><div class="img-txt">גרור או <strong>לחץ לבחירה</strong></div></div>
+        <button class="img-clr" id="img-clr" onclick="clearImg(event)" type="button">✕ הסר</button>
+      </div>
+      <div class="sep-or">או</div>
+      <input class="ltr" type="text" id="img-url" placeholder="https://... קישור לתמונה" oninput="urlImg()">
+    </div>
+    <div class="fr">
+      <div class="fld"><label>שם הפרויקט</label><input id="pn" placeholder="שם הפרויקט"></div>
+      <div class="fld"><label>אמוג'י</label><input id="pi" placeholder="🤖" maxlength="4"></div>
+    </div>
+    <div class="fld"><label>תיאור</label><textarea id="pd" placeholder="מה הפרויקט עושה? מה הערך שלו?"></textarea></div>
+    <div class="fr">
+      <div class="fld"><label>קטגוריה</label>
+        <select id="pc"><option>AI & Automation</option><option>Mobile App</option><option>Web</option><option>Chrome Extension</option><option>Backend</option><option>Content</option><option>אחר</option></select>
+      </div>
+      <div class="fld"><label>סטטוס</label>
+        <select id="ps"><option value="done">✓ הושלם</option><option value="wip">⟳ בפיתוח</option><option value="plan">◌ מתוכנן</option></select>
+      </div>
+    </div>
+    <div class="fld"><label>תגיות טכנולוגיות</label>
+      <div class="tw" id="ptw" onclick="document.getElementById('pti').focus()">
+        <input class="ti" id="pti" placeholder="הקלד ולחץ Enter..." onkeydown="tk(event,'p')">
+      </div>
+      <div class="ti-h">Enter אחרי כל תגית</div>
+    </div>
+
+    <!-- ROI FIELDS -->
+    <div class="roi-fields">
+      <div class="roi-field-title">📊 תוצאות עסקיות (ROI)</div>
+      <div class="roi-row">
+        <div class="roi-row-icon">💰</div>
+        <div class="fld" style="gap:3px">
+          <label>Cost Reduction — חסכון בכסף</label>
+          <input id="roi-cost" placeholder='למשל: "חסך 3,000₪ בחודש"' dir="auto">
+        </div>
+      </div>
+      <div class="roi-row">
+        <div class="roi-row-icon">⏱️</div>
+        <div class="fld" style="gap:3px">
+          <label>Time Savings — חסכון בזמן</label>
+          <input id="roi-time" placeholder='למשל: "חסך 15 שעות עבודה בחודש"' dir="auto">
+        </div>
+      </div>
+      <div class="roi-row">
+        <div class="roi-row-icon">😮‍💨</div>
+        <div class="fld" style="gap:3px">
+          <label>Workload Reduction — הפחתת עומס</label>
+          <input id="roi-load" placeholder='למשל: "ביטל תהליך ידני של 3 שלבים"' dir="auto">
+        </div>
+      </div>
+      <div class="roi-row">
+        <div class="roi-row-icon">📈</div>
+        <div class="fld" style="gap:3px">
+          <label>Business Impact — השפעה עסקית</label>
+          <input id="roi-biz" placeholder='למשל: "פתח שוק של 230,000 לומדים"' dir="auto">
+        </div>
+      </div>
+    </div>
+
+    <div class="fr">
+      <div class="fld"><label>Demo URL</label><input class="ltr" id="pdemo" placeholder="https://..."></div>
+      <div class="fld"><label>GitHub URL</label><input class="ltr" id="pgh" placeholder="https://github.com/..."></div>
+    </div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveProject()">שמור פרויקט</button><button class="bcancel" onclick="closeProject()">ביטול</button></div>
+</div>
+</div>
+
+<!-- SERVICE MODAL -->
+<div class="ov" id="ov-svc" onclick="if(event.target===this)closeSvc()">
+<div class="modal">
+  <div class="mtitle" id="svc-title">שירות חדש</div>
+  <div class="fg">
+    <div class="fr">
+      <div class="fld"><label>שם השירות</label><input id="sn" placeholder="למשל: סוכן WhatsApp"></div>
+      <div class="fld"><label>אייקון</label><input id="si" placeholder="🤖" maxlength="4"></div>
+    </div>
+    <div class="fld"><label>קטגוריה</label>
+      <select id="sc"><option>אוטומציה עסקית</option><option>AI לעסק</option><option>הייטק ותעשייה</option><option>תוכן ושיווק</option><option>אפליקציות</option></select>
+    </div>
+    <div class="fld"><label>תיאור השירות</label><textarea id="sd" placeholder="מה השירות עושה? מה הערך לעסק?"></textarea></div>
+    <div class="fld"><label>מי צריך את זה?</label><input id="sw" placeholder="למשל: רופאים, קבלנים, חנויות..."></div>
+    <div class="fr">
+      <div class="fld"><label>מחיר מינימום (₪)</label><input id="sp-min" placeholder="3,500" dir="ltr"></div>
+      <div class="fld"><label>מחיר מקסימום (₪)</label><input id="sp-max" placeholder="6,500" dir="ltr"></div>
+    </div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveSvc()">שמור שירות</button><button class="bcancel" onclick="closeSvc()">ביטול</button></div>
+</div>
+</div>
+
+<!-- ARTICLE MODAL -->
+<div class="ov" id="ov-art" onclick="if(event.target===this)closeArt()">
+<div class="modal">
+  <div class="mtitle" id="art-modal-title">מאמר חדש</div>
+  <div class="fg">
+    <div class="fld"><label>כותרת המאמר</label><input id="an" placeholder="למשל: ההבדל בין Base44 ל-Lovable"></div>
+    <div class="fld"><label>תקציר</label><textarea id="as" placeholder="תיאור קצר של המאמר..."></textarea></div>
+    <div class="fr">
+      <div class="fld"><label>שפה</label>
+        <select id="al"><option value="he">עברית 🇮🇱</option><option value="en">English 🇺🇸</option><option value="both">שתיהן</option></select>
+      </div>
+      <div class="fld"><label>תאריך</label><input class="ltr" id="ad" type="date"></div>
+    </div>
+    <div class="fld"><label>קישור למאמר / פוסט</label><input class="ltr" id="al-url" placeholder="https://linkedin.com/..."></div>
+    <div class="fld"><label>תגיות</label>
+      <div class="tw" id="atw" onclick="document.getElementById('ati').focus()">
+        <input class="ti" id="ati" placeholder="הקלד ולחץ Enter..." onkeydown="tk(event,'a')">
+      </div>
+    </div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveArt()">שמור מאמר</button><button class="bcancel" onclick="closeArt()">ביטול</button></div>
+</div>
+</div>
+
+<!-- PROFILE MODAL -->
+<div class="ov" id="ov-prof" onclick="if(event.target===this)closeProfile()">
+<div class="modal modal-sm">
+  <div class="mtitle">עריכת פרופיל</div>
+  <div class="fg">
+    <div class="fr">
+      <div class="fld"><label>שם פרטי</label><input id="prof-fn" placeholder="Molaly"></div>
+      <div class="fld"><label>שם משפחה</label><input id="prof-ln" placeholder="Mekonen"></div>
+    </div>
+    <div class="fld"><label>כותרת מקצועית</label><textarea id="prof-sub" placeholder="AI Solutions Architect..."></textarea></div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveProfile()">שמור</button><button class="bcancel" onclick="closeProfile()">ביטול</button></div>
+</div>
+</div>
+
+<!-- STAT MODAL -->
+<div class="ov" id="ov-stat" onclick="if(event.target===this)closeStat()">
+<div class="modal modal-sm">
+  <div class="mtitle">עריכת נתון</div>
+  <div class="fg">
+    <div class="fld"><label>ערך</label><input id="sv" placeholder="7+"></div>
+    <div class="fld"><label>תיאור</label><input id="sl" placeholder="שנות ניסיון"></div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveStat()">שמור</button><button class="bcancel" onclick="closeStat()">ביטול</button></div>
+</div>
+</div>
+
+<!-- CONTACT MODAL -->
+<div class="ov" id="ov-contact" onclick="if(event.target===this)closeContact()">
+<div class="modal modal-sm">
+  <div class="mtitle">קישורי יצירת קשר</div>
+  <div class="fg">
+    <div class="fld"><label>📧 אימייל</label><input class="ltr" id="c-email" placeholder="your@email.com"></div>
+    <div class="fld"><label>💼 LinkedIn</label><input class="ltr" id="c-li" placeholder="https://linkedin.com/in/..."></div>
+    <div class="fld"><label>💻 GitHub</label><input class="ltr" id="c-gh" placeholder="https://github.com/..."></div>
+    <div class="fld"><label>📱 טלפון / WhatsApp</label><input class="ltr" id="c-ph" placeholder="+972..."></div>
+    <div class="fld"><label>📄 קישור CV חיצוני</label><input class="ltr" id="c-cv" placeholder="https://... (אם לא מעלה PDF)"></div>
+  </div>
+  <div class="mf"><button class="bsave" onclick="saveContact()">שמור</button><button class="bcancel" onclick="closeContact()">ביטול</button></div>
+</div>
+</div>
+
+<!-- ADD SKILL/LANG MODAL -->
+<div class="ov" id="ov-add" onclick="if(event.target===this)closeAdd()">
+<div class="modal modal-sm">
+  <div class="mtitle" id="add-title">הוסף</div>
+  <div class="fg"><div class="fld"><label id="add-label">ערך</label><input id="add-inp" onkeydown="if(event.key==='Enter')saveAdd()"></div></div>
+  <div class="mf"><button class="bsave" onclick="saveAdd()">הוסף</button><button class="bcancel" onclick="closeAdd()">ביטול</button></div>
+</div>
+</div>
+
+<!-- PIN MODAL -->
+<div class="ov" id="ov-pin" onclick="if(event.target===this)closePin()">
+<div class="pin-modal">
+  <div style="font-size:26px;margin-bottom:8px">🔐</div>
+  <div style="font-family:'DM Serif Display',serif;font-size:17px;margin-bottom:5px">מצב עריכה</div>
+  <div style="font-size:11px;color:var(--tx2)">הכנס סיסמה לעריכת הדשבורד</div>
+  <input class="pin-input" id="pin-inp" type="password" maxlength="30" placeholder="••••" onkeydown="if(event.key==='Enter')checkPin()">
+  <div class="pin-err" id="pin-err"></div>
+  <button class="bsave" style="width:100%" onclick="checkPin()">כניסה</button>
+</div>
+</div>
+
+<!-- FAB + BANNER -->
+<div class="fab" onclick="toggleEdit()" title="מצב עריכה">🔒</div>
+<div class="edit-banner">
+  <span>✎ מצב עריכה פעיל</span>
+  <div style="display:flex;gap:6px;align-items:center">
+    <button onclick="exportData()" style="background:rgba(255,255,255,.15);border:none;color:white;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px">💾 ייצוא</button>
+    <button onclick="importData()" style="background:rgba(255,255,255,.15);border:none;color:white;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px">📂 ייבוא</button>
+    <button onclick="changePin()" style="background:rgba(255,255,255,.15);border:none;color:white;padding:3px 10px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px">🔑 סיסמה</button>
+    <button onclick="toggleEdit()" style="background:rgba(255,255,255,.2);border:none;color:white;padding:3px 12px;border-radius:6px;cursor:pointer;font-family:inherit;font-size:11px">🔒 נעל</button>
+  </div>
+</div>
+
+<script>
+function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
+function safeUrl(u){if(!u)return'';const s=String(u).trim();return/^javascript:/i.test(s)?'#':s;}
+const COLORS={'AI & Automation':'#7c6af7','Mobile App':'#4ecca3','Web':'#f7a26a','Chrome Extension':'#f7c948','Backend':'#6af7c4','Content':'#f76a9c','אחר':'#a0a0a0'};
+const SVC_COLORS={'אוטומציה עסקית':'#7c6af7','AI לעסק':'#4ecca3','הייטק ותעשייה':'#f7a26a','תוכן ושיווק':'#f76a9c','אפליקציות':'#f7c948'};
+const SVC_ICONS={'אוטומציה עסקית':'⚙️','AI לעסק':'🤖','הייטק ותעשייה':'🏭','תוכן ושיווק':'📣','אפליקציות':'📱'};
+
+const DEF={
+  profile:{firstName:'Molaly',lastName:'Mekonen',role:'AI Solutions Architect\nProduction Engineer @ Intel',avail:'open'},
+  greetingName:'Molaly',
+  heroBannerSub:'מומחה אוטומציה עם פריסות פרודקשן אמיתיות לעסקים. בנה ופרס פתרונות אוטומציה מקצה לקצה. שבע שנים באינטל בנו תשתית חזקה של חשיבה תהליכית ועבודה בתוך ארגונים גדולים.',
+  manualStats:[{v:'7',l:'שנות ניסיון'},{v:'12+',l:'לקוחות'},{v:'4',l:'שפות'}],
+  skills:['Claude API','n8n','React Native','Supabase','Python','Apify','Google Cloud','ElevenLabs','JavaScript','Make.com'],
+  langs:['עברית','אנגלית','אמהרית','פורטוגזית'],
+  contact:{email:'moti.marva@gmail.com',linkedin:'https://www.linkedin.com/in/molaly-mekonen-416a57111/',github:'',phone:'052-874-2884',cv:''},
+  projects:[
+    {id:1,icon:'⟶',name:'RTL Fix – תיקון עברית ל-AI',category:'Chrome Extension',desc:'תוסף כרום חינמי שמתקן אוטומטית כיוון טקסט עברי בכל כלי ה-AI הגדולים.',tags:['JavaScript','Chrome Extension','RTL'],status:'done',demo:'./claude-rtl-extension.zip',github:'./RTL-Fix-מדריך-התקנה.pdf',img:'',roi:{cost:'',time:'',load:'',biz:''}},
+    {id:2,icon:'🚗',name:'אפליקציית תיאוריה – אמהרית',category:'Mobile App',desc:'אפליקציית React Native לדוברי אמהרית להכנה לבחינת תיאוריה בישראל.',tags:['React Native','Supabase','Google Cloud TTS','Claude API'],status:'wip',demo:'',github:'',img:'',roi:{cost:'',time:'',load:'',biz:'פתח שוק של ~230,000 לומדים בשנה'}},
+    {id:3,icon:'🤖',name:'LinkedIn Automation System',category:'AI & Automation',desc:'מערכת אוטומציה לפרסום וחיפוש מועמדים על LinkedIn.',tags:['n8n','Apify','Claude API'],status:'done',demo:'',github:'',img:'',roi:{cost:'',time:'חסך ~10 שעות עבודה ידנית בשבוע',load:'ביטל תהליך ידני מייגע של פרסום יומי',biz:''}},
+    {id:4,icon:'🏠',name:'Real Estate Automation – יד2',category:'AI & Automation',desc:'סקרייפינג יד2, ניתוח AI ודוחות אוטומטיים למשקיעים.',tags:['Apify','Claude API','n8n'],status:'done',demo:'',github:'',img:'',roi:{cost:'',time:'',load:'',biz:''}},
+    {id:5,icon:'📖',name:"You Can't See It But You Feel It",category:'Content',desc:'ספר מלחמה רוחנית בעברית ואנגלית. Amazon KDP.',tags:['Amazon KDP','TikTok','YouTube'],status:'done',demo:'',github:'',img:'',roi:{cost:'',time:'',load:'',biz:''}},
+    {id:6,icon:'🎓',name:'AI Solutions Architect – HackerU',category:'AI & Automation',desc:'220 שעות הכשרה ב-AI ואוטומציה.',tags:['Claude API','n8n','Python','Supabase'],status:'wip',demo:'',github:'',img:'',roi:{cost:'',time:'',load:'',biz:''}},
+  ],
+  services:[
+    {id:1,icon:'💬',name:'סוכן WhatsApp לעסק',category:'אוטומציה עסקית',desc:'הלקוח כותב לוואטסאפ, הסוכן עונה, מתאם ומתעד. עובד 24/7 בלי מזכירה.',who:'רופאים, קבלנים, מסעדות, חנויות',priceMin:'3,500',priceMax:'6,500'},
+    {id:2,icon:'⚙️',name:'אוטומציה של תהליכים חוזרים',category:'אוטומציה עסקית',desc:'כל דבר שעובד עושה אותו דבר כל יום — מחובר ורץ אוטומטית.',who:'כל עסק עם 3+ עובדים',priceMin:'2,500',priceMax:'5,000'},
+    {id:3,icon:'🤖',name:'צ\'אטבוט AI לאתר',category:'AI לעסק',desc:'לקוח נכנס לאתר ושואל שאלות — AI עונה על בסיס מידע העסק, 24/7.',who:'חנויות אונליין, מרפאות, משרדים',priceMin:'4,000',priceMax:'8,000'},
+    {id:4,icon:'📄',name:'עיבוד מסמכים עם AI',category:'AI לעסק',desc:'חשבוניות, חוזים, טפסים — AI קורא, מסכם ומכניס למערכת. בלי הקלדה ידנית.',who:'רואי חשבון, עורכי דין, ביטוח',priceMin:'3,000',priceMax:'6,000'},
+    {id:5,icon:'📊',name:'דשבורד ניהולי חי',category:'הייטק ותעשייה',desc:'במקום דוחות Excel ישנים — דשבורד שמתעדכן בזמן אמת.',who:'מנהלים שמקבלים החלטות על נתונים',priceMin:'5,000',priceMax:'12,000'},
+    {id:6,icon:'📣',name:'אוטומציה של תוכן לרשתות',category:'תוכן ושיווק',desc:'נושא אחד → AI מייצר פוסטים לכל הרשתות בסגנון של העסק.',who:'עסקים שצריכים נוכחות דיגיטלית',priceMin:'2,000',priceMax:'4,000'},
+  ],
+  articles:[]
+};
+
+let D={},editId=null,editSvcId=null,editArtId=null,af='all',projTags=[],artTags=[],curImg='',editStatIdx=-1,addType='',editMode=false,curTab='projects';
+
+function load(){const s=localStorage.getItem('pfv4');D=s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));if(!D.services)D.services=DEF.services;if(!D.articles)D.articles=[];if(D.projects.length&&!D.projects[0].roi)D.projects.forEach(p=>{if(!p.roi)p.roi={cost:'',time:'',load:'',biz:''};});}
+function saveAll(){
+  const roles=document.getElementById('prof-role-disp');if(roles)D.profile.role=roles.innerText;
+  const sub=document.getElementById('hb-sub');if(sub)D.heroBannerSub=sub.innerText;
+  const gn=document.getElementById('greeting-name');if(gn)D.greetingName=gn.innerText;
+  try{localStorage.setItem('pfv4',JSON.stringify(D));}
+  catch(e){alert('האחסון המקומי מלא! מחק תמונות מהפרויקטים כדי לפנות מקום.');}
+}
+
+// ── TABS ──
+function switchTab(tab){
+  curTab=tab;
+  document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
+  ['projects','services','articles'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+}
+
+// ── RENDER ──
+function render(){renderSidebar();renderProjects();renderServices();renderArticles();updateTabCounts();}
+
+function updateTabCounts(){
+  document.getElementById('tc-projects').textContent=D.projects.length;
+  document.getElementById('tc-services').textContent=D.services.length;
+  document.getElementById('tc-articles').textContent=D.articles.length;
+}
+
+function renderSidebar(){
+  document.getElementById('prof-name-disp').innerHTML=esc(D.profile.firstName)+' <span>'+esc(D.profile.lastName)+'</span>';
+  document.getElementById('prof-role-disp').innerText=D.profile.role||'';
+  document.getElementById('greeting-name').innerText=D.greetingName||D.profile.firstName;
+  if(D.profileImg)document.getElementById('profile-img').src=D.profileImg;
+  const ab=document.getElementById('avail-badge');
+  ab.className='avail-badge '+(D.profile.avail||'open');
+  ab.textContent=D.profile.avail==='open'?'פתוח לפרויקטים':'עסוק כרגע';
+  D.manualStats.forEach((ms,i)=>{const n=document.getElementById('ms-'+i);const l=document.getElementById('ml-'+i);if(n)n.textContent=ms.v;if(l)l.textContent=ms.l;});
+  document.getElementById('s-total').textContent=D.projects.length;
+  document.getElementById('s-done').textContent=D.projects.filter(p=>p.status==='done').length;
+  document.getElementById('s-wip').textContent=D.projects.filter(p=>p.status==='wip').length;
+  document.getElementById('skills-list').innerHTML=D.skills.map((s,i)=>`<span class="skill-tag">${esc(s)}<button class="rm" onclick="removeItem('skill',${i})">×</button></span>`).join('');
+  document.getElementById('langs-list').innerHTML=D.langs.map((l,i)=>`<span class="skill-tag">${esc(l)}<button class="rm" onclick="removeItem('lang',${i})">×</button></span>`).join('');
+  const cl=document.getElementById('contact-list');
+  const items=[];
+  if(D.contact.email)items.push(`<a class="contact-item" href="mailto:${esc(D.contact.email)}"><span class="c-icon">📧</span>${esc(D.contact.email)}</a>`);
+  if(D.contact.linkedin)items.push(`<a class="contact-item" href="${safeUrl(D.contact.linkedin)}" target="_blank"><span class="c-icon">💼</span>LinkedIn</a>`);
+  if(D.contact.github)items.push(`<a class="contact-item" href="${safeUrl(D.contact.github)}" target="_blank"><span class="c-icon">💻</span>GitHub</a>`);
+  if(D.contact.phone)items.push(`<a class="contact-item" href="tel:${esc(D.contact.phone)}"><span class="c-icon">📱</span>${esc(D.contact.phone)}</a>`);
+  if(!items.length)items.push('<div style="font-size:10px;color:var(--tx3);padding:3px 6px">לחץ \'ערוך\' להוספת קישורים</div>');
+  cl.innerHTML=items.join('');
+  document.getElementById('hb-title').innerHTML=esc(D.profile.firstName)+' <span>'+esc(D.profile.lastName)+'</span>';
+  document.getElementById('hb-sub').innerText=D.heroBannerSub||DEF.heroBannerSub;
+  const cvHref=(!D.contact.cv||D.contact.cv==='#')?'./CV.pdf':D.contact.cv;
+  const liHref=D.contact.linkedin||'https://www.linkedin.com/in/molaly-mekonen-416a57111/';
+  const cvEl=document.getElementById('cta-cv');const liEl=document.getElementById('cta-li');
+  if(cvEl){cvEl.href=cvHref;cvEl.setAttribute('download','Moti_Mekonen_CV.pdf');}
+  if(liEl){liEl.href=liHref;}
+}
+
+function renderProjects(){
+  const list=af==='all'?D.projects:D.projects.filter(p=>p.category===af);
+  const cats=['all',...new Set(D.projects.map(p=>p.category))];
+  document.getElementById('ftabs').innerHTML=cats.map(c=>`<button class="ftab ${af===c?'on':''}" onclick="setF('${c}')">${c==='all'?'הכל':c}</button>`).join('');
+  const grid=document.getElementById('grid');
+  if(!list.length){grid.innerHTML='<div class="empty">📂<br>לחץ "+ פרויקט חדש" להוספה</div>';return;}
+  const slM={done:'הושלם',wip:'בפיתוח',plan:'מתוכנן'};const scM={done:'s-done',wip:'s-wip',plan:'s-plan'};
+  grid.innerHTML=list.map((p,i)=>{
+    const col=COLORS[p.category]||'#7c6af7';
+    const imgH=p.img?`<img class="card-img" src="${safeUrl(p.img)}" alt="" onerror="this.style.display='none'">`:`<div class="card-img-ph" style="--cc:${col}">${esc(p.icon)||'📁'}</div>`;
+    const roi=p.roi||{};
+    const roiItems=[
+      roi.cost?`<div class="roi-item"><span class="roi-icon">💰</span><div class="roi-content"><div class="roi-label">Cost Reduction</div><div class="roi-val">${esc(roi.cost)}</div></div></div>`:'',
+      roi.time?`<div class="roi-item"><span class="roi-icon">⏱️</span><div class="roi-content"><div class="roi-label">Time Savings</div><div class="roi-val">${esc(roi.time)}</div></div></div>`:'',
+      roi.load?`<div class="roi-item"><span class="roi-icon">😮‍💨</span><div class="roi-content"><div class="roi-label">Workload Reduction</div><div class="roi-val">${esc(roi.load)}</div></div></div>`:'',
+      roi.biz?`<div class="roi-item"><span class="roi-icon">📈</span><div class="roi-content"><div class="roi-label">Business Impact</div><div class="roi-val">${esc(roi.biz)}</div></div></div>`:'',
+    ].filter(Boolean).join('');
+    return `<div class="card" style="--cc:${col};animation-delay:${i*.05}s">
+      <div class="card-img-wrap" onclick="editP(${p.id})">${imgH}<div class="card-img-edit">✎ ערוך</div></div>
+      <div class="card-body">
+        <div class="card-top"><div class="card-cat">${esc(p.category)}</div><div class="card-acts"><button class="bico" onclick="editP(${p.id})">✎</button><button class="bico del" onclick="delP(${p.id})">✕</button></div></div>
+        <div class="card-title">${esc(p.name)}</div>
+        <div class="card-desc">${esc(p.desc)}</div>
+        <div class="card-tags">${p.tags.map(t=>`<span class="ctag">${esc(t)}</span>`).join('')}</div>
+        ${roiItems?`<div class="roi-section">${roiItems}</div>`:''}
+        <div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?(p.demo.endsWith('.zip')?`<a class="clink" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>`:`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 Demo</a>`):''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>
+      </div></div>`;
+  }).join('');
+}
+
+function renderServices(){
+  const grid=document.getElementById('svc-grid');
+  if(!D.services.length){grid.innerHTML='<div class="empty">🛠️<br>לחץ "+ שירות חדש" להוספה</div>';return;}
+  grid.innerHTML=D.services.map((s,i)=>{
+    const col=SVC_COLORS[s.category]||'#7c6af7';
+    const price=s.priceMin&&s.priceMax?`${esc(s.priceMin)}₪ – ${esc(s.priceMax)}₪`:s.priceMin?`מ-${esc(s.priceMin)}₪`:'';
+    return `<div class="svc-card" style="animation-delay:${i*.05}s">
+      <div style="display:flex;justify-content:space-between;align-items:flex-start">
+        <div class="svc-icon">${esc(s.icon)||SVC_ICONS[s.category]||'🔧'}</div>
+        <div class="svc-acts"><button class="bico edit-only" onclick="editSvc(${s.id})">✎</button><button class="bico del edit-only" onclick="delSvc(${s.id})">✕</button></div>
+      </div>
+      <div class="svc-cat" style="color:${col}">${esc(s.category)}</div>
+      <div class="svc-name">${esc(s.name)}</div>
+      <div class="svc-desc">${esc(s.desc)}</div>
+      <div class="svc-footer"><div class="svc-price">${price}</div><div class="svc-who">${s.who?'👥 '+esc(s.who):''}</div></div>
+    </div>`;
+  }).join('');
+}
+
+function renderArticles(){
+  const grid=document.getElementById('art-grid');
+  if(!D.articles.length){grid.innerHTML='<div class="empty">✍️<br>לחץ "+ מאמר חדש" להוספת הפוסט הראשון שלך</div>';return;}
+  const langLabel={he:'עברית 🇮🇱',en:'English 🇺🇸',both:'HE + EN'};
+  grid.innerHTML=D.articles.map((a,i)=>`<div class="art-card" style="animation-delay:${i*.05}s">
+    <div class="art-header">
+      <div class="art-acts edit-only"><button class="bico" onclick="editArt(${a.id})">✎</button><button class="bico del" onclick="delArt(${a.id})">✕</button></div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <span class="art-lang ${a.lang||'he'}">${langLabel[a.lang||'he']}</span>
+        <span class="art-date">${esc(a.date||'')}</span>
+      </div>
+    </div>
+    <div class="art-title">${esc(a.name)}</div>
+    <div class="art-summary">${esc(a.summary)}</div>
+    <div class="art-footer">
+      <div class="art-tags">${(a.tags||[]).map(t=>`<span class="ctag">${esc(t)}</span>`).join('')}</div>
+      ${a.url?`<a class="art-link" href="${safeUrl(a.url)}" target="_blank" rel="noopener">קרא עוד ↗</a>`:''}
+    </div>
+  </div>`).join('');
+}
+
+function setF(f){af=f;renderProjects();}
+
+// ── EDIT MODE ──
+function isEdit(){return editMode;}
+function toggleEdit(){
+  if(editMode){editMode=false;document.body.classList.remove('edit-mode');document.querySelector('.fab').textContent='🔒';}
+  else{document.getElementById('pin-inp').value='';document.getElementById('pin-err').textContent='';document.getElementById('ov-pin').classList.add('open');setTimeout(()=>document.getElementById('pin-inp').focus(),80);}
+}
+function checkPin(){
+  const pin=document.getElementById('pin-inp').value;
+  const saved=localStorage.getItem('pfv4_pin')||'molaly2026';
+  if(pin===saved){editMode=true;document.body.classList.add('edit-mode');document.querySelector('.fab').textContent='✎';closePin();}
+  else{document.getElementById('pin-err').textContent='סיסמה שגויה';document.getElementById('pin-inp').value='';document.getElementById('pin-inp').focus();}
+}
+function closePin(){document.getElementById('ov-pin').classList.remove('open');}
+
+// ── IMAGE ──
+function resize(file,cb){const r=new FileReader();r.onload=e=>{const img=new Image();img.onload=()=>{const M=900;let w=img.width,h=img.height;if(w>M){h=h*(M/w);w=M;}const c=document.createElement('canvas');c.width=w;c.height=h;c.getContext('2d').drawImage(img,0,0,w,h);cb(c.toDataURL('image/jpeg',.82));};img.src=e.target.result;};r.readAsDataURL(file);}
+function showPrev(src){curImg=src;const p=document.getElementById('img-prev');p.src=src;p.classList.add('show');document.getElementById('img-ph-el').style.display='none';document.getElementById('img-clr').classList.add('show');document.getElementById('img-url').value='';}
+function clearImg(e){if(e)e.stopPropagation();curImg='';const p=document.getElementById('img-prev');p.classList.remove('show');p.src='';document.getElementById('img-ph-el').style.display='';document.getElementById('img-clr').classList.remove('show');document.getElementById('img-url').value='';}
+function handleProjImg(inp){if(!inp.files[0])return;if(inp.files[0].size>5*1024*1024){alert('הקובץ גדול מ-5MB');return;}resize(inp.files[0],showPrev);}
+function ev(e,o){e.preventDefault();document.getElementById('img-drop').classList.toggle('drag',o);}
+function evDrop(e){e.preventDefault();document.getElementById('img-drop').classList.remove('drag');const f=e.dataTransfer.files[0];if(f&&f.type.startsWith('image/')){resize(f,showPrev);}}
+function urlImg(){const u=document.getElementById('img-url').value.trim();if(u)showPrev(u);else clearImg();}
+function triggerProfileImg(){document.getElementById('profile-img-input').click();}
+function handleProfileImg(inp){if(!inp.files[0])return;resize(inp.files[0],src=>{D.profileImg=src;saveAll();document.getElementById('profile-img').src=src;});}
+
+// ── TAGS ──
+function tk(e,type){if(e.key==='Enter'||e.key===','){e.preventDefault();const v=e.target.value.trim().replace(/,$/,'');if(!v)return;if(type==='p')projTags.push(v);else artTags.push(v);renderTW(type);e.target.value='';}}
+function renderTW(type){
+  const wrap=document.getElementById(type==='p'?'ptw':'atw');
+  const inp=document.getElementById(type==='p'?'pti':'ati');
+  const tags=type==='p'?projTags:artTags;
+  wrap.querySelectorAll('.tt').forEach(t=>t.remove());
+  tags.forEach((t,i)=>{const el=document.createElement('span');el.className='tt';el.innerHTML=t+`<button onclick="rmTag('${type}',${i})" type="button">×</button>`;wrap.insertBefore(el,inp);});
+}
+function rmTag(type,i){if(type==='p')projTags.splice(i,1);else artTags.splice(i,1);renderTW(type);}
+
+// ── PROJECTS ──
+function openProject(p){
+  editId=p?p.id:null;
+  document.getElementById('ptitle').textContent=p?'עריכת פרויקט':'פרויקט חדש';
+  document.getElementById('pn').value=p?.name||'';document.getElementById('pi').value=p?.icon||'';
+  document.getElementById('pd').value=p?.desc||'';document.getElementById('pc').value=p?.category||'AI & Automation';
+  document.getElementById('ps').value=p?.status||'done';document.getElementById('pdemo').value=p?.demo||'';document.getElementById('pgh').value=p?.github||'';
+  const roi=p?.roi||{};
+  document.getElementById('roi-cost').value=roi.cost||'';document.getElementById('roi-time').value=roi.time||'';
+  document.getElementById('roi-load').value=roi.load||'';document.getElementById('roi-biz').value=roi.biz||'';
+  projTags=p?[...p.tags]:[];renderTW('p');clearImg();if(p?.img)showPrev(p.img);
+  document.getElementById('ov-proj').classList.add('open');
+}
+function closeProject(){document.getElementById('ov-proj').classList.remove('open');editId=null;}
+function saveProject(){
+  const name=document.getElementById('pn').value.trim();if(!name){alert('נא להכניס שם');return;}
+  const ti=document.getElementById('pti');if(ti.value.trim()){projTags.push(ti.value.trim());ti.value='';}
+  const p={id:editId||Date.now(),icon:document.getElementById('pi').value.trim()||'📁',name,
+    category:document.getElementById('pc').value,desc:document.getElementById('pd').value.trim(),
+    tags:[...projTags],status:document.getElementById('ps').value,
+    demo:document.getElementById('pdemo').value.trim(),github:document.getElementById('pgh').value.trim(),img:curImg,
+    roi:{cost:document.getElementById('roi-cost').value.trim(),time:document.getElementById('roi-time').value.trim(),load:document.getElementById('roi-load').value.trim(),biz:document.getElementById('roi-biz').value.trim()}};
+  if(editId){const i=D.projects.findIndex(x=>x.id===editId);D.projects[i]=p;}else D.projects.push(p);
+  saveAll();render();closeProject();
+}
+function editP(id){openProject(D.projects.find(p=>p.id===id));}
+function delP(id){if(confirm('למחוק פרויקט זה?')){D.projects=D.projects.filter(p=>p.id!==id);saveAll();render();}}
+
+// ── SERVICES ──
+function openService(s){
+  editSvcId=s?s.id:null;
+  document.getElementById('svc-title').textContent=s?'עריכת שירות':'שירות חדש';
+  document.getElementById('sn').value=s?.name||'';document.getElementById('si').value=s?.icon||'';
+  document.getElementById('sc').value=s?.category||'אוטומציה עסקית';document.getElementById('sd').value=s?.desc||'';
+  document.getElementById('sw').value=s?.who||'';document.getElementById('sp-min').value=s?.priceMin||'';document.getElementById('sp-max').value=s?.priceMax||'';
+  document.getElementById('ov-svc').classList.add('open');
+}
+function closeSvc(){document.getElementById('ov-svc').classList.remove('open');editSvcId=null;}
+function saveSvc(){
+  const name=document.getElementById('sn').value.trim();if(!name){alert('נא להכניס שם');return;}
+  const s={id:editSvcId||Date.now(),icon:document.getElementById('si').value.trim()||'🔧',name,
+    category:document.getElementById('sc').value,desc:document.getElementById('sd').value.trim(),
+    who:document.getElementById('sw').value.trim(),priceMin:document.getElementById('sp-min').value.trim(),priceMax:document.getElementById('sp-max').value.trim()};
+  if(editSvcId){const i=D.services.findIndex(x=>x.id===editSvcId);D.services[i]=s;}else D.services.push(s);
+  saveAll();renderServices();updateTabCounts();closeSvc();
+}
+function editSvc(id){openService(D.services.find(s=>s.id===id));}
+function delSvc(id){if(confirm('למחוק שירות?')){D.services=D.services.filter(s=>s.id!==id);saveAll();renderServices();updateTabCounts();}}
+
+// ── ARTICLES ──
+function openArticle(a){
+  editArtId=a?a.id:null;
+  document.getElementById('art-modal-title').textContent=a?'עריכת מאמר':'מאמר חדש';
+  document.getElementById('an').value=a?.name||'';document.getElementById('as').value=a?.summary||'';
+  document.getElementById('al').value=a?.lang||'he';document.getElementById('ad').value=a?.date||new Date().toISOString().split('T')[0];
+  document.getElementById('al-url').value=a?.url||'';
+  artTags=a?[...a.tags]:[];renderTW('a');
+  document.getElementById('ov-art').classList.add('open');
+}
+function closeArt(){document.getElementById('ov-art').classList.remove('open');editArtId=null;}
+function saveArt(){
+  const name=document.getElementById('an').value.trim();if(!name){alert('נא להכניס כותרת');return;}
+  const ti=document.getElementById('ati');if(ti.value.trim()){artTags.push(ti.value.trim());ti.value='';}
+  const a={id:editArtId||Date.now(),name,summary:document.getElementById('as').value.trim(),
+    lang:document.getElementById('al').value,date:document.getElementById('ad').value,
+    url:document.getElementById('al-url').value.trim(),tags:[...artTags]};
+  if(editArtId){const i=D.articles.findIndex(x=>x.id===editArtId);D.articles[i]=a;}else D.articles.push(a);
+  saveAll();renderArticles();updateTabCounts();closeArt();
+}
+function editArt(id){openArticle(D.articles.find(a=>a.id===id));}
+function delArt(id){if(confirm('למחוק מאמר?')){D.articles=D.articles.filter(a=>a.id!==id);saveAll();renderArticles();updateTabCounts();}}
+
+// ── PROFILE ──
+function openProfile(){document.getElementById('prof-fn').value=D.profile.firstName;document.getElementById('prof-ln').value=D.profile.lastName;document.getElementById('prof-sub').value=D.profile.role||'';document.getElementById('ov-prof').classList.add('open');}
+function closeProfile(){document.getElementById('ov-prof').classList.remove('open');}
+function saveProfile(){D.profile.firstName=document.getElementById('prof-fn').value.trim()||'Molaly';D.profile.lastName=document.getElementById('prof-ln').value.trim()||'Mekonen';D.profile.role=document.getElementById('prof-sub').value.trim();saveAll();renderSidebar();closeProfile();}
+
+// ── STAT ──
+function editStat(i){editStatIdx=i;document.getElementById('sv').value=D.manualStats[i].v;document.getElementById('sl').value=D.manualStats[i].l;document.getElementById('ov-stat').classList.add('open');}
+function closeStat(){document.getElementById('ov-stat').classList.remove('open');}
+function saveStat(){D.manualStats[editStatIdx]={v:document.getElementById('sv').value.trim(),l:document.getElementById('sl').value.trim()};saveAll();renderSidebar();closeStat();}
+
+// ── CONTACT ──
+function openContact(){document.getElementById('c-email').value=D.contact.email||'';document.getElementById('c-li').value=D.contact.linkedin||'';document.getElementById('c-gh').value=D.contact.github||'';document.getElementById('c-ph').value=D.contact.phone||'';document.getElementById('c-cv').value=D.contact.cv||'';document.getElementById('ov-contact').classList.add('open');}
+function closeContact(){document.getElementById('ov-contact').classList.remove('open');}
+function saveContact(){D.contact={email:document.getElementById('c-email').value.trim(),linkedin:document.getElementById('c-li').value.trim(),github:document.getElementById('c-gh').value.trim(),phone:document.getElementById('c-ph').value.trim(),cv:document.getElementById('c-cv').value.trim()};saveAll();renderSidebar();closeContact();}
+
+// ── SKILLS/LANGS ──
+function openAdd(type){addType=type;document.getElementById('add-title').textContent=type==='skill'?'הוסף טכנולוגיה':'הוסף שפה';document.getElementById('add-label').textContent=type==='skill'?'שם הטכנולוגיה':'שם השפה';document.getElementById('add-inp').value='';document.getElementById('ov-add').classList.add('open');setTimeout(()=>document.getElementById('add-inp').focus(),50);}
+function closeAdd(){document.getElementById('ov-add').classList.remove('open');}
+function saveAdd(){const v=document.getElementById('add-inp').value.trim();if(v){if(addType==='skill')D.skills.push(v);else D.langs.push(v);saveAll();renderSidebar();}closeAdd();}
+function removeItem(type,i){if(type==='skill')D.skills.splice(i,1);else D.langs.splice(i,1);saveAll();renderSidebar();}
+
+// ── AVAIL ──
+function toggleAvail(){D.profile.avail=D.profile.avail==='open'?'busy':'open';saveAll();renderSidebar();}
+
+// ── EXPORT / IMPORT / PIN ──
+function exportData(){
+  const blob=new Blob([JSON.stringify(D,null,2)],{type:'application/json'});
+  const a=document.createElement('a');a.href=URL.createObjectURL(blob);
+  a.download='portfolio-backup-'+new Date().toISOString().split('T')[0]+'.json';
+  a.click();URL.revokeObjectURL(a.href);
+}
+function importData(){
+  const inp=document.createElement('input');inp.type='file';inp.accept='.json';
+  inp.onchange=e=>{const f=e.target.files[0];if(!f)return;const r=new FileReader();
+    r.onload=ev=>{try{const d=JSON.parse(ev.target.result);
+      if(!d.profile||!d.projects)throw new Error();
+      if(!confirm('ייבוא יחליף את כל הנתונים הקיימים. להמשיך?'))return;
+      D=d;saveAll();render();alert('הנתונים יובאו בהצלחה!');
+    }catch{alert('קובץ לא תקין — ייבוא נכשל');}};r.readAsText(f);};inp.click();
+}
+function changePin(){
+  const old=prompt('סיסמה נוכחית:');if(old===null)return;
+  const saved=localStorage.getItem('pfv4_pin')||'molaly2026';
+  if(old!==saved){alert('סיסמה שגויה');return;}
+  const n1=prompt('סיסמה חדשה (לפחות 4 תווים):');
+  if(!n1||n1.length<4){alert('סיסמה קצרה מדי');return;}
+  const n2=prompt('אשר סיסמה חדשה:');
+  if(n1!==n2){alert('הסיסמאות לא תואמות');return;}
+  localStorage.setItem('pfv4_pin',n1);alert('הסיסמה שונתה בהצלחה!');
+}
+
+// ── INIT ──
+load();render();
+</script>
+</body>
+</html>
