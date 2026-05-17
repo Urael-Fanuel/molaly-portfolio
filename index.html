@@ -864,14 +864,14 @@ function changePin(){
 // ── DEFAULT IMAGES ──
 function migrateImages(){
   const imgs={
-    1:'./img/proj1.png',
-    2:'./img/proj2.png',
-    3:'./img/proj3.png',
-    4:'./img/proj4.png',
-    5:'./img/proj5.png',
-    6:'./img/proj6.png',
+    1:'./img/proj1.jpg',
+    2:'./img/proj2.jpg',
+    3:'./img/proj3.jpg',
+    4:'./img/proj4.jpg',
+    5:'./img/proj5.jpg',
+    6:'./img/proj6.jpg',
   };
-  D.projects.forEach(p=>{if(imgs[p.id]&&(!p.img||p.img.startsWith('https://images.unsplash.com')))p.img=imgs[p.id];});
+  D.projects.forEach(p=>{if(imgs[p.id]&&!String(p.img).startsWith('data:'))p.img=imgs[p.id];});
 }
 
 // ── INIT ──
