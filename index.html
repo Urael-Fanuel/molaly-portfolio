@@ -854,8 +854,21 @@ function changePin(){
   localStorage.setItem('pfv4_pin',n1);alert('הסיסמה שונתה בהצלחה!');
 }
 
+// ── DEFAULT IMAGES ──
+function migrateImages(){
+  const imgs={
+    1:'https://images.unsplash.com/photo-bTmAPRL7-qc?w=900&h=500&fit=crop&q=80',
+    2:'https://images.unsplash.com/photo-kARZuSYMfrA?w=900&h=500&fit=crop&q=80',
+    3:'https://images.unsplash.com/photo-0YEvGZp0bK0?w=900&h=500&fit=crop&q=80',
+    4:'https://images.unsplash.com/photo-zZrtuNA9TYU?w=900&h=500&fit=crop&q=80',
+    5:'https://images.unsplash.com/photo-c333d6YEhi0?w=900&h=500&fit=crop&q=80',
+    6:'https://images.unsplash.com/photo-eGGFZ5X2LnA?w=900&h=500&fit=crop&q=80',
+  };
+  D.projects.forEach(p=>{if(!p.img&&imgs[p.id])p.img=imgs[p.id];});
+}
+
 // ── INIT ──
-load();render();
+load();migrateImages();saveAll();render();
 </script>
 </body>
 </html>
