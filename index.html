@@ -859,12 +859,12 @@ function changePin(){
 // ── DEFAULT IMAGES ──
 function migrateImages(){
   const imgs={
-    1:'https://images.unsplash.com/photo-bTmAPRL7-qc?w=900&h=500&fit=crop&q=80',
-    2:'https://images.unsplash.com/photo-jb-LAz1hGog?w=900&h=500&fit=crop&q=80',
-    3:'https://images.unsplash.com/photo-UY6SV10HQR0?w=900&h=500&fit=crop&q=80',
-    4:'https://images.unsplash.com/photo-rgJ1J8SDEAY?w=900&h=500&fit=crop&q=80',
-    5:'https://images.unsplash.com/photo-c333d6YEhi0?w=900&h=500&fit=crop&q=80',
-    6:'https://images.unsplash.com/photo-eGGFZ5X2LnA?w=900&h=500&fit=crop&q=80',
+    1:'./img/proj1.jpg',
+    2:'./img/proj2.jpg',
+    3:'./img/proj3.jpg',
+    4:'./img/proj4.jpg',
+    5:'./img/proj5.jpg',
+    6:'./img/proj6.jpg',
   };
   D.projects.forEach(p=>{if(imgs[p.id]&&(!p.img||p.img.startsWith('https://images.unsplash.com')))p.img=imgs[p.id];});
 }
