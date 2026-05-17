@@ -534,6 +534,7 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:46px}
 <script>
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function safeUrl(u){if(!u)return'';const s=String(u).trim();return/^javascript:/i.test(s)?'#':s;}
+function imgErr(el,col,icon){el.outerHTML='<div class="card-img-ph" style="--cc:'+col+'">'+icon+'</div>';}
 const COLORS={'AI & Automation':'#7c6af7','Mobile App':'#4ecca3','Web':'#f7a26a','Chrome Extension':'#f7c948','Backend':'#6af7c4','Content':'#f76a9c','אחר':'#a0a0a0'};
 const SVC_COLORS={'אוטומציה עסקית':'#7c6af7','AI לעסק':'#4ecca3','הייטק ותעשייה':'#f7a26a','תוכן ושיווק':'#f76a9c','אפליקציות':'#f7c948'};
 const SVC_ICONS={'אוטומציה עסקית':'⚙️','AI לעסק':'🤖','הייטק ותעשייה':'🏭','תוכן ושיווק':'📣','אפליקציות':'📱'};
@@ -632,7 +633,8 @@ function renderProjects(){
   const slM={done:'הושלם',wip:'בפיתוח',plan:'מתוכנן'};const scM={done:'s-done',wip:'s-wip',plan:'s-plan'};
   grid.innerHTML=list.map((p,i)=>{
     const col=COLORS[p.category]||'#7c6af7';
-    const imgH=p.img?`<img class="card-img" src="${safeUrl(p.img)}" alt="" onerror="this.style.display='none'">`:`<div class="card-img-ph" style="--cc:${col}">${esc(p.icon)||'📁'}</div>`;
+    const safeIcon=esc(p.icon||'📁');
+    const imgH=p.img?`<img class="card-img" src="${safeUrl(p.img)}" alt="" onerror="imgErr(this,'${col}','${safeIcon}')">`:`<div class="card-img-ph" style="--cc:${col}">${safeIcon}</div>`;
     const roi=p.roi||{};
     const roiItems=[
       roi.cost?`<div class="roi-item"><span class="roi-icon">💰</span><div class="roi-content"><div class="roi-label">Cost Reduction</div><div class="roi-val">${esc(roi.cost)}</div></div></div>`:'',
@@ -858,13 +860,13 @@ function changePin(){
 function migrateImages(){
   const imgs={
     1:'https://images.unsplash.com/photo-bTmAPRL7-qc?w=900&h=500&fit=crop&q=80',
-    2:'https://images.unsplash.com/photo-kARZuSYMfrA?w=900&h=500&fit=crop&q=80',
-    3:'https://images.unsplash.com/photo-0YEvGZp0bK0?w=900&h=500&fit=crop&q=80',
-    4:'https://images.unsplash.com/photo-zZrtuNA9TYU?w=900&h=500&fit=crop&q=80',
+    2:'https://images.unsplash.com/photo-jb-LAz1hGog?w=900&h=500&fit=crop&q=80',
+    3:'https://images.unsplash.com/photo-UY6SV10HQR0?w=900&h=500&fit=crop&q=80',
+    4:'https://images.unsplash.com/photo-rgJ1J8SDEAY?w=900&h=500&fit=crop&q=80',
     5:'https://images.unsplash.com/photo-c333d6YEhi0?w=900&h=500&fit=crop&q=80',
     6:'https://images.unsplash.com/photo-eGGFZ5X2LnA?w=900&h=500&fit=crop&q=80',
   };
-  D.projects.forEach(p=>{if(!p.img&&imgs[p.id])p.img=imgs[p.id];});
+  D.projects.forEach(p=>{if(imgs[p.id]&&(!p.img||p.img.startsWith('https://images.unsplash.com')))p.img=imgs[p.id];});
 }
 
 // ── INIT ──
