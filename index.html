@@ -228,6 +228,11 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:46px}
 .pin-input:focus{border-color:var(--ac)}
 .pin-err{color:var(--re);font-size:11px;margin-top:-8px;margin-bottom:8px;min-height:16px}
 
+.card-dl-row{display:flex;gap:8px;padding:12px 15px 14px;flex-wrap:wrap}
+.btn-dl-primary{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:var(--ac);color:#fff;border:none;padding:10px 14px;border-radius:9px;font-size:12px;font-weight:700;cursor:pointer;font-family:inherit;text-decoration:none;transition:opacity .2s;min-width:120px}
+.btn-dl-primary:hover{opacity:.85}
+.btn-dl-secondary{flex:1;display:inline-flex;align-items:center;justify-content:center;gap:6px;background:transparent;color:var(--tx);border:1px solid var(--bor2);padding:10px 14px;border-radius:9px;font-size:12px;font-weight:600;cursor:pointer;font-family:inherit;text-decoration:none;transition:all .2s;min-width:120px}
+.btn-dl-secondary:hover{border-color:var(--ac);color:var(--ac)}
 ::-webkit-scrollbar{width:4px}
 ::-webkit-scrollbar-track{background:transparent}
 ::-webkit-scrollbar-thumb{background:var(--bor2);border-radius:2px}
@@ -650,7 +655,7 @@ function renderProjects(){
         <div class="card-desc">${esc(p.desc)}</div>
         <div class="card-tags">${p.tags.map(t=>`<span class="ctag">${esc(t)}</span>`).join('')}</div>
         ${roiItems?`<div class="roi-section">${roiItems}</div>`:''}
-        <div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?(p.demo.endsWith('.zip')?`<a class="clink" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>`:`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 Demo</a>`):''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>
+        ${(p.demo&&p.demo.endsWith('.zip'))?`<div class="card-dl-row"><a class="btn-dl-primary" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>${p.github&&p.github.endsWith('.pdf')?`<a class="btn-dl-secondary" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:''}</div>`:`<div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 Demo</a>`:''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>`}
       </div></div>`;
   }).join('');
 }
