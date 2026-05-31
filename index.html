@@ -921,6 +921,7 @@ function migrateImages(){
     4:'./img/proj4.jpg',
     5:'./img/proj5.jpg',
     6:'./img/proj6.jpg',
+    7:'./img/proj7.png',
   };
   D.projects.forEach(p=>{if(imgs[p.id]&&!String(p.img).startsWith('data:'))p.img=imgs[p.id];});
 }
