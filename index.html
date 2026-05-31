@@ -575,6 +575,7 @@ const DEF={
   langs:['עברית','אנגלית','אמהרית','פורטוגזית'],
   contact:{email:'moti.marva@gmail.com',linkedin:'https://www.linkedin.com/in/molaly-mekonen-416a57111/',github:'',phone:'052-874-2884',cv:''},
   projects:[
+    {id:8,icon:'🏗️',name:'WhatsApp AI Attendance Agent – 7 Construction Sites',category:'AI & Automation',desc:'מערכת סוכנים אוטונומית מתקדמת מבוססת WhatsApp ו-LLM לניהול, תיאום ודיווח נוכחות בזמן אמת של עשרות עובדים ב-7 אתרי בנייה פעילים. המערכת תומכת בדיווחים ב-4 שפות שונות ומייצרת דוחות שכר חודשיים מושלמים ישירות למייל של ההנהלה.',tags:['WhatsApp API','LLM Agent','n8n Orchestration','Automated Payroll'],status:'done',demo:'https://www.linkedin.com/in/molaly-mekonen-416a57111/',github:'',img:'',roi:{cost:'צמצום של אלפי שקלים של טעויות דיווח ידניות',time:'קיצור הפקת דוח שכר חודשי מימים שלמים לדקות בודדות',load:'ביטול לילות לבנים ורדיפה ידנית אחר מנהלי עבודה ב-4 שפות',biz:'שקיפות מלאה לסמנכ"ל תפעול על המתרחש בשטח כבר ב-08:30 בבוקר'}},
     {id:1,icon:'⟶',name:'Enterprise RTL AI Integrator',category:'Chrome Extension',desc:'תשתית כרום מאובטחת לניהול והנגשת יישור טקסט (RTL) בכל כלי הבינה המלאכותית המובילים, המשמשת צוותים ארגוניים להגברת פרודוקטיביות יומיומית.',tags:['Chrome Extension','JavaScript','RTL Integration'],status:'done',demo:'./claude-rtl-extension.zip',github:'./RTL-Fix-מדריך-התקנה.pdf',img:'',roi:{cost:'שיפור זמני עבודה של מאות עובדים',time:'חיסכון של כ-12 דקות לכל שעת שימוש ב-AI',load:'מניעת תסכול וטעויות קריאה של טקסטים דו-כיווניים',biz:'מותקן בקרב אלפי משתמשים בארגונים שונים'}},
     {id:2,icon:'🚗',name:'Generative AI Translation & TTS Mobile Platform',category:'Mobile App',desc:'ארכיטקטורת קצה לקצה של אפליקציית מובייל ייעודית (React Native) הכוללת מנועי תרגום מבוססי LLM וסינתזת קול (TTS) מבוזרת בענן להכנה לבחינות רישוי.',tags:['React Native','Supabase','Google Cloud TTS','Claude API'],status:'wip',demo:'',github:'',img:'',roi:{cost:'צמצום עלויות פיתוח באמצעות שרת ללא שרת',time:'תרגום וסנכרון קולי מיידי בזמן אמת',load:'אוטומציה מלאה של יצירת קבצי אודיו ותרגומים',biz:'פתיחת שוק למידה חדש עבור כ-230,000 דוברי אמהרית'}},
     {id:7,icon:'🛡️',name:'Cyber-Guardian – MCP Security Scanner',category:'Web',desc:'סורק האבטחה הראשון בעולם לשרתי MCP (Model Context Protocol), סקילים של AI והרחבות IDE. המערכת מזהה קוד זדוני, הזרקות פרומפטים (Prompt Injections), גניבת אישורים והרעלת כלים לפני חיבור ה-AI למערכות הארגון.',tags:['MCP Security','Vulnerability Scanner','AI Safety','Cyber Security'],status:'done',demo:'https://cyberguardianscan.com/',github:'',img:'',roi:{cost:'מניעת אירועי אבטחת מידע ופריצות פנים-ארגוניות',time:'סריקת אבטחה מעמיקה של קוד שרת תוך פחות מ-3 שניות',load:'זיהוי אוטומטי של 60 משפחות איומי סייבר ופרומפטים זדוניים',biz:'פלטפורמת אבטחה חלוצה (First-to-Market) להגנת סביבות פיתוח AI'}},
@@ -922,6 +923,7 @@ function migrateImages(){
     5:'./img/proj5.jpg',
     6:'./img/proj6.jpg',
     7:'./img/proj7.png',
+    8:'./img/proj8.png',
   };
   D.projects.forEach(p=>{if(imgs[p.id]&&!String(p.img).startsWith('data:'))p.img=imgs[p.id];});
 }
