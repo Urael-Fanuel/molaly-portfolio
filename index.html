@@ -690,15 +690,33 @@ function renderProjects(){
       roi.load?`<div class="roi-item"><span class="roi-icon">😮‍💨</span><div class="roi-content"><div class="roi-label">Workload Reduction</div><div class="roi-val">${esc(roi.load)}</div></div></div>`:'',
       roi.biz?`<div class="roi-item"><span class="roi-icon">📈</span><div class="roi-content"><div class="roi-label">Business Impact</div><div class="roi-val">${esc(roi.biz)}</div></div></div>`:'',
     ].filter(Boolean).join('');
+    
+    // Custom live badge for Cyber-Guardian
+    const liveBadge = p.id === 7 
+      ? `<span style="font-size:11px; font-weight:800; color:#10b981; background:rgba(16,185,129,0.08); border:1px solid rgba(16,185,129,0.2); padding:3px 8px; border-radius:8px; margin-right:8px; display:inline-flex; align-items:center; gap:4px;">🟢 סורק פעיל בשידור חי</span>`
+      : '';
+      
+    // Custom full-width CTA button for live scan
+    const liveButton = p.id === 7
+      ? `<a href="${safeUrl(p.demo)}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 16px; border-radius:12px; text-decoration:none; margin-top:12px; text-align:center; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.2);"><span style="font-size:14px">🛡️</span> כניסה לסורק וסריקה בחינם (10 בחודש) ↗</a>`
+      : '';
+      
     return `<div class="card" style="--cc:${col};animation-delay:${i*.05}s">
       <div class="card-img-wrap" onclick="editP(${p.id})">${imgH}<div class="card-img-edit">✎ ערוך</div></div>
       <div class="card-body">
-        <div class="card-top"><div class="card-cat">${esc(p.category)}</div><div class="card-acts"><button class="bico" onclick="editP(${p.id})">✎</button><button class="bico del" onclick="delP(${p.id})">✕</button></div></div>
+        <div class="card-top">
+          <div style="display:flex; align-items:center;">
+            <div class="card-cat">${esc(p.category)}</div>
+            ${liveBadge}
+          </div>
+          <div class="card-acts"><button class="bico" onclick="editP(${p.id})">✎</button><button class="bico del" onclick="delP(${p.id})">✕</button></div>
+        </div>
         <div class="card-title">${esc(p.name)}</div>
         <div class="card-desc">${esc(p.desc)}</div>
         <div class="card-tags">${p.tags.map(t=>`<span class="ctag">${esc(t)}</span>`).join('')}</div>
         ${roiItems?`<div class="roi-section">${roiItems}</div>`:''}
-        ${(p.demo&&p.demo.endsWith('.zip'))?`<div class="card-dl-row"><a class="btn-dl-primary" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>${p.github&&p.github.endsWith('.pdf')?`<a class="btn-dl-secondary" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:''}</div>`:`<div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank" style="${p.id===7 ? 'color:var(--ac2);font-weight:800;border:1px solid rgba(16,185,129,0.35);background:rgba(16,185,129,0.06);padding:4px 10px;border-radius:6px;' : ''}">${p.id===7 ? '🛡️ סרוק קוד בחינם (10 בחודש)' : '🔗 Demo'}</a>`:''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>`}
+        ${liveButton}
+        ${p.id === 7 ? '' : ((p.demo&&p.demo.endsWith('.zip'))?`<div class="card-dl-row"><a class="btn-dl-primary" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>${p.github&&p.github.endsWith('.pdf')?`<a class="btn-dl-secondary" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:''}</div>`:`<div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 Demo</a>`:''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>`)}
       </div></div>`;
   }).join('');
 }
