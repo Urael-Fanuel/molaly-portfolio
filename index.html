@@ -147,13 +147,15 @@ body{font-family:'Space Grotesk',sans-serif;background:radial-gradient(circle at
 .card{background:var(--sur);backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);border:1px solid var(--bor);border-radius:20px;overflow:hidden;transition:transform .3s cubic-bezier(0.16, 1, 0.3, 1),box-shadow .3s ease,border-color .3s ease;position:relative;animation:fi .3s ease both;direction:rtl}
 @keyframes fi{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
 .card:hover{transform:translateY(-5px);box-shadow:0 20px 40px rgba(0,0,0,0.65), 0 0 20px rgba(99, 102, 241, 0.12);border-color:rgba(99,102,241,0.25)}
-.card-img-wrap{width:100%;height:140px;position:relative;overflow:hidden;cursor:pointer}
+.card-img-wrap{width:100%;height:140px;position:relative;overflow:hidden;cursor:default}
+.card-img-wrap.has-link{cursor:pointer}
+body.edit-mode .card-img-wrap{cursor:pointer}
 .card-img{width:100%;height:100%;object-fit:cover;display:block;transition:transform .5s ease}
 .card:hover .card-img{transform:scale(1.04)}
 .card-img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:40px;background:linear-gradient(135deg,var(--sur2),var(--sur3));position:relative}
 .card-img-ph::before{content:'';position:absolute;inset:0;background:radial-gradient(circle at 70% 30%,var(--cc,var(--ac)),transparent 65%);opacity:.15;pointer-events:none}
 .card-img-edit{position:absolute;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;font-size:12px;color:#fff;gap:4px;font-weight:600}
-.card-img-wrap:hover .card-img-edit{display:flex}
+body.edit-mode .card-img-wrap:hover .card-img-edit{display:flex}
 .card-body{padding:20px}
 .card-top{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px}
 .card-cat{font-size:11px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--cc,var(--ac));background:rgba(255,255,255,0.03);padding:3px 8px;border-radius:6px;border:1px solid rgba(255,255,255,0.05);width:fit-content}
@@ -743,14 +745,14 @@ function renderProjects(){
       : '';
       
     return `<div class="card" style="--cc:${col};animation-delay:${i*.05}s">
-      <div class="card-img-wrap" onclick="editP(${p.id})">${imgH}<div class="card-img-edit">✎ ערוך</div></div>
+      <div class="card-img-wrap ${p.demo && p.demo !== '#' ? 'has-link' : ''}" onclick="if(isEdit()){editP(${p.id})}else{const d='${safeUrl(p.demo)}';if(d&&d!=='#')window.open(d,'_blank');}">${imgH}<div class="card-img-edit">✎ ערוך</div></div>
       <div class="card-body">
         <div class="card-top">
           <div style="display:flex; align-items:center;">
             <div class="card-cat">${esc(p.category)}</div>
             ${liveBadge}
           </div>
-          <div class="card-acts"><button class="bico" onclick="editP(${p.id})">✎</button><button class="bico del" onclick="delP(${p.id})">✕</button></div>
+          <div class="card-acts edit-only"><button class="bico" onclick="editP(${p.id})">✎</button><button class="bico del" onclick="delP(${p.id})">✕</button></div>
         </div>
         <div class="card-title">${esc(p.name)}</div>
         <div class="card-desc">${esc(p.desc)}</div>
@@ -771,7 +773,7 @@ function renderServices(){
     return `<div class="svc-card" style="animation-delay:${i*.05}s">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div class="svc-icon">${esc(s.icon)||SVC_ICONS[s.category]||'🔧'}</div>
-        <div class="svc-acts"><button class="bico edit-only" onclick="editSvc(${s.id})">✎</button><button class="bico del edit-only" onclick="delSvc(${s.id})">✕</button></div>
+        <div class="svc-acts edit-only"><button class="bico" onclick="editSvc(${s.id})">✎</button><button class="bico del" onclick="delSvc(${s.id})">✕</button></div>
       </div>
       <div class="svc-cat" style="color:${col}">${esc(s.category)}</div>
       <div class="svc-name">${esc(s.name)}</div>
