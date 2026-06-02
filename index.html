@@ -792,15 +792,35 @@ function renderProjects(){
         </a>`
       : '';
       
-    // Custom side-by-side action buttons for Cyber-Guardian
-    const liveButton = p.id === 7
-      ? `<div style="display:flex; gap:8px; margin-top:12px;">
+    // Determine card footer / action buttons
+    let cardFooterHtml = '';
+    if (p.id === 7) {
+      cardFooterHtml = `
+        <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
           <a href="${safeUrl(p.demo)}" target="_blank" style="flex:1.2; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 12px; border-radius:12px; text-decoration:none; text-align:center; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.2);"><span style="font-size:14px">🛡️</span> כניסה לסורק ↗</a>
           <button onclick="openCase(${p.id})" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px; background:rgba(255,255,255,0.03); color:var(--tx); border:1px solid var(--bor2); padding:10px 12px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--ac)'; this.style.color='var(--tx)';" onmouseout="this.style.borderColor='var(--bor2)';">המשך קריאה 📖</button>
-        </div>`
-      : '';
+          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:0; border-radius:12px; cursor:pointer; transition:all 0.2s;" title="שתף פרויקט" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">📤</button>
+        </div>`;
+    } else if (p.id === 1) {
+      cardFooterHtml = `
+        <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
+          <button onclick="openCase(${p.id})" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 12px; border-radius:12px; border:none; cursor:pointer; font-family:inherit; transition:all 0.2s; box-shadow:0 4px 12px rgba(99,102,241,0.25);"><span style="font-size:14px">📖</span> המשך לקריאה והורדה</button>
+          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:0; border-radius:12px; cursor:pointer; transition:all 0.2s;" title="שתף פרויקט" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">📤</button>
+        </div>`;
+    } else {
+      cardFooterHtml = `
+        <div class="card-footer">
+          <span class="sbadge ${scM[p.status]}">${slM[p.status]}</span>
+          <div class="clinks" style="display:flex; gap:8px; align-items:center;">
+            <button class="clink" onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="background:none; border:none; cursor:pointer; color:var(--tx2); display:inline-flex; align-items:center; gap:4px; font-family:inherit;" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--tx2)'">📤 שתף</button>
+            ${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 לאתר</a>`:''}
+            ${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}
+          </div>
+        </div>`;
+    }
       
-    const clickHandler = `if(isEdit()){editP(${p.id})}else{const d='${safeUrl(p.demo)}';if(d&&d!=='#')window.open(d,'_blank');}`;
+    const isHtmlDemo = p.demo && p.demo.endsWith('.html');
+    const clickHandler = `if(isEdit()){editP(${p.id})}else{${isHtmlDemo ? `window.open('${safeUrl(p.demo)}','_blank')` : `openCase(${p.id})`}}`;
 
     return `<div class="card" style="--cc:${col};animation-delay:${i*.05}s">
       <div class="card-img-wrap ${p.demo && p.demo !== '#' ? 'has-link' : ''}" onclick="${clickHandler}">${imgH}<div class="card-img-edit">✎ ערוך</div></div>
@@ -816,8 +836,7 @@ function renderProjects(){
         <div class="card-desc">${esc(p.desc)}</div>
         <div class="card-tags">${p.tags.map(t=>`<span class="ctag">${esc(t)}</span>`).join('')}</div>
         ${roiItems?`<div class="roi-section">${roiItems}</div>`:''}
-        ${liveButton}
-        ${p.id === 7 ? '' : ((p.demo&&p.demo.endsWith('.zip'))?`<div class="card-dl-row"><a class="btn-dl-primary" href="${safeUrl(p.demo)}" download>⬇️ הורד תוסף</a>${p.github&&p.github.endsWith('.pdf')?`<a class="btn-dl-secondary" href="${safeUrl(p.github)}" target="_blank">📄 מדריך התקנה</a>`:''}</div>`:`<div class="card-footer"><span class="sbadge ${scM[p.status]}">${slM[p.status]}</span><div class="clinks">${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 לאתר</a>`:''}${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}  </div></div>`)}
+        ${cardFooterHtml}
       </div></div>`;
   }).join('');
 }
@@ -1063,6 +1082,58 @@ function openCase(id){
         </div>
       </div>
     </div>`;
+  } else if(id===1){
+    html=`<div style="display:flex; flex-direction:column; gap:20px;">
+      <div style="background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.2); border-radius:16px; padding:20px; text-align:center;">
+        <h3 style="color:var(--ac); font-size:20px; margin-bottom:8px; font-weight:800;">הנגשת כלי בינה מלאכותית לשפה העברית (RTL)</h3>
+        <p style="color:var(--tx2); font-size:15px; line-height:1.6;">
+          ממשקי AI מובילים (כמו Claude, ChatGPT, v0 ועוד) מעוצבים לשפות משמאל לימין (LTR). בכתיבה בעברית, סימני הפיסוק זזים, מילים באנגלית מתבלבלות וסדר המשפטים מתהפך.
+          <strong>התוצאה:</strong> תסכול רב, איטיות בעבודה ופגיעה ישירה בפרודוקטיביות של עובדים בארגונים.
+        </p>
+      </div>
+      
+      <div>
+        <h4 style="color:var(--tx); font-size:17px; margin-bottom:12px; font-weight:700; border-right:3px solid var(--ac); padding-right:8px;">מה התוסף פותר ומאפשר?</h4>
+        <ul style="list-style-type:none; padding-right:0; display:grid; gap:12px;">
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">✍️</span>
+            <div>
+              <strong style="color:var(--tx);">יישור אוטומטי לימין (RTL):</strong> מזהה אוטומטית עברית ומיישר את תיבות הקלט ותשובות ה-AI לימין ללא מאמץ.
+            </div>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">⚡</span>
+            <div>
+              <strong style="color:var(--tx);">שיפור פוקוס וזמן עבודה:</strong> חוסך כ-12 דקות בממוצע לכל שעת שימוש ב-AI על ידי מניעת הצורך להעתיק וליישר פסקאות באופן ידני.
+            </div>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">🔒</span>
+            <div>
+              <strong style="color:var(--tx);">אבטחה ברמה ארגונית (Enterprise Safe):</strong> התוסף פועל מקומית על הדפדפן שלכם בלבד. הוא אינו שומר, אוסף או מעביר שום מידע או קוד החוצה.
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="border-top:1px solid var(--bor); padding-top:16px;">
+        <h4 style="color:var(--tx); font-size:17px; margin-bottom:12px; font-weight:700; border-right:3px solid var(--ac2); padding-right:8px;">תוצאות מוכחות בשטח (ROI):</h4>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>📈 שיפור פרודוקטיביות</strong><br>שיפור משמעותי בחוויית העבודה של מאות עובדים בארגונים.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>⏱️ חיסכון מצטבר בזמן</strong><br>חיסכון של שעות עבודה חודשיות לכל עובד שמשתמש ב-AI.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>😌 מניעת שחיקה</strong><br>ביטול התסכול היומיומי של קריאת טקסט הפוך ומבולבל.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>👥 אלפי משתמשים פעילים</strong><br>התוסף מותקן ונמצא בשימוש יומי בחברות הייטק וארגונים מובילים.
+          </div>
+        </div>
+      </div>
+    </div>`;
   } else if(p.caseStudy || p.demo){
     html=`<div style="text-align:center; padding:20px;">
       <h3 style="margin-bottom:12px; color:var(--tx);">קייס סטאדי: ${esc(p.name)}</h3>
@@ -1093,6 +1164,15 @@ function openCase(id){
       <div style="display:flex; gap:10px;">
         <button class="cta-s" onclick="closeCase(); openVisitorContact('אשמח לשיחת אפיון חינם לגבי פרויקט Cyber-Guardian');" style="padding:10px 18px; border-radius:10px; cursor:pointer;">✉️ שיחת אפיון חינם</button>
         <a class="cta-p" href="${safeUrl(p.demo)}" target="_blank" style="padding:10px 22px; border-radius:12px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 14px rgba(16,185,129,0.3); background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:none; color:white; font-weight:700; text-decoration:none;">🛡️ כניסה לסורק וסריקה בחינם ↗</a>
+      </div>
+    `;
+  } else if(id===1){
+    mf.innerHTML=`
+      <button class="bcancel" onclick="closeCase()">סגור</button>
+      <div style="display:flex; gap:8px; align-items:center;">
+        <button class="cta-s" onclick="closeCase(); openVisitorContact('אשמח לשיחת אפיון חינם לגבי פרויקט RTL AI Integrator');" style="padding:10px 14px; border-radius:10px; cursor:pointer;">✉️ שיחת אפיון</button>
+        <a class="cta-s" href="${safeUrl(p.github)}" target="_blank" style="padding:10px 14px; border-radius:10px; text-decoration:none; display:inline-flex; align-items:center; gap:4px; font-weight:600; cursor:pointer;">📄 מדריך התקנה</a>
+        <a class="cta-p" href="${safeUrl(p.demo)}" download style="padding:10px 18px; border-radius:10px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 12px rgba(99,102,241,0.25); background:linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%); border:none; color:white; font-weight:700; text-decoration:none;">⬇️ הורד תוסף</a>
       </div>
     `;
   } else {
@@ -1224,6 +1304,86 @@ function showSuccessNotification(){
   }, 4500);
 }
 
+function shareProject(e, id, name) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
+  }
+  const shareUrl = `${window.location.origin}${window.location.pathname}#project-${id}`;
+  const shareTitle = `פרויקט: ${name}`;
+  const shareText = `בדוק את הפרויקט "${name}" בפורטפוליו של מולאלי מקונן:`;
+
+  if (navigator.share) {
+    navigator.share({
+      title: shareTitle,
+      text: shareText,
+      url: shareUrl
+    }).catch(err => {
+      copyToClipboard(shareUrl);
+    });
+  } else {
+    copyToClipboard(shareUrl);
+  }
+}
+
+function copyToClipboard(text) {
+  navigator.clipboard.writeText(text).then(() => {
+    showShareToast();
+  }).catch(err => {
+    const inp = document.createElement('input');
+    inp.value = text;
+    document.body.appendChild(inp);
+    inp.select();
+    try {
+      document.execCommand('copy');
+      showShareToast();
+    } catch (e) {
+      alert('לא ניתן להעתיק את הקישור אוטומטית. העתק אותו מכאן: ' + text);
+    }
+    inp.remove();
+  });
+}
+
+function showShareToast() {
+  const alertEl = document.createElement('div');
+  alertEl.style.cssText = `
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%);
+    color: white;
+    padding: 16px 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(99, 102, 241, 0.3);
+    z-index: 9999;
+    direction: rtl;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  `;
+  alertEl.innerHTML = `<span>🔗 הקישור לפרויקט הועתק ללוח! בהצלחה בשיתוף.</span>`;
+  document.body.appendChild(alertEl);
+  
+  setTimeout(() => {
+    alertEl.style.opacity = '1';
+    alertEl.style.transform = 'translateX(-50%) translateY(0)';
+  }, 50);
+  
+  setTimeout(() => {
+    alertEl.style.opacity = '0';
+    alertEl.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => {
+      alertEl.remove();
+    }, 300);
+  }, 4500);
+}
+
 
 // ── EXPORT / IMPORT / PIN ──
 function exportData(){
@@ -1310,8 +1470,22 @@ function migrateImages(){
   });
 }
 
+function handleHashRoute() {
+  const hash = window.location.hash;
+  if (hash && hash.startsWith('#project-')) {
+    const id = parseInt(hash.replace('#project-', ''), 10);
+    if (!isNaN(id)) {
+      const p = D.projects && D.projects.find(x => x.id === id);
+      if (p) {
+        openCase(id);
+      }
+    }
+  }
+}
+
 // ── INIT ──
-load();migrateImages();saveAll();render();updateContentEditable();
+load();migrateImages();saveAll();render();updateContentEditable();handleHashRoute();
+window.addEventListener('hashchange', handleHashRoute);
 </script>
 </body>
 </html>
