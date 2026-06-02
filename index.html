@@ -312,7 +312,10 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
     <div class="profile-role" id="prof-role-disp" contenteditable="false" onblur="saveAll()">AI Solutions Architect<br>Production Engineer @ Intel</div>
     <div style="margin-top:9px; display:flex; flex-direction:column; gap:8px; align-items:center;">
       <div class="avail-badge open" id="avail-badge" onclick="if(isEdit())toggleAvail()">פתוח לפרויקטים</div>
-      <button class="cta-s" onclick="shareSite(event)" style="font-size:11.5px; padding:6px 14px; border-radius:20px; width:fit-content; border:1px solid var(--bor2); cursor:pointer; display:inline-flex; align-items:center; gap:5px;">📤 שתף את האתר</button>
+      <button class="cta-s" onclick="shareSite(event)" style="font-size:11.5px; padding:6px 14px; border-radius:20px; width:fit-content; border:1px solid var(--bor2); cursor:pointer; display:inline-flex; align-items:center; gap:5px;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-left:3px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        שתף את האתר
+      </button>
     </div>
     <button class="add-tag-btn edit-only" style="margin-top:8px" onclick="openProfile()">✎ ערוך פרופיל</button>
   </div>
@@ -350,7 +353,10 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
   <div class="topbar">
     <div class="greeting">שלום 👋 , אני <strong id="greeting-name" contenteditable="false" onblur="saveAll()">Molaly</strong> , מומחה AI ואוטומציה — בואו נבנה משהו מדהים ביחד</div>
     <div style="display:flex; gap:8px;">
-      <button class="cta-s" onclick="shareSite(event)" id="btn-share-site" style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">📤 שתף אתר</button>
+      <button class="cta-s" onclick="shareSite(event)" id="btn-share-site" style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">
+        <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-left:4px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+        שתף אתר
+      </button>
       <button class="cta-s" onclick="if(isEdit()){openContact()}else{openVisitorContact()}" id="btn-contact">✉ צור קשר</button>
     </div>
   </div>
@@ -663,8 +669,11 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
     <a id="share-li" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#0077b5; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
       💼 LinkedIn
     </a>
-    <a id="share-mail" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#ea4335; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
-      ✉️ אימייל
+    <a id="share-gmail" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#ea4335; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      🔴 Gmail (אינטרנט)
+    </a>
+    <a id="share-mail" target="_blank" style="grid-column: span 2; display:flex; align-items:center; justify-content:center; gap:8px; background:#4b5563; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.01)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      ✉️ אפליקציית מייל ברירת מחדל (Outlook וכד')
     </a>
   </div>
   
@@ -839,20 +848,29 @@ function renderProjects(){
         <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
           <a href="${safeUrl(p.demo)}" target="_blank" style="flex:1.2; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 12px; border-radius:12px; text-decoration:none; text-align:center; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.2);"><span style="font-size:14px">🛡️</span> כניסה לסורק ↗</a>
           <button onclick="openCase(${p.id})" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px; background:rgba(255,255,255,0.03); color:var(--tx); border:1px solid var(--bor2); padding:10px 12px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--ac)'; this.style.color='var(--tx)';" onmouseout="this.style.borderColor='var(--bor2)';">המשך קריאה 📖</button>
-          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:0; border-radius:12px; cursor:pointer; transition:all 0.2s;" title="שתף פרויקט" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">📤</button>
+          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:10px 14px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-left:4px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            שתף
+          </button>
         </div>`;
     } else if (p.id === 1) {
       cardFooterHtml = `
         <div style="display:flex; gap:8px; margin-top:12px; align-items:center;">
           <button onclick="openCase(${p.id})" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 12px; border-radius:12px; border:none; cursor:pointer; font-family:inherit; transition:all 0.2s; box-shadow:0 4px 12px rgba(99,102,241,0.25);"><span style="font-size:14px">📖</span> המשך לקריאה והורדה</button>
-          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="width:36px; height:36px; display:inline-flex; align-items:center; justify-content:center; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:0; border-radius:12px; cursor:pointer; transition:all 0.2s;" title="שתף פרויקט" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">📤</button>
+          <button onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="display:inline-flex; align-items:center; justify-content:center; gap:6px; background:rgba(255,255,255,0.03); color:var(--tx2); border:1px solid var(--bor2); padding:10px 14px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.color='var(--ac)'; this.style.borderColor='var(--ac)';" onmouseout="this.style.color='var(--tx2)'; this.style.borderColor='var(--bor2)';">
+            <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-left:4px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+            שתף
+          </button>
         </div>`;
     } else {
       cardFooterHtml = `
         <div class="card-footer">
           <span class="sbadge ${scM[p.status]}">${slM[p.status]}</span>
           <div class="clinks" style="display:flex; gap:8px; align-items:center;">
-            <button class="clink" onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="background:none; border:none; cursor:pointer; color:var(--tx2); display:inline-flex; align-items:center; gap:4px; font-family:inherit;" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--tx2)'">📤 שתף</button>
+            <button class="clink" onclick="shareProject(event, ${p.id}, '${esc(p.name)}')" style="background:none; border:none; cursor:pointer; color:var(--tx2); display:inline-flex; align-items:center; gap:4px; font-family:inherit;" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--tx2)'">
+              <svg xmlns="http://www.w3.org/2000/svg" width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round" style="vertical-align:middle; margin-left:3px;"><circle cx="18" cy="5" r="3"></circle><circle cx="6" cy="12" r="3"></circle><circle cx="18" cy="19" r="3"></circle><line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line><line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line></svg>
+              שתף
+            </button>
             ${p.demo?`<a class="clink" href="${safeUrl(p.demo)}" target="_blank">🔗 לאתר</a>`:''}
             ${p.github?(p.github.endsWith('.pdf')?`<a class="clink" href="${safeUrl(p.github)}" target="_blank">📄 מדריך</a>`:`<a class="clink" href="${safeUrl(p.github)}" target="_blank">💻 GitHub</a>`):''}
           </div>
@@ -1380,6 +1398,7 @@ function openCustomShareModal(title, text, url) {
   document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n' + url)}`;
   document.getElementById('share-tg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
   document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  document.getElementById('share-gmail').href = `https://mail.google.com/mail/?view=cm&fs=1&su=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
   document.getElementById('share-mail').href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
   
   document.getElementById('ov-share').classList.add('open');
