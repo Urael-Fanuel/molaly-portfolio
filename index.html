@@ -1134,20 +1134,94 @@ function sendContact(method){
   
   const myEmail = D.contact.email || 'moti.marva@gmail.com';
   const myPhone = D.contact.phone || '052-874-2884';
-  const cleanPhone = myPhone.replace(/[^0-9]/g, '');
-  const formattedPhone = cleanPhone.startsWith('0') ? '972' + cleanPhone.substring(1) : cleanPhone;
   
-  const textMsg = `היי מוטי,\nאשמח לשיחת אפיון.\nשם: ${name}\nטלפון: ${phone || 'לא הוזן'}\nאימייל: ${email || 'לא הוזן'}\nפרטים: ${msg || 'לא הוזנו'}`;
+  const textMsg = `שם: ${name}\nטלפון: ${phone || 'לא הוזן'}\nאימייל: ${email || 'לא הוזן'}\nפרטים: ${msg || 'לא הוזנו'}`;
   
   if(method === 'whatsapp'){
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent(textMsg)}`;
+    const cleanPhone = myPhone.replace(/[^0-9]/g, '');
+    const formattedPhone = cleanPhone.startsWith('0') ? '972' + cleanPhone.substring(1) : cleanPhone;
+    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent('היי מוטי, אשמח לשיחת אפיון.\n' + textMsg)}`;
     window.open(url, '_blank');
+    
+    showSuccessNotification();
+    closeVisitorContact();
   } else {
-    const subject = `פנייה חדשה מהפורטפוליו - ${name}`;
-    const url = `mailto:${myEmail}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(textMsg)}`;
-    window.open(url, '_blank');
+    // AJAX email submission using FormSubmit.co
+    const btn = document.querySelector('#ov-visitor-contact button[onclick="sendContact(\'email\')"]');
+    const originalText = btn.innerHTML;
+    btn.disabled = true;
+    btn.innerHTML = '⌛ שולח מייל...';
+    
+    fetch(`https://formsubmit.co/ajax/${myEmail}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        'Accept': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        email: email,
+        phone: phone,
+        message: msg,
+        _subject: `פנייה חדשה מהפורטפוליו - ${name}`
+      })
+    })
+    .then(res => {
+      if(!res.ok) throw new Error();
+      return res.json();
+    })
+    .then(data => {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      showSuccessNotification();
+      closeVisitorContact();
+    })
+    .catch(err => {
+      btn.disabled = false;
+      btn.innerHTML = originalText;
+      alert('אירעה שגיאה בשליחת המייל. מומלץ להשתמש באפשרות ה-WhatsApp או לנסות שנית.');
+    });
   }
-  closeVisitorContact();
+}
+
+function showSuccessNotification(){
+  const alertEl = document.createElement('div');
+  alertEl.style.cssText = `
+    position: fixed;
+    top: 24px;
+    left: 50%;
+    transform: translateX(-50%) translateY(-20px);
+    background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+    color: white;
+    padding: 16px 28px;
+    border-radius: 16px;
+    box-shadow: 0 10px 25px rgba(16, 185, 129, 0.3);
+    z-index: 9999;
+    direction: rtl;
+    text-align: center;
+    font-weight: 700;
+    font-size: 15px;
+    opacity: 0;
+    transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  `;
+  alertEl.innerHTML = `<span>✨ תודה! הפרטים נשלחו בהצלחה ונתקבלו אצלי. אצור קשר בהקדם.</span>`;
+  document.body.appendChild(alertEl);
+  
+  setTimeout(() => {
+    alertEl.style.opacity = '1';
+    alertEl.style.transform = 'translateX(-50%) translateY(0)';
+  }, 50);
+  
+  setTimeout(() => {
+    alertEl.style.opacity = '0';
+    alertEl.style.transform = 'translateX(-50%) translateY(-20px)';
+    setTimeout(() => {
+      alertEl.remove();
+    }, 300);
+  }, 4500);
 }
 
 
