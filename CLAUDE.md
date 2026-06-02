@@ -3,7 +3,7 @@
 ## מה הפרויקט הזה?
 דשבורד פורטפוליו אישי של Molaly Mekonen — AI Solutions Architect.
 קובץ HTML יחיד (`index.html`) + קובץ CV (`CV.pdf`).
-מתארח על Netlify בכתובת: https://molaly-portfolio.netlify.app
+מתארח ב-GitHub Pages בכתובת: https://urael-fanuel.github.io/molaly-portfolio/
 
 ## כללים חשובים — אל תשבור אלה!
 
