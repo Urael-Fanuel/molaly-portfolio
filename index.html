@@ -310,7 +310,10 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
     <input type="file" accept="image/*" id="profile-img-input" onchange="handleProfileImg(this)" style="display:none">
     <div class="profile-name" id="prof-name-disp">Molaly <span>Mekonen</span></div>
     <div class="profile-role" id="prof-role-disp" contenteditable="false" onblur="saveAll()">AI Solutions Architect<br>Production Engineer @ Intel</div>
-    <div style="margin-top:9px"><div class="avail-badge open" id="avail-badge" onclick="if(isEdit())toggleAvail()">פתוח לפרויקטים</div></div>
+    <div style="margin-top:9px; display:flex; flex-direction:column; gap:8px; align-items:center;">
+      <div class="avail-badge open" id="avail-badge" onclick="if(isEdit())toggleAvail()">פתוח לפרויקטים</div>
+      <button class="cta-s" onclick="shareSite(event)" style="font-size:11.5px; padding:6px 14px; border-radius:20px; width:fit-content; border:1px solid var(--bor2); cursor:pointer; display:inline-flex; align-items:center; gap:5px;">📤 שתף את האתר</button>
+    </div>
     <button class="add-tag-btn edit-only" style="margin-top:8px" onclick="openProfile()">✎ ערוך פרופיל</button>
   </div>
 
@@ -346,7 +349,10 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
 <div class="main">
   <div class="topbar">
     <div class="greeting">שלום 👋 , אני <strong id="greeting-name" contenteditable="false" onblur="saveAll()">Molaly</strong> , מומחה AI ואוטומציה — בואו נבנה משהו מדהים ביחד</div>
-    <button class="cta-s" onclick="if(isEdit()){openContact()}else{openVisitorContact()}" id="btn-contact">✉ צור קשר</button>
+    <div style="display:flex; gap:8px;">
+      <button class="cta-s" onclick="shareSite(event)" id="btn-share-site" style="display:inline-flex; align-items:center; gap:6px; cursor:pointer;">📤 שתף אתר</button>
+      <button class="cta-s" onclick="if(isEdit()){openContact()}else{openVisitorContact()}" id="btn-contact">✉ צור קשר</button>
+    </div>
   </div>
 
   <div class="hero-banner">
@@ -632,6 +638,40 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
     <button class="cta-s" onclick="sendContact('email')" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; font-weight:700; padding:12px; border-color:var(--ac); color:var(--tx); cursor:pointer;">
       ✉️ שליחה במייל
     </button>
+  </div>
+</div>
+</div>
+
+<!-- SHARE MODAL -->
+<div class="ov" id="ov-share" onclick="if(event.target===this)closeShareModal()">
+<div class="modal modal-sm" style="max-width: 400px; text-align: center; background:rgba(15,23,42,0.96); backdrop-filter:blur(24px); border:1px solid rgba(255,255,255,0.1); border-radius:24px; padding:28px;">
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:1px solid var(--bor); padding-bottom:12px;">
+    <div class="mtitle" id="share-modal-title" style="margin-bottom:0; font-size:20px; font-weight:800;">שתף פרויקט</div>
+    <button onclick="closeShareModal()" style="background:none; border:none; color:var(--tx3); cursor:pointer; font-size:20px; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='var(--ac)'" onmouseout="this.style.color='var(--tx3)'">✕</button>
+  </div>
+  
+  <p id="share-modal-desc" style="font-size:14px; color:var(--tx2); margin-bottom:20px; line-height:1.5; text-align: right; direction: rtl;"></p>
+  
+  <!-- Social buttons grid -->
+  <div style="display:grid; grid-template-columns: 1fr 1fr; gap:10px; margin-bottom:20px; direction: rtl;">
+    <a id="share-wa" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#25D366; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      💬 WhatsApp
+    </a>
+    <a id="share-tg" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#0088cc; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      ✈️ Telegram
+    </a>
+    <a id="share-li" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#0077b5; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      💼 LinkedIn
+    </a>
+    <a id="share-mail" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:8px; background:#ea4335; color:white; padding:12px; border-radius:12px; text-decoration:none; font-weight:700; font-size:14px; transition:transform 0.2s, opacity 0.2s; cursor:pointer;" onmouseover="this.style.transform='scale(1.02)'; this.style.opacity='0.95';" onmouseout="this.style.transform='scale(1)'; this.style.opacity='1';">
+      ✉️ אימייל
+    </a>
+  </div>
+  
+  <!-- Link copy input field -->
+  <div style="background:var(--sur2); border:1px solid var(--bor); border-radius:12px; padding:8px 12px; display:flex; align-items:center; justify-content:space-between; gap:10px; direction: ltr;">
+    <input id="share-link-input" readonly style="background:none; border:none; color:var(--tx2); font-size:12px; outline:none; flex:1; direction:ltr; text-align:left; width: 60%;" onclick="this.select()">
+    <button onclick="copyShareLinkFromInput()" style="background:var(--ac); border:none; color:white; padding:8px 14px; border-radius:8px; font-size:12px; font-weight:700; cursor:pointer; transition:opacity 0.2s;" onmouseover="this.style.opacity='0.9'" onmouseout="this.style.opacity='1'">העתק 🔗</button>
   </div>
 </div>
 </div>
@@ -1304,6 +1344,8 @@ function showSuccessNotification(){
   }, 4500);
 }
 
+let currentShareUrl = '';
+
 function shareProject(e, id, name) {
   if (e) {
     e.stopPropagation();
@@ -1312,18 +1354,56 @@ function shareProject(e, id, name) {
   const shareUrl = `${window.location.origin}${window.location.pathname}#project-${id}`;
   const shareTitle = `פרויקט: ${name}`;
   const shareText = `בדוק את הפרויקט "${name}" בפורטפוליו של מולאלי מקונן:`;
+  
+  openCustomShareModal(shareTitle, shareText, shareUrl);
+}
 
-  if (navigator.share) {
-    navigator.share({
-      title: shareTitle,
-      text: shareText,
-      url: shareUrl
-    }).catch(err => {
-      copyToClipboard(shareUrl);
-    });
-  } else {
-    copyToClipboard(shareUrl);
+function shareSite(e) {
+  if (e) {
+    e.stopPropagation();
+    e.preventDefault();
   }
+  const shareUrl = `${window.location.origin}${window.location.pathname}`;
+  const shareTitle = `הפורטפוליו של מולאלי מקונן - AI Solutions Architect`;
+  const shareText = `היי, מומלץ לבקר בפורטפוליו של מולאלי מקונן (מוטי) - מומחה AI ואוטומציה תהליכים עסקיים:`;
+  
+  openCustomShareModal("שתף את האתר", shareText, shareUrl);
+}
+
+function openCustomShareModal(title, text, url) {
+  currentShareUrl = url;
+  document.getElementById('share-modal-title').textContent = title;
+  document.getElementById('share-modal-desc').textContent = text;
+  document.getElementById('share-link-input').value = url;
+  
+  // Update social links
+  document.getElementById('share-wa').href = `https://api.whatsapp.com/send?text=${encodeURIComponent(text + '\n' + url)}`;
+  document.getElementById('share-tg').href = `https://t.me/share/url?url=${encodeURIComponent(url)}&text=${encodeURIComponent(text)}`;
+  document.getElementById('share-li').href = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`;
+  document.getElementById('share-mail').href = `mailto:?subject=${encodeURIComponent(title)}&body=${encodeURIComponent(text + '\n\n' + url)}`;
+  
+  document.getElementById('ov-share').classList.add('open');
+}
+
+function closeShareModal() {
+  document.getElementById('ov-share').classList.remove('open');
+}
+
+function copyShareLinkFromInput() {
+  const input = document.getElementById('share-link-input');
+  input.select();
+  navigator.clipboard.writeText(input.value).then(() => {
+    showShareToast();
+    closeShareModal();
+  }).catch(() => {
+    try {
+      document.execCommand('copy');
+      showShareToast();
+      closeShareModal();
+    } catch (err) {
+      alert('נכשל בהעתקה. אנא העתק ידנית מהתיבה.');
+    }
+  });
 }
 
 function copyToClipboard(text) {
