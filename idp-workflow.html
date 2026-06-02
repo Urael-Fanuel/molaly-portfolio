@@ -1,0 +1,550 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Intelligent Document Processing (IDP) – מבלגן פיננסי לארכיון דיגיטלי חכם</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030712;
+  --sur: rgba(17, 24, 39, 0.7);
+  --sur2: rgba(31, 41, 55, 0.65);
+  --sur3: rgba(55, 65, 81, 0.5);
+  --bor: rgba(255, 255, 255, 0.08);
+  --bor2: rgba(255, 255, 255, 0.15);
+  --ac: #6366f1; /* Indigo */
+  --ac2: #10b981; /* Emerald */
+  --ac3: #f59e0b; /* Amber */
+  --tx: #f9fafb;
+  --tx2: #d1d5db;
+  --tx3: #9ca3af;
+}
+
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  font-family: 'Outfit', 'Space Grotesk', sans-serif;
+  background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 50%);
+  color: var(--tx);
+  min-height: 100vh;
+  direction: rtl;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: rgba(3, 7, 18, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bor);
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--tx);
+}
+
+.logo span {
+  color: var(--ac);
+  font-style: italic;
+}
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--tx2);
+  border: 1px solid var(--bor2);
+  padding: 8px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-back:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--ac);
+  color: var(--tx);
+  transform: translateY(-1px);
+}
+
+main {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 40px 24px 80px;
+}
+
+.hero {
+  text-align: center;
+  margin-bottom: 48px;
+  animation: fadeIn 0.8s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ac2);
+  background: rgba(16, 185, 129, 0.08);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  margin-bottom: 16px;
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4.5vw, 42px);
+  line-height: 1.25;
+  margin-bottom: 18px;
+  color: var(--tx);
+  letter-spacing: -0.5px;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--tx2);
+  max-width: 720px;
+  margin: 0 auto 28px;
+  font-weight: 300;
+}
+
+.cta-group {
+  display: flex;
+  justify-content: center;
+  gap: 14px;
+}
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+/* Sections styling */
+section {
+  margin-bottom: 40px;
+  background: var(--sur);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--bor);
+  border-radius: 24px;
+  padding: 32px;
+}
+
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tx);
+}
+
+/* Pain section */
+.pain-section {
+  border-color: rgba(239, 68, 68, 0.15);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.03) 0%, rgba(3, 7, 18, 0) 100%);
+}
+
+.pain-grid {
+  display: grid;
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.pain-card {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+}
+
+.pain-icon {
+  font-size: 20px;
+  color: #ef4444;
+  flex-shrink: 0;
+  margin-top: 2px;
+}
+
+.pain-content h3 {
+  font-size: 16px;
+  color: var(--tx);
+  margin-bottom: 6px;
+  font-weight: 700;
+}
+
+.pain-content p {
+  font-size: 14.5px;
+  color: var(--tx2);
+  line-height: 1.6;
+}
+
+/* Architecture Timeline */
+.architecture-timeline {
+  display: grid;
+  gap: 20px;
+  margin-top: 24px;
+}
+
+.step-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--bor);
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover {
+  border-color: var(--bor2);
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.step-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  margin-bottom: 8px;
+}
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--ac);
+  font-weight: 700;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.step-card:nth-child(2) .step-num {
+  background: rgba(16, 185, 129, 0.15);
+  border-color: rgba(16, 185, 129, 0.3);
+  color: var(--ac2);
+}
+
+.step-card:nth-child(3) .step-num {
+  background: rgba(245, 158, 11, 0.15);
+  border-color: rgba(245, 158, 11, 0.3);
+  color: var(--ac3);
+}
+
+.step-card:nth-child(4) .step-num {
+  background: rgba(99, 102, 241, 0.15);
+  border-color: rgba(99, 102, 241, 0.3);
+  color: var(--ac);
+}
+
+.step-title {
+  font-size: 16px;
+  font-weight: 700;
+  color: var(--tx);
+}
+
+.step-desc {
+  font-size: 14.5px;
+  color: var(--tx2);
+  padding-right: 40px;
+}
+
+/* Results section */
+.results-section {
+  border-color: rgba(16, 185, 129, 0.15);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.03) 0%, rgba(3, 7, 18, 0) 100%);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.result-card {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.08);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.result-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(16, 185, 129, 0.25);
+}
+
+.result-icon {
+  font-size: 28px;
+  margin-bottom: 12px;
+}
+
+.result-title {
+  font-size: 17px;
+  font-weight: 700;
+  color: var(--ac2);
+  margin-bottom: 6px;
+}
+
+.result-desc {
+  font-size: 14px;
+  color: var(--tx2);
+  line-height: 1.5;
+}
+
+/* Footer Section */
+.footer-cta {
+  text-align: center;
+  padding: 48px 32px;
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.5) 0%, rgba(17, 24, 39, 0.6) 100%);
+  border: 1px solid var(--bor);
+  border-radius: 24px;
+  margin-top: 48px;
+}
+
+.footer-cta h2 {
+  font-size: 24px;
+  justify-content: center;
+  margin-bottom: 10px;
+}
+
+.footer-cta p {
+  font-size: 15px;
+  color: var(--tx2);
+  max-width: 600px;
+  margin: 0 auto 28px;
+}
+
+footer {
+  text-align: center;
+  padding: 24px;
+  font-size: 13px;
+  color: var(--tx3);
+  border-top: 1px solid var(--bor);
+}
+
+@media (max-width: 768px) {
+  section {
+    padding: 24px;
+  }
+  .results-grid {
+    grid-template-columns: 1fr;
+  }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <a href="./index.html" class="logo">Molaly <span>Mekonen</span></a>
+    <a href="./index.html" class="btn-back">
+      <span>חזרה לפורטפוליו</span>
+      <span>←</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="badge">⬡ פרויקט AI &amp; אוטומציה</div>
+    <h1>מבלגן פיננסי לארכיון דיגיטלי חכם: אוטומציית קצה לקצה לעיבוד חשבוניות מבוססת AI</h1>
+    <p class="hero-sub">מערכת מתקדמת מבוססת OCR ו-LLMs לחילוץ מידע מחשבוניות וחוזים, תיוק חכם ב-Google Drive ואינטגרציה ל-CRM ומסדי נתונים.</p>
+    <div class="cta-group">
+      <a href="https://wa.me/972528742884?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%9E%D7%95%D7%9C%D7%9C%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98%20%D7%94-IDP" target="_blank" rel="noopener" class="btn-primary">✉️ שיחת אפיון חינם</a>
+    </div>
+  </div>
+
+  <!-- THE PAIN -->
+  <section class="pain-section">
+    <h2>הכאב השקט שחונק עסקים מבפנים</h2>
+    <p style="color: var(--tx2); font-size: 15px; margin-bottom: 8px;">عסקים רבים מתמודדים יום-יום עם "הר מפלצות" בלתי נראה: ערימות של חשבוניות, קבלות ומסמכי רכש שדורשים טיפול ידני, סיזיפי ומועד לפורענות. התלות בהקלדת נתונים ידנית (Data Entry) גובה מחיר יקר:</p>
+    
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>צווארי בקבוק תזרימיים</h3>
+          <p>חשבוניות ממתינות שבועות להזנה, מה שמעוור את מקבלי ההחלטות לגבי מצב התזרים האמיתי.</p>
+        </div>
+      </div>
+      
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>שחיקת ההון האנושי</h3>
+          <p>עובדים יצירתיים ומוכשרים הופכים ל"פועלי קלדנות", מה שמוביל לשחיקה (Burnout), תסכול ובזבוז משאבים.</p>
+        </div>
+      </div>
+      
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>חרדת ביקורות וקנסות</h3>
+          <p>מסמך אחד שהלך לאיבוד או אפס אחד שהוקלד בטעות בסכום המע"מ, עלולים להוביל לקנסות כבדים ולשעות של נבירה בקלסרים בניסיון לאתר את הטעות.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE SOLUTION -->
+  <section>
+    <h2>💡 הפתרון: סינרגיה מושלמת בין AI לאוטומציה</h2>
+    <p style="margin-bottom: 14px; font-size: 15px; color: var(--tx2);">
+      כהנדסאי וארכיטקט פתרונות AI ואוטומציה שמגיע מסביבות ייצור טכנולוגיות מוקפדות, התפיסה שלי היא שמערכות חייבות לעבוד בדיוק כירורגי. עסק לא אמור לשרת את הניירת שלו; הטכנולוגיה צריכה להעלים אותה.
+    </p>
+    <p style="font-size: 15px; color: var(--tx2);">
+      כדי לפתור את האתגר הזה מהשורש, פיתחתי <strong>WORKFLOW פיננסי מקצה לקצה</strong> המשלב בינה מלאכותית לחילוץ נתונים חסר שגיאות וחיסכון משמעותי בשעות קלדנות, ומושלם על ידי בניית מערכת תיוק דינמית וחכמה ב-Google Drive Workspace המקשרת אוטומטית בין המסמך המקורי לנתונים שחולצו.
+    </p>
+  </section>
+
+  <!-- THE ARCHITECTURE -->
+  <section>
+    <h2>⚙️ ארכיטקטורה של דיוק: מתחת למכסה המנוע</h2>
+    <p style="font-size: 15px; color: var(--tx2); margin-bottom: 8px;">הפרויקט נבנה מתוך הבנה עמוקה של זרימת מידע (Data Pipeline) נכונה, תוך שימוש בכלים המתקדמים ביותר:</p>
+    
+    <div class="architecture-timeline">
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">1</div>
+          <div class="step-title">איסוף חכם ללא מגע אדם</div>
+        </div>
+        <div class="step-desc">האוטומציה מאזינה לנקודות הקליטה של הארגון ומושכת כל חשבונית נכנסת באופן מאובטח ומידי.</div>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">2</div>
+          <div class="step-title">המוח האנליטי (LLM)</div>
+        </div>
+        <div class="step-desc">יישום של מודל שפה מתקדם (LLM) שסורק את המסמך הפיננסי (Unstructured Data), מבין את ההקשר של כל מספר וטקסט, ומחלץ את המידע הקריטי ברמת דיוק אבסולוטית.</div>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">3</div>
+          <div class="step-title">המרת נתונים לתקן בינלאומי</div>
+        </div>
+        <div class="step-desc">הנתונים שחולצו נארזים אוטומטית לקובץ JSON מובנה ונקי, המוכן לאינטגרציה מיידית עם מערכות הארגון.</div>
+      </div>
+      
+      <div class="step-card">
+        <div class="step-header">
+          <div class="step-num">4</div>
+          <div class="step-title">תיוק דינמי מבוסס משתנים</div>
+        </div>
+        <div class="step-desc">המערכת פותחת תת-תיקיות ייעודיות לכל מסמך על פי שם הספק ומספר החשבונית, ומשדכת בין קובץ המקור לנתונים המעובדים.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SCALABILITY -->
+  <section>
+    <h2>📈 סקלביליות (Scalability) וצמיחה</h2>
+    <p style="margin-bottom: 14px; font-size: 15px; color: var(--tx2);">
+      ארכיטקטורה מנצחת היא כזו שצופה פני עתיד. הפרויקט נבנה בתפיסה מתקדמת שמאפשרת למערכת לשמש כצינור נתונים חי ולא רק כארכיון. ניתן להזרים את המידע שחולץ בזמן אמת אל מסדי נתונים גמישים, לוחות בקרה (Dashboards) או כל מערכת לניהול מידע שהעסק עובד איתה.
+    </p>
+    <p style="font-size: 15px; color: var(--tx2);">
+      בנוסף, הארכיטקטורה הפתוחה מאפשרת אינטגרציה חלקה לכלים חיצוניים ואפליקציות מסרים (כמו WhatsApp או Telegram). המשמעות היא שכל עובד מורשה יכול לתשאל את המערכת, לאתר חשבוניות ולקבל נתונים בזמן אמת גם כשהוא בשטח או מחוץ למשרד – הכל תחת מעטפת אבטחת מידע קפדנית וברמה הגבוהה ביותר.
+    </p>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results-section">
+    <h2>🎯 התוצאה: שקט נפשי, שליטה מוחלטת והתייעלות</h2>
+    
+    <div class="results-grid">
+      <div class="result-card">
+        <div class="result-icon">✨</div>
+        <div class="result-title">100% דיוק</div>
+        <div class="result-desc">אפס טעויות הקלדה ואפס מסמכים אבודים. שליטה מלאה בנתונים.</div>
+      </div>
+      
+      <div class="result-card">
+        <div class="result-icon">⏱️</div>
+        <div class="result-title">חיסכון בשעות</div>
+        <div class="result-desc">ביטול מוחלט של תהליכי הזנה ידנית ותיוק ידני מייגע.</div>
+      </div>
+      
+      <div class="result-card">
+        <div class="result-icon">🔍</div>
+        <div class="result-title">נגישות מיידית</div>
+        <div class="result-desc">כל מסמך נשלף בשבריר שנייה מכל מקום, גם דרך אפליקציות מסרים.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <div class="footer-cta">
+    <h2>מוכנים להוציא את עבודת הניירת מהעסק שלכם ולהתחיל לעבוד חכם?</h2>
+    <p>אני מוללי ( מוטי ) מקונן, ארכיטקט פתרונות AI ואוטומציה. בואו נזהה יחד את צווארי הבקבוק בעסק שלכם, ונתפור להם ארכיטקטורה טכנולוגית מדויקת ונקייה שתזניק אתכם קדימה.</p>
+    <a href="https://wa.me/972528742884?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%9E%D7%95%D7%9C%D7%9C%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98%20%D7%94-IDP" target="_blank" rel="noopener" class="btn-primary">✉️ צרו קשר לשיחת אפיון חינם</a>
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 Molaly Mekonen – AI Solutions Architect. כל הזכויות שמורות.</p>
+</footer>
+
+</body>
+</html>
