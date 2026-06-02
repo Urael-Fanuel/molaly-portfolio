@@ -756,9 +756,12 @@ function renderProjects(){
         </a>`
       : '';
       
-    // Custom full-width CTA button for live scan
+    // Custom side-by-side action buttons for Cyber-Guardian
     const liveButton = p.id === 7
-      ? `<a href="${safeUrl(p.demo)}" target="_blank" style="display:flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 16px; border-radius:12px; text-decoration:none; margin-top:12px; text-align:center; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.2);"><span style="font-size:14px">🛡️</span> כניסה לסורק וסריקה בחינם (10 בחודש) ↗</a>`
+      ? `<div style="display:flex; gap:8px; margin-top:12px;">
+          <a href="${safeUrl(p.demo)}" target="_blank" style="flex:1.2; display:inline-flex; align-items:center; justify-content:center; gap:6px; background:linear-gradient(135deg, #10b981 0%, #059669 100%); color:#fff; font-weight:700; font-size:13px; padding:10px 12px; border-radius:12px; text-decoration:none; text-align:center; transition:all 0.2s; box-shadow:0 4px 12px rgba(16,185,129,0.2);"><span style="font-size:14px">🛡️</span> כניסה לסורק ↗</a>
+          <button onclick="openCase(${p.id})" style="flex:1; display:inline-flex; align-items:center; justify-content:center; gap:4px; background:rgba(255,255,255,0.03); color:var(--tx); border:1px solid var(--bor2); padding:10px 12px; border-radius:12px; font-size:13px; font-weight:600; cursor:pointer; font-family:inherit; transition:all 0.2s;" onmouseover="this.style.borderColor='var(--ac)'; this.style.color='var(--tx)';" onmouseout="this.style.borderColor='var(--bor2)';">המשך קריאה 📖</button>
+        </div>`
       : '';
       
     const clickHandler = `if(isEdit()){editP(${p.id})}else{const d='${safeUrl(p.demo)}';if(d&&d!=='#')window.open(d,'_blank');}`;
@@ -963,6 +966,109 @@ function removeItem(type,i){if(type==='skill')D.skills.splice(i,1);else D.langs.
 
 // ── AVAIL ──
 function toggleAvail(){D.profile.avail=D.profile.avail==='open'?'busy':'open';saveAll();renderSidebar();}
+
+// ── CASE STUDY ──
+function openCase(id){
+  const p=D.projects.find(x=>x.id===id);
+  if(!p)return;
+  document.getElementById('case-title').textContent=p.name;
+  let html='';
+  if(id===7){
+    html=`<div style="display:flex; flex-direction:column; gap:20px;">
+      <div style="background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.2); border-radius:16px; padding:20px; text-align:center;">
+        <h3 style="color:var(--ac); font-size:20px; margin-bottom:8px; font-weight:800;">הסכנה שמתחבאת בתוך מהפכת ה-AI</h3>
+        <p style="color:var(--tx2); font-size:15px; line-height:1.6;">
+          שרתי <strong>Model Context Protocol (MCP)</strong> הם פריצת הדרך הגדולה ביותר של השנה בעולמות ה-AI — הם מאפשרים לעוזרי AI (כמו Claude, ChatGPT וכו') להתחבר ישירות למחשב שלכם, לקרוא קבצים, לגשת למאגרי נתונים ולהריץ פקודות.
+          <strong>אבל יש לכך מחיר כבד:</strong> ללא הגנה ופיקוח, שרתי MCP אלו עלולים לשמש כדלת אחורית זדונית למחשב שלכם.
+        </p>
+      </div>
+      
+      <div>
+        <h4 style="color:var(--tx); font-size:17px; margin-bottom:12px; font-weight:700; border-right:3px solid var(--ac); padding-right:8px;">מה הן הסכנות האמיתיות?</h4>
+        <ul style="list-style-type:none; padding-right:0; display:grid; gap:12px;">
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">🔓</span>
+            <div>
+              <strong style="color:var(--tx);">גניבת מפתחות API וסינונים רגישים:</strong> שרת MCP זדוני או לא מאובטח יכול לגשת לקבצי ההגדרות שלכם ולשלוח את מפתחות ה-API היקרים שלכם לשרת חיצוני ללא ידיעתכם.
+            </div>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">🔥</span>
+            <div>
+              <strong style="color:var(--tx);">הזרקות פרומפטים (Prompt Injection):</strong> אם ה-AI קורא קובץ או אתר חיצוני שמכיל הנחיות זדוניות נסתרות, הוא עלול לקבל פקודה "להשתגע" ולמחוק קבצים במחשב שלכם או להריץ קוד הרסני.
+            </div>
+          </li>
+          <li style="display:flex; align-items:flex-start; gap:8px;">
+            <span style="font-size:18px;">📦</span>
+            <div>
+              <strong style="color:var(--tx);">הרצת קוד זדוני מרחוק:</strong> דרך שרת MCP פגיע, תוקפים יכולים להריץ פקודות טרמינל במערכת ההפעלה שלכם ולהשיג שליטה מלאה על המחשב.
+            </div>
+          </li>
+        </ul>
+      </div>
+      
+      <div style="border-top:1px solid var(--bor); padding-top:16px;">
+        <h4 style="color:var(--tx); font-size:17px; margin-bottom:12px; font-weight:700; border-right:3px solid var(--ac2); padding-right:8px;">איך Cyber-Guardian עוזר לכם?</h4>
+        <p style="margin-bottom:12px;">
+          Cyber-Guardian הוא סורק האבטחה הראשון בעולם שנבנה במיוחד כדי לפתור את הבעיה הזו. הוא מנתח את קוד שרת ה-MCP שלכם תוך 3 שניות בלבד, ומאתר:
+        </p>
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>🛡️ זיהוי 60+ סוגי איומים</strong><br>כולל קריאות רשת חשודות, הזרקות פרומפטים ופרצות קוד.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>⚡ סריקה מיידית ב-3 שניות</strong><br>ניתוח סטטי מהיר ללא צורך בהתקנה מורכבת.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>🎁 10 סריקות חינם בחודש</strong><br>מתאים לכל מפתח עצמאי או חובב AI שרוצה להישאר בטוח.
+          </div>
+          <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
+            <strong>📈 דוח אבטחה מפורט</strong><br>הסבר ברור על כל פגיעות שנמצאה והוראות לתיקון.
+          </div>
+        </div>
+      </div>
+    </div>`;
+  } else if(p.caseStudy || p.demo){
+    html=`<div style="text-align:center; padding:20px;">
+      <h3 style="margin-bottom:12px; color:var(--tx);">קייס סטאדי: ${esc(p.name)}</h3>
+      <p style="margin-bottom:20px;">לפרויקט זה יש עמוד הסבר מקיף ומעוצב בנפרד.</p>
+      <a class="cta-p" href="${safeUrl(p.caseStudy || p.demo)}" target="_blank">פתח את קייס הסטאדי המלא ↗</a>
+    </div>`;
+  } else {
+    html=`<div style="display:flex; flex-direction:column; gap:16px;">
+      <p><strong>תיאור פרויקט:</strong> ${esc(p.desc)}</p>
+      ${p.roi ? `
+        <div style="background:rgba(16,185,129,0.05); border:1px solid var(--bor); padding:15px; border-radius:12px;">
+          <h4 style="color:var(--ac2); margin-bottom:8px;">תוצאות עסקיות (ROI):</h4>
+          <ul style="list-style-type:none; padding-right:0; display:grid; gap:8px;">
+            ${p.roi.cost ? `<li><strong>Cost Reduction:</strong> ${esc(p.roi.cost)}</li>` : ''}
+            ${p.roi.time ? `<li><strong>Time Savings:</strong> ${esc(p.roi.time)}</li>` : ''}
+            ${p.roi.load ? `<li><strong>Workload Reduction:</strong> ${esc(p.roi.load)}</li>` : ''}
+            ${p.roi.biz ? `<li><strong>Business Impact:</strong> ${esc(p.roi.biz)}</li>` : ''}
+          </ul>
+        </div>
+      ` : ''}
+    </div>`;
+  }
+  document.getElementById('case-content').innerHTML=html;
+  const mf=document.querySelector('#ov-case .mf');
+  if(id===7){
+    mf.innerHTML=`
+      <button class="bcancel" onclick="closeCase()">סגור</button>
+      <div style="display:flex; gap:10px;">
+        <button class="cta-s" onclick="closeCase(); openContact();" style="padding:10px 18px; border-radius:10px;">✉️ שיחת אפיון חינם</button>
+        <a class="cta-p" href="${safeUrl(p.demo)}" target="_blank" style="padding:10px 22px; border-radius:12px; display:inline-flex; align-items:center; gap:6px; box-shadow:0 4px 14px rgba(16,185,129,0.3); background:linear-gradient(135deg, #10b981 0%, #059669 100%); border:none; color:white; font-weight:700; text-decoration:none;">🛡️ כניסה לסורק וסריקה בחינם ↗</a>
+      </div>
+    `;
+  } else {
+    mf.innerHTML=`
+      <button class="bcancel" onclick="closeCase()">סגור</button>
+      <button class="bsave" onclick="closeCase(); openContact();" style="display:inline-flex; align-items:center; gap:8px;">✉️ שיחת אפיון חינם</button>
+    `;
+  }
+  document.getElementById('ov-case').classList.add('open');
+}
+function closeCase(){document.getElementById('ov-case').classList.remove('open');}
 
 
 // ── EXPORT / IMPORT / PIN ──
