@@ -1193,12 +1193,22 @@ const DEF={
 
 let D={},editId=null,editSvcId=null,editArtId=null,af='all',projTags=[],artTags=[],curImg='',editStatIdx=-1,addType='',editMode=false,curTab='projects';
 
+function isAdmin(){
+  return localStorage.getItem('pf_admin') === 'true';
+}
 function load(){
   try {
-    const s=localStorage.getItem('pfv4');
-    D=s?JSON.parse(s):JSON.parse(JSON.stringify(DEF));
+    if (!isAdmin()) {
+      if (localStorage.getItem('pfv4')) {
+        localStorage.removeItem('pfv4');
+      }
+      D = JSON.parse(JSON.stringify(DEF));
+    } else {
+      const s = localStorage.getItem('pfv4');
+      D = s ? JSON.parse(s) : JSON.parse(JSON.stringify(DEF));
+    }
   } catch(e) {
-    D=JSON.parse(JSON.stringify(DEF));
+    D = JSON.parse(JSON.stringify(DEF));
   }
   if(!D) D=JSON.parse(JSON.stringify(DEF));
   if(!D.profile) D.profile=JSON.parse(JSON.stringify(DEF.profile));
@@ -1214,10 +1224,11 @@ function load(){
   }
 }
 function saveAll(){
+  if (!isAdmin()) return;
   const roles=document.getElementById('prof-role-disp');if(roles)D.profile.role=roles.innerText;
   const sub=document.getElementById('hb-sub');if(sub)D.heroBannerSub=sub.innerText;
   const gn=document.getElementById('greeting-name');if(gn)D.greetingName=gn.innerText;
-  try{localStorage.setItem('pfv4',JSON.stringify(D));}
+  try{localStorage.setItem('pfv4', JSON.stringify(D));}
   catch(e){alert('האחסון המקומי מלא! מחק תמונות מהפרויקטים כדי לפנות מקום.');}
 }
 
@@ -1468,13 +1479,30 @@ function setF(f){af=f;renderProjects();}
 // ── EDIT MODE ──
 function isEdit(){return editMode;}
 function toggleEdit(){
-  if(editMode){editMode=false;document.body.classList.remove('edit-mode');document.querySelector('.fab').textContent='🔒';updateContentEditable();}
+  if(editMode){
+    editMode=false;
+    localStorage.removeItem('pf_admin');
+    document.body.classList.remove('edit-mode');
+    document.querySelector('.fab').textContent='🔒';
+    updateContentEditable();
+    load();
+    render();
+  }
   else{document.getElementById('pin-inp').value='';document.getElementById('pin-err').textContent='';document.getElementById('ov-pin').classList.add('open');setTimeout(()=>document.getElementById('pin-inp').focus(),80);}
 }
 function checkPin(){
   const pin=document.getElementById('pin-inp').value;
   const saved=localStorage.getItem('pfv4_pin')||'molaly2026';
-  if(pin===saved){editMode=true;document.body.classList.add('edit-mode');document.querySelector('.fab').textContent='✎';closePin();updateContentEditable();}
+  if(pin===saved){
+    localStorage.setItem('pf_admin', 'true');
+    editMode=true;
+    document.body.classList.add('edit-mode');
+    document.querySelector('.fab').textContent='✎';
+    closePin();
+    updateContentEditable();
+    load();
+    render();
+  }
   else{document.getElementById('pin-err').textContent='סיסמה שגויה';document.getElementById('pin-inp').value='';document.getElementById('pin-inp').focus();}
 }
 function closePin(){document.getElementById('ov-pin').classList.remove('open');}
