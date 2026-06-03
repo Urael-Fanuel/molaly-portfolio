@@ -2,7 +2,7 @@
 
 ## מה הפרויקט הזה?
 דשבורד פורטפוליו אישי של Molaly Mekonen — AI Solutions Architect.
-קובץ HTML יחיד (`index.html`) + קובץ CV (`CV.pdf`).
+מפוצל לקבצי HTML, CSS, ו-JS עם סקריפט בדיקה + קובץ CV (`CV.pdf`).
 מתארח ב-GitHub Pages בכתובת: https://urael-fanuel.github.io/molaly-portfolio/
 
 ## כללים חשובים — אל תשבור אלה!
@@ -47,7 +47,10 @@ textarea, input { direction: rtl; text-align: right; }
 
 ```
 portfolio-v3/
-├── index.html    ← כל הקוד (HTML + CSS + JS בקובץ אחד)
+├── index.html    ← מבנה העמוד (HTML)
+├── style.css     ← עיצובים ואנימציות (CSS)
+├── app.js        ← לוגיקה ונתונים (JavaScript)
+├── verify.js     ← סקריפט בדיקה אוטומטי
 ├── CV.pdf        ← קורות חיים של Molaly
 └── CLAUDE.md     ← הקובץ הזה
 ```
@@ -70,7 +73,11 @@ portfolio-v3/
 - אימייל: moti.marva@gmail.com
 - טלפון: 052-874-2884
 
+## פקודות בדיקה
+* הרצת בדיקת סינטקס ותקינות מלאה לפני ביצוע commit/push: `node verify.js`
+
 ## לפני כל שינוי — בדוק
+- [ ] הרצת `node verify.js` והבדיקות עברו בהצלחה
 - [ ] RTL תקין בכל טקסט עברי חדש
 - [ ] לא נשברו כפתורי CV ו-LinkedIn
 - [ ] מנגנון הסיסמה עדיין עובד
