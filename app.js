@@ -14,7 +14,7 @@ const DEF={
   langs:['עברית','אנגלית','אמהרית','פורטוגזית'],
   contact:{email:'moti.marva@gmail.com',linkedin:'https://www.linkedin.com/in/molaly-mekonen-416a57111/',github:'',phone:'052-874-2884',cv:''},
   projects:[
-    {id:7,icon:'🛡️',name:'Cyber-Guardian – MCP Security Scanner',category:'Web',desc:'סורק האבטחה הראשון בעולם לשרתי MCP (Model Context Protocol), סקילים של AI, הרחבות IDE, GitHub Actions וחבילות/תלויות npm/PyPI. הכלי סורק קבצי קונפיגורציה ותלויות כמו package.json, requirements.txt, קבצי lock והגדרות registry במטרה לזהות התנהגות מסוכנת, הזרקות פרומפטים וגניבת מפתחות API ומגן עליכם. 🎁 10 סריקות חינמיות בחודש לכל משתמש! היכנסו עכשיו וסרקו את הקוד שלכם בחינם!',tags:['MCP Security','Vulnerability Scanner','AI Safety','Cyber Security'],status:'done',demo:'https://cyberguardianscan.com/',github:'',img:'',roi:{cost:'מניעת אירועי אבטחת מידע ופריצות פנים-ארגוניות',time:'סריקת אבטחה מהירה ומעמיקה של קוד, קובצי תצורה ותלויות פרויקט',load:'זיהוי אוטומטי של 60 משפחות איומי סייבר ופרומפטים זדוניים',biz:'פלטפורמת אבטחה חלוצה (First-to-Market) להגנת סביבות פיתוח AI'}},
+    {id:7,icon:'🛡️',name:'Cyber-Guardian – MCP Security Scanner',category:'Web',desc:'סורק האבטחה הראשון בעולם להגנת סביבות פיתוח AI ושרתי MCP. המערכת סורקת שרתי MCP, סקילים של AI, תוספי IDE (כמו Cursor), תהליכי GitHub Actions וחבילות קוד ותלויות (npm/PyPI) מול 60 משפחות איומי סייבר. הסריקה מתבצעת באמצעות מנוע תלת-שכבתי ייחודי (סריקה סטטית, ניתוח סמנטי מבוסס LLM ובדיקת התנהגות) ומציגה תוצאות בזמן אמת בלוח בקרה גלובלי עם המלצות תיקון ואלטרנטיבות בטוחות. 🎁 10 סריקות חינמיות בחודש לכל משתמש!',tags:['MCP Security','Vulnerability Scanner','AI Safety','Cyber Security','Supply Chain'],status:'done',demo:'https://cyberguardianscan.com/',github:'',img:'',roi:{cost:'מניעת אירועי אבטחת מידע ופריצות פנים-ארגוניות (כולל גניבת מפתחות API וזליגת קונטקסט)',time:'סריקה מבוזרת ומהירה המספקת ממצאים והמלצות תיקון (Remediation) תוך שניות',load:'זיהוי אוטומטי של 60 משפחות איומי סייבר ומציאת אלטרנטיבות קוד פתוח בטוחות',biz:'הגנת סביבות פיתוח AI בארגונים ופלטפורמת Live Dashboard חלוצה לניתוח איומים גלובליים'}},
     {id:2,icon:'🚗',name:'Generative AI Translation & TTS Mobile Platform',category:'Mobile App',desc:'ארכיטקטורת קצה לקצה של אפליקציית מובייל ייעודית (React Native) הכוללת מנועי תרגום מבוססי LLM וסינתזת קול (TTS) מבוזרת בענן להכנה לבחינות רישוי.',tags:['React Native','Supabase','Google Cloud TTS','Claude API'],status:'wip',demo:'',github:'',img:'',roi:{cost:'צמצום עלויות פיתוח באמצעות שרת ללא שרת',time:'תרגום וסנכרון קולי מיידי בזמן אמת',load:'אוטומציה מלאה של יצירת קבצי אודיו ותרגומים',biz:'פתיחת שוק למידה חדש עבור כ-230,000 דוברי אמהרית'}},
     {id:8,icon:'🏗️',name:'WhatsApp AI Attendance Agent – 7 Construction Sites',category:'AI & Automation',desc:'מערכת סוכנים אוטונומית מתקדמת מבוססת WhatsApp ו-LLM לניהול, תיאום ודיווח נוכחות בזמן אמת של עשרות עובדים ב-7 אתרי בנייה פעילים. המערכת תומכת בדיווחים ב-4 שפות שונות ומייצרת דוחות שכר חודשיים מושלמים ישירות למייל של ההנהלה.',tags:['WhatsApp API','LLM Agent','n8n Orchestration','Automated Payroll'],status:'done',demo:'./whatsapp-agent.html',github:'',img:'',roi:{cost:'צמצום של אלפי שקלים של טעויות דיווח ידניות',time:'קיצור הפקת דוח שכר חודשי מימים שלמים לדקות בודדות',load:'ביטול לילות לבנים ורדיפה ידנית אחר מנהלי עבודה ב-4 שפות',biz:'שקיפות מלאה לסמנכ"ל תפעול על המתרחש בשטח כבר ב-08:30 בבוקר'}},
     {id:9,icon:'📄',name:'Intelligent Document Processing (IDP) Enterprise Workflow',category:'AI & Automation',desc:'מבלגן פיננסי לארכיון דיגיטלי חכם: אוטומציית קצה לקצה לעיבוד חשבוניות מבוססת AI. מערכת מתקדמת מבוססת OCR ו-LLMs לחילוץ מידע מחשבוניות וחוזים ותיוק חכם ב-Google Drive.',tags:['IDP Scanner','OCR & LLM Extraction','Enterprise Automation','Google Drive API'],status:'done',demo:'./idp-workflow.html',github:'',img:'',roi:{cost:'100% דיוק: אפס טעויות הקלדה ואפס קנסות או מסמכים אבודים',time:'חיסכון של עשרות שעות בחודש על ידי ביטול הזנה ותיוק ידניים',load:'ביטול מוחלט של שחיקת עובדים על קלדנות סיזיפית',biz:'ארכיון דיגיטלי נגיש בשניות מכל מכשיר (שאילתות ב-WhatsApp)'},caseStudy:'./idp-workflow.html'},
@@ -669,8 +669,8 @@ function openCase(id){
   let html='';
   if(id===7){
     html=`<div style="display:flex; flex-direction:column; gap:20px;">
-      <div style="background:rgba(99,102,241,0.06); border:1px solid rgba(99,102,241,0.2); border-radius:16px; padding:20px; text-align:center;">
-        <h3 style="color:var(--ac); font-size:20px; margin-bottom:8px; font-weight:800;">הסכנה שמתחבאת בתוך סביבות פיתוח וסוכני AI</h3>
+      <div style="background:rgba(16,185,129,0.06); border:1px solid rgba(16,185,129,0.2); border-radius:16px; padding:20px; text-align:center;">
+        <h3 style="color:#10b981; font-size:20px; margin-bottom:8px; font-weight:800;">הסכנה שמתחבאת בתוך סביבות פיתוח וסוכני AI</h3>
         <p style="color:var(--tx2); font-size:15px; line-height:1.6;">
           כלי פיתוח מודרניים כמו שרתי <strong>Model Context Protocol (MCP)</strong>, סקילים של AI, הרחבות IDE ו-GitHub Actions פותחים עידן חדש של פרודוקטיביות — אך ללא הגנה ופיקוח הם עלולים לשמש כדלת אחורית זדונית למחשב ולשרתים שלכם. תוקפים מנצלים חולשות סייבר והזרקות פרומפטים כדי לגנוב מפתחות API, להריץ קוד זדוני או לחדור דרך תלויות פגיעות.
         </p>
@@ -694,7 +694,7 @@ function openCase(id){
           <li style="display:flex; align-items:flex-start; gap:8px;">
             <span style="font-size:18px;">📦</span>
             <div>
-              <strong style="color:var(--tx);">הרצת קוד זדוני מרחוק:</strong> דרך שרתי פיתוח פגיעים ותוספים לא מאובטחים, תוקפים יכולים להריץ פקודות טרמינל במערכת ההפעלה שלכם ולהשיג שליטה מלאה על המחשב.
+              <strong style="color:var(--tx);">מתקפות שרשרת אספקה (Supply Chain Attacks):</strong> ספריות ותלויות צד-שלישי פגיעות או זדוניות (כמו npm/PyPI) המשתלבות בפרויקטים, או הגדרות registry מזויפות, המאפשרות הרצת קוד זדוני מרחוק.
             </div>
           </li>
         </ul>
@@ -703,20 +703,20 @@ function openCase(id){
       <div style="border-top:1px solid var(--bor); padding-top:16px;">
         <h4 style="color:var(--tx); font-size:17px; margin-bottom:12px; font-weight:700; border-right:3px solid var(--ac2); padding-right:8px;">איך Cyber-Guardian עוזר לכם?</h4>
         <p style="margin-bottom:12px;">
-          Cyber-Guardian הוא סורק האבטחה הראשון בעולם שנבנה במיוחד כדי לפתור את הבעיה הזו. הוא מנתח את הקוד, קובצי התצורה והתלויות שלכם (כולל package.json, requirements.txt, קובצי lock והגדרות registry) ומאתר:
+          Cyber-Guardian הוא סורק האבטחה הראשון בעולם שנבנה במיוחד כדי לפתור את הבעיה הזו. הוא מנתח את הקוד, קובצי התצורה והתלויות שלכם (כולל package.json, requirements.txt, קובצי lock והגדרות registry) באמצעות מנוע סריקה תלת-שכבתי:
         </p>
         <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
           <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
-            <strong>🛡️ זיהוי 60+ סוגי איומים</strong><br>כולל קריאות רשת חשודות, הזרקות פרומפטים ופרצות קוד.
+            <strong>🛡️ מנוע סריקה תלת-שכבתי</strong><br>סריקה סטטית, ניתוח סמנטי מבוסס LLM ובדיקת התנהגות מבוססת הוכחות.
           </div>
           <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
-            <strong>⚡ סריקה מהירה ומעמיקה</strong><br>ניתוח סטטי מהיר של הקוד והתלויות ללא צורך בהתקנה מורכבת.
+            <strong>🔍 זיהוי 60 משפחות איומים</strong><br>כולל קריאות רשת חשודות, הזרקות פרומפטים עקיפות והרעלת כלים.
           </div>
           <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
-            <strong>🎁 10 סריקות חינם בחודש</strong><br>מתאים לכל מפתח עצמאי או חובב AI שרוצה להישאר בטוח.
+            <strong>📊 Live Dashboard גלובלי</strong><br>לוח בקרה חי להצגת ציוני אבטחה (Verdict Scores), סריקות אחרונות וסטטיסטיקות איומים.
           </div>
           <div style="background:var(--sur2); border:1px solid var(--bor); padding:10px 14px; border-radius:10px; font-size:14px;">
-            <strong>📈 דוח אבטחה מפורט</strong><br>הסבר ברור על כל פגיעות שנמצאה והוראות לתיקון.
+            <strong>🎁 סריקה והמלצות תיקון בחינם</strong><br>הוראות תיקון (Remediation) ואלטרנטיבות בטוחות + 10 סריקות חינם בחודש.
           </div>
         </div>
       </div>
