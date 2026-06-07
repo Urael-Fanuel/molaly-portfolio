@@ -1121,7 +1121,7 @@ function migrateImages(){
     4:'./img/proj4.jpg',
     5:'./img/proj5.jpg',
     6:'./img/proj6.jpg',
-    7:'./img/proj7.png',
+    7:'./img/cyber-guardian-logo.jpg',
     8:'./img/proj8.png',
     9:'./img/proj9.png',
   };
