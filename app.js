@@ -11,7 +11,7 @@ const DEF={
   heroBannerSub:'מגשר על הפער בין יעדים עסקיים אסטרטגיים לבין ארכיטקטורת ייצור (Production) חסינת כשלים. עם 7 שנות ניסיון בהנדסה מורכבת בחברת Intel ותשוקה עמוקה לבינה מלאכותית, אני מתכנן ומטמיע מערכות AI, סוכנים אוטונומיים ואוטומציות סקיילביליות החוסכות אלפי שעות עבודה ומביאות לשיפור רווחיות מוכח עבור ארגונים ועסקים בצמיחה.',
   manualStats:[{v:'7+',l:'שנות הנדסה ב-Intel'},{v:'20+',l:'תהליכים שעברו דיגיטציה'},{v:'90%',l:'חיסכון בזמן משימה'}],
   skills:['Enterprise AI Architecture', 'Agentic Workflows', 'n8n & Make Orchestration', 'LLM Integration (Claude, OpenAI)', 'Python & Production Engineering', 'Cloud Solutions (GCP, Supabase)', 'Systems Automation', 'Process Auditing & ROI', 'Data Pipelines', 'React Native'],
-  langs:['עברית','אנגלית','אמהרית','פורטוגזית'],
+  langs:['עברית','אנגלית'],
   contact:{email:'moti.marva@gmail.com',linkedin:'https://www.linkedin.com/in/molaly-mekonen-416a57111/',github:'',phone:'052-874-2884',cv:''},
   projects:[
     {id:7,icon:'🛡️',name:'Cyber-Guardian – MCP Security Scanner',category:'Web',desc:'סורק האבטחה הראשון בעולם להגנת סביבות פיתוח AI ושרתי MCP. המערכת סורקת שרתי MCP, סקילים של AI, תוספי IDE (כמו Cursor), תהליכי GitHub Actions וחבילות קוד ותלויות (npm/PyPI) מול 60 משפחות איומי סייבר. הסריקה מתבצעת באמצעות מנוע תלת-שכבתי ייחודי (סריקה סטטית, ניתוח סמנטי מבוסס LLM ובדיקת התנהגות) ומציגה תוצאות בזמן אמת בלוח בקרה גלובלי עם המלצות תיקון ואלטרנטיבות בטוחות. 🎁 10 סריקות חינמיות בחודש לכל משתמש!',tags:['MCP Security','Vulnerability Scanner','AI Safety','Cyber Security','Supply Chain'],status:'done',demo:'https://cyberguardianscan.com/',github:'',img:'./img/cyber-guardian-logo.jpg',roi:{cost:'מניעת אירועי אבטחת מידע ופריצות פנים-ארגוניות (כולל גניבת מפתחות API וזליגת קונטקסט)',time:'סריקה מבוזרת ומהירה המספקת ממצאים והמלצות תיקון (Remediation) תוך שניות',load:'זיהוי אוטומטי של 60 משפחות איומי סייבר ומציאת אלטרנטיבות קוד פתוח בטוחות',biz:'הגנת סביבות פיתוח AI בארגונים ופלטפורמת Live Dashboard חלוצה לניתוח איומים גלובליים'}},
@@ -499,7 +499,7 @@ function viewArticle(id){
   actionsHtml += `
 <div style="background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(99,102,241,0.08) 100%);border:1px solid rgba(16,185,129,0.25);border-radius:18px;padding:16px 20px;margin-top:16px;direction:rtl;">
   <strong style="color:var(--tx);font-size:14px;display:block;margin-bottom:5px;">רוצים להשיג תוצאות כאלה בעסק שלכם?</strong>
-  <span style="font-size:12.5px;color:var(--tx2);display:block;margin-bottom:13px;">דברו עם מולאלי ישירות: <a href="tel:0528742884" style="color:var(--ac);font-weight:700;font-size:14px;direction:ltr;display:inline-block;text-decoration:none;">052-874-2884</a> — שיחת אפיון חינם וללא התחייבות.</span>
+  <span style="font-size:12.5px;color:var(--tx2);display:block;margin-bottom:13px;">דברו עם איתי ישירות: <a href="tel:0528742884" style="color:var(--ac);font-weight:700;font-size:14px;direction:ltr;display:inline-block;text-decoration:none;">052-874-2884</a> — שיחת אפיון חינם וללא התחייבות.</span>
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
     <a href="tel:0528742884" style="padding:10px 20px;border-radius:10px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;font-weight:700;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(16,185,129,0.3);">📞 התקשרו עכשיו</a>
     <button onclick="closeArtView(); openVisitorContact('היי מוטי, קראתי את המאמר בנושא &quot;' + esc(a.name) + '&quot; ואשמח לשיחת אפיון לעסק שלי.');" style="padding:10px 18px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--bor2);color:var(--tx);font-size:13px;font-weight:600;font-family:inherit;">✉️ שלחו הודעה</button>
@@ -965,7 +965,7 @@ function shareProject(e, id, name) {
   }
   const shareUrl = `${window.location.origin}${window.location.pathname}#project-${id}`;
   const shareTitle = `פרויקט: ${name}`;
-  const shareText = `בדוק את הפרויקט "${name}" בפורטפוליו של מולאלי מקונן:`;
+  const shareText = `בדוק את הפרויקט "${name}" בפורטפוליו של איתי מקונן:`;
   
   openCustomShareModal(shareTitle, shareText, shareUrl);
 }
@@ -976,8 +976,8 @@ function shareSite(e) {
     e.preventDefault();
   }
   const shareUrl = `${window.location.origin}${window.location.pathname}`;
-  const shareTitle = `הפורטפוליו של מולאלי מקונן - AI Solutions Architect`;
-  const shareText = `היי, מומלץ לבקר בפורטפוליו של מולאלי מקונן (מוטי) - מומחה AI ואוטומציה תהליכים עסקיים:`;
+  const shareTitle = `הפורטפוליו של איתי מקונן - AI Solutions Architect`;
+  const shareText = `היי, מומלץ לבקר בפורטפוליו של איתי מקונן (מוטי) - מומחה AI ואוטומציה תהליכים עסקיים:`;
   
   openCustomShareModal("שתף את האתר", shareText, shareUrl);
 }
@@ -1760,7 +1760,7 @@ function renderPRD(prd) {
 function openVisitorContactFromPRD() {
   const ctaText = (currentPRD && currentPRD.cta)
     ? currentPRD.cta
-    : 'שלום מולאלי, רוצה לקדם את הפרויקט שאפיינו יחד בסוכן האפיון.';
+    : 'שלום איתי, רוצה לקדם את הפרויקט שאפיינו יחד בסוכן האפיון.';
   openVisitorContact(ctaText);
 }
 

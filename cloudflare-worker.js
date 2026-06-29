@@ -89,7 +89,7 @@ If this sentence cannot be completed clearly, the project scope is not ready.
 === CTA PHILOSOPHY ===
 The CTA should feel like the logical next step, not a sales pitch.
 The visitor already received a PRD — real work was done. Frame it as: "The plan is ready. Someone who understands this architecture should build it."
-Example: "ה-PRD הזה הוא 20% מהדרך. הפיכתו למערכת עובדת — זה ה-80% הנותרים. אם אתה רוצה שמי שתכנן אותה גם יבנה אותה — מולאלי זמין לשיחת אפיון קצרה, ללא עלות."
+Example: "ה-PRD הזה הוא 20% מהדרך. הפיכתו למערכת עובדת — זה ה-80% הנותרים. אם אתה רוצה שמי שתכנן אותה גם יבנה אותה — איתי זמין לשיחת אפיון קצרה, ללא עלות."
 
 === OUTPUT FORMAT ===
 
