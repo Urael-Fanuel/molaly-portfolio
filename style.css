@@ -648,6 +648,44 @@ body.edit-mode .main,body.edit-mode .sidebar{padding-top:54px}
   }
 }
 
+/* ── PRD Card Styles ── */
+.prd-sb {
+  margin-bottom: 14px;
+  padding-bottom: 14px;
+  border-bottom: 1px solid var(--bor);
+}
+.prd-lbl {
+  font-size: 10px;
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.8px;
+  color: var(--ac);
+  margin-bottom: 7px;
+}
+.prd-tech-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 8px 12px;
+  background: rgba(255,255,255,0.03);
+  border: 1px solid var(--bor);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--tx2);
+}
+.prd-tech-item strong {
+  color: var(--tx);
+}
+.prd-pitfall-item {
+  padding: 9px 12px;
+  background: rgba(239,68,68,0.05);
+  border: 1px solid rgba(239,68,68,0.15);
+  border-radius: 8px;
+  font-size: 13px;
+  color: var(--tx2);
+  line-height: 1.6;
+}
+
 /* PDF Print Custom Media */
 @media print {
   body * {

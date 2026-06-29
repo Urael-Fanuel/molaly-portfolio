@@ -414,7 +414,6 @@ function renderServices(){
   if(!D.services.length){grid.innerHTML='<div class="empty">🛠️<br>לחץ "+ שירות חדש" להוספה</div>';return;}
   grid.innerHTML=D.services.map((s,i)=>{
     const col=SVC_COLORS[s.category]||'#7c6af7';
-    const price=s.priceMin&&s.priceMax?`${esc(s.priceMin)}₪ – ${esc(s.priceMax)}₪`:s.priceMin?`מ-${esc(s.priceMin)}₪`:'';
     return `<div class="svc-card" style="animation-delay:${i*.05}s">
       <div style="display:flex;justify-content:space-between;align-items:flex-start">
         <div class="svc-icon">${esc(s.icon)||SVC_ICONS[s.category]||'🔧'}</div>
@@ -423,7 +422,7 @@ function renderServices(){
       <div class="svc-cat" style="color:${col}">${esc(s.category)}</div>
       <div class="svc-name">${esc(s.name)}</div>
       <div class="svc-desc">${esc(s.desc)}</div>
-      <div class="svc-footer"><div class="svc-price">${price}</div><div class="svc-who">${s.who?'👥 '+esc(s.who):''}</div></div>
+      <div class="svc-footer"><div class="svc-who">${s.who?'👥 '+esc(s.who):''}</div></div>
     </div>`;
   }).join('');
 }
@@ -1519,50 +1518,14 @@ function handleHashRoute() {
 
 
 // ==========================================
-// 🤖 INTERACTIVE ARCHITECT AGENT LOGIC
+// 🤖 CLAUDE AI ARCHITECT AGENT
 // ==========================================
 
-let archStep = 0; // 0: Initial idea, 1: Q1, 2: Q2, 3: Q3, 4: Done
-let userAnswers = {
-  idea: '',
-  flowType: '',
-  qa: '',
-  io: ''
-};
-let detectedArch = 'orchestrator'; // default
+const ARCH_WORKER_URL = 'WORKER_URL_PLACEHOLDER'; // החלף בURL של ה-Cloudflare Worker לאחר ה-deploy
 
-const ARCH_DETAILS = {
-  orchestrator: {
-    name: 'Orchestrator (מנצח מרכזי)',
-    desc: 'סוכן מנהל מרכזי (Orchestrator) המפרק את הבקשה לתת-משימות, מחלק אותן לסוכני קצה מתמחים (Workers), אוסף את תוצאותיהם ומאחד אותן לתשובה סופית.',
-    color: '#7c6af7',
-    glow: 'rgba(124,106,247,0.4)'
-  },
-  pipeline: {
-    name: 'Pipeline (צינור ליניארי)',
-    desc: 'זרימה סדרתית (Step-by-step) שבה הפלט של סוכן אחד משמש ישירות כקלט עבור הסוכן הבא בתור (למשל: סריקת מידע -> ניתוח -> ניסוח -> עריכה).',
-    color: '#4ecca3',
-    glow: 'rgba(78,204,163,0.4)'
-  },
-  hierarchical: {
-    name: 'Hierarchical (מבנה היררכי)',
-    desc: 'חלוקת סמכויות היררכית (מנהל על -> מנהלי ביניים -> סוכני קצה). מתאים למערכות ענק עם תחומי אחריות נפרדים וניהול הרשאות מורכב.',
-    color: '#f7c948',
-    glow: 'rgba(247,201,72,0.4)'
-  },
-  router: {
-    name: 'Router (נתב החלטות)',
-    desc: 'מערכת המבוססת על סוכן סיווג (Classifier/Router) המנתח את הקלט ומנתב אותו לסוכן המתמחה הספציפי הרלוונטי למשימה.',
-    color: '#f7a26a',
-    glow: 'rgba(247,162,106,0.4)'
-  },
-  network: {
-    name: 'Network (רשת מבוזרת)',
-    desc: 'סוכנים הפועלים במקביל ומתקשרים זה עם זה באופן חופשי ומבוזר (Mesh Network) ללא צורך במנצח מרכזי.',
-    color: '#f76a9c',
-    glow: 'rgba(247,106,156,0.4)'
-  }
-};
+let archMessages = [];
+let archIsLoading = false;
+let currentPRD = null;
 
 function handleArchKey(e) {
   if (e.key === 'Enter' && !e.shiftKey) {
@@ -1576,11 +1539,8 @@ function addChatMessage(sender, text, isHtml = false) {
   if (!history) return;
   const msg = document.createElement('div');
   msg.className = 'chat-msg ' + (sender === 'user' ? 'user-msg' : 'agent-msg');
-  if (isHtml) {
-    msg.innerHTML = text;
-  } else {
-    msg.innerText = text;
-  }
+  if (isHtml) msg.innerHTML = text;
+  else msg.innerText = text;
   history.appendChild(msg);
   history.scrollTop = history.scrollHeight;
 }
@@ -1596,479 +1556,301 @@ function showAgentTyping() {
   return loader;
 }
 
-function sendArchMessage() {
+async function sendArchMessage() {
+  if (archIsLoading) return;
   const input = document.getElementById('arch-user-input');
   if (!input) return;
   const text = input.value.trim();
   if (!text) return;
-  
+
+  if (ARCH_WORKER_URL === 'WORKER_URL_PLACEHOLDER') {
+    addChatMessage('agent', '⚙️ הסוכן עדיין לא מחובר. יש להגדיר את ARCH_WORKER_URL ב-app.js לאחר ה-deploy של ה-Cloudflare Worker.', false);
+    return;
+  }
+
   input.value = '';
   addChatMessage('user', text);
-  
-  const loader = showAgentTyping();
-  
-  setTimeout(() => {
-    if (loader) loader.remove();
-    processAgentStep(text);
-  }, 1000);
-}
+  archMessages.push({ role: 'user', content: text });
+  archIsLoading = true;
 
-function processAgentStep(userInput) {
-  if (archStep === 0) {
-    userAnswers.idea = userInput;
-    
-    // Perform keyword analysis to detect base architecture candidate
-    const norm = userInput.toLowerCase();
-    if (/(טור|צינור|סדרת|עוקב|שלב אחרי שלב|בזה אחר זה)/.test(norm)) {
-      detectedArch = 'pipeline';
-    } else if (/(היררכי|עץ|מנהל על|מבנה ניהול|שכבות|דרג)/.test(norm)) {
-      detectedArch = 'hierarchical';
-    } else if (/(נתב|מנתב|מיון|סיווג|switch|router|אם זה)/.test(norm)) {
-      detectedArch = 'router';
-    } else if (/(רשת|מקביל|מבוזר|ללא מנהל|כולם עם כולם)/.test(norm)) {
-      detectedArch = 'network';
-    } else {
-      detectedArch = 'orchestrator'; // default
-    }
-    
-    archStep = 1;
-    askQuestion1();
-  } else {
-    // If user typed manually instead of clicking options
-    addChatMessage('agent', 'נא לבחור אחת מהאפשרויות המוצגות למטה כדי להמשיך באפיון.');
+  const loader = showAgentTyping();
+  try {
+    const responseText = await callClaudeWorker(archMessages);
+    if (loader) loader.remove();
+    archMessages.push({ role: 'assistant', content: responseText });
+    handleClaudeResponse(responseText);
+  } catch (err) {
+    if (loader) loader.remove();
+    addChatMessage('agent', '⚠️ שגיאה בחיבור לשרת. בדוק את החיבור לאינטרנט ונסה שוב.', false);
+    console.error('Claude Worker error:', err);
+  } finally {
+    archIsLoading = false;
   }
 }
 
-function askQuestion1() {
-  const text = `נשמע מעניין מאוד! זיהיתי פוטנציאל לארכיטקטורת <strong>${ARCH_DETAILS[detectedArch].name}</strong>.<br><br>
-    כדי לדייק את זרימת העבודה (Workflow), יש לי 3 שאלות קצרות אליך.<br>
-    <strong>שאלה 1: כיצד צריכה להתבצע זרימת המשימות בין הסוכנים השונים?</strong>`;
-  
-  addChatMessage('agent', text, true);
-  
-  // Render options inside the chat
-  const optionsHtml = `
-    <div class="arch-options-list">
-      <button class="arch-option-btn" onclick="selectArchOption('sequential', 'זרימה טורית וסדרתית (צינור משימות)')">🛠️ זרימה טורית וסדרתית (Step-by-step)</button>
-      <button class="arch-option-btn" onclick="selectArchOption('parallel', 'זרימה מבוזרת/מקבילית (סוכנים מתקשרים חופשי)')">⚡ זרימה מבוזרת או מקבילית (Mesh Network)</button>
-      <button class="arch-option-btn" onclick="selectArchOption('centralized', 'ניהול משימות מונחה על ידי סוכן מנהל מרכזי')">👑 מנהל מרכזי שמחלק תתי-משימות ומאחד פלט</button>
+async function callClaudeWorker(messages) {
+  const res = await fetch(ARCH_WORKER_URL, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ messages }),
+  });
+  if (!res.ok) throw new Error('Worker HTTP ' + res.status);
+  const data = await res.json();
+  if (data.error) throw new Error(data.error.message || 'Claude API error');
+  return data.content[0].text;
+}
+
+function handleClaudeResponse(text) {
+  let parsed = null;
+  try {
+    const jsonMatch = text.match(/\{[\s\S]*\}/);
+    if (jsonMatch) parsed = JSON.parse(jsonMatch[0]);
+  } catch (e) { /* plain text fallback */ }
+
+  if (parsed && parsed.type === 'prd' && parsed.prd) {
+    currentPRD = parsed.prd;
+    addChatMessage('agent', '✅ <strong>האפיון הושלם!</strong> ה-PRD המלא שלך מוכן — ראה מצד שמאל.', true);
+    renderPRD(parsed.prd);
+  } else if (parsed && parsed.type === 'question' && parsed.content) {
+    addChatMessage('agent', parsed.content, false);
+  } else {
+    addChatMessage('agent', text, false);
+  }
+}
+
+function renderPRD(prd) {
+  const PATTERN_COLORS = {
+    orchestrator: '#7c6af7', pipeline: '#4ecca3',
+    hierarchical: '#f7c948', router: '#f7a26a',
+    network: '#f76a9c', simple_automation: '#10b981'
+  };
+  const color = PATTERN_COLORS[prd.architecture && prd.architecture.pattern] || '#7c6af7';
+  const isAI = !prd.aiDecision || prd.aiDecision.recommendation !== 'simple_automation';
+  const decisionColor = isAI ? '#7c6af7' : '#10b981';
+  const decisionLabel = isAI ? '🤖 נדרש AI Agent' : '⚙️ אוטומציה פשוטה מספיקה';
+
+  const mvpHtml = (prd.mvp || []).map((s, i) =>
+    `<li style="margin-bottom:8px;"><strong>שלב ${i + 1}:</strong> ${esc(s)}</li>`
+  ).join('');
+
+  const techHtml = (prd.techStack || []).map(t =>
+    `<div class="prd-tech-item"><strong>${esc(t.tool)}</strong><span>${esc(t.role)}</span></div>`
+  ).join('');
+
+  const pitfallsHtml = (prd.pitfalls || []).map(p =>
+    `<div class="prd-pitfall-item">⚠️ <strong>${esc(p.name)}:</strong> ${esc(p.warning)}</div>`
+  ).join('');
+
+  const componentsHtml = (prd.architecture && prd.architecture.components || []).map(c =>
+    `<li style="margin-bottom:6px;">${esc(c)}</li>`
+  ).join('');
+
+  const arch = prd.architecture || {};
+  const ai = prd.aiDecision || {};
+  const ds = prd.dataSource || {};
+  const roi = prd.roi || {};
+
+  const html = `<div id="prd-display" style="direction:rtl;text-align:right;width:100%;font-size:13.5px;">
+
+    <div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bor);">
+      <div style="font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">📋 PRD — מסמך דרישות מוצר</div>
+      <h2 style="margin:0 0 6px;font-size:20px;font-weight:900;color:var(--tx);">${esc(prd.projectName || '')}</h2>
+      <p style="margin:0;color:var(--tx2);font-size:13px;font-style:italic;">${esc(prd.tagline || '')}</p>
     </div>
-  `;
-  addChatMessage('agent', optionsHtml, true);
-}
 
-function selectArchOption(value, label) {
-  // Add user message for selected option
-  addChatMessage('user', label);
-  
-  const loader = showAgentTyping();
-  
-  setTimeout(() => {
-    if (loader) loader.remove();
-    
-    if (archStep === 1) {
-      userAnswers.flowType = value;
-      archStep = 2;
-      
-      // Ask Question 2
-      const text = `הבנתי. כעת לשאלה השנייה:<br>
-        <strong>שאלה 2: האם המערכת דורשת שילוב של בקרת איכות (QA Evaluation) ואישור אנושי, או שהיא צריכה לפעול בצורה אוטונומית לחלוטין?</strong>`;
-      addChatMessage('agent', text, true);
-      
-      const optionsHtml = `
-        <div class="arch-options-list">
-          <button class="arch-option-btn" onclick="selectArchOption('qa_required', 'נדרשת בקרת איכות ואישור אנושי (Human-in-the-loop)')">🛡️ נדרשת בקרת איכות ואישור אנושי (Human-in-the-loop)</button>
-          <button class="arch-option-btn" onclick="selectArchOption('autonomous', 'אוטונומי לחלוטין (אפס התערבות ידנית)')">⚡ אוטונומי לחלוטין (מנוע AI עצמאי מקצה לקצה)</button>
-        </div>
-      `;
-      addChatMessage('agent', optionsHtml, true);
-      
-    } else if (archStep === 2) {
-      userAnswers.qa = value;
-      archStep = 3;
-      
-      // Ask Question 3
-      const text = `הבנתי. שאלה אחרונה חביבה:<br>
-        <strong>שאלה 3: מהו ערוץ התקשורת או ממשק הקלט/פלט המרכזי של לקוחות/משתמשים עם מערכת הסוכנים?</strong>`;
-      addChatMessage('agent', text, true);
-      
-      const optionsHtml = `
-        <div class="arch-options-list">
-          <button class="arch-option-btn" onclick="selectArchOption('whatsapp', 'ממשק הודעות מהיר (WhatsApp / Telegram)')">💬 ממשק הודעות מהיר (WhatsApp / Telegram)</button>
-          <button class="arch-option-btn" onclick="selectArchOption('web', 'אפליקציית Web ייעודית או דשבורד דפדפן')">🌐 אפליקציית Web ייעודית או דשבורד דפדפן</button>
-          <button class="arch-option-btn" onclick="selectArchOption('internal', 'מערכת פנימית (מייל, קובצי Google Drive או מערכת CRM)')">📁 מערכת פנימית (אימיילים, Google Drive או CRM)</button>
-        </div>
-      `;
-      addChatMessage('agent', optionsHtml, true);
-      
-    } else if (archStep === 3) {
-      userAnswers.io = value;
-      archStep = 4;
-      generateArchitectResult();
-    }
-  }, 1000);
-}
+    <div style="background:${decisionColor}18;border:1px solid ${decisionColor}44;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;">
+      <div>
+        <div style="font-weight:800;color:${decisionColor};font-size:14px;">${decisionLabel}</div>
+        <div style="font-size:12px;color:var(--tx2);margin-top:3px;">${esc(ai.reasoning || '')}</div>
+      </div>
+    </div>
 
-function generateArchitectResult() {
-  // Determine final architecture
-  let finalArch = detectedArch;
-  if (userAnswers.flowType === 'sequential') {
-    finalArch = 'pipeline';
-  } else if (userAnswers.flowType === 'parallel') {
-    finalArch = 'network';
-  } else if (userAnswers.flowType === 'centralized') {
-    finalArch = 'orchestrator';
+    <div class="prd-sb">
+      <div class="prd-lbl">🎯 הבעיה העסקית</div>
+      <p style="margin:0;color:var(--tx2);line-height:1.7;">${esc(prd.businessProblem || '')}</p>
+    </div>
+
+    <div class="prd-sb">
+      <div class="prd-lbl" style="color:${color};">🏛️ ארכיטקטורה: ${esc(arch.patternHeb || arch.pattern || '')}</div>
+      <p style="margin:0 0 10px;color:var(--tx2);line-height:1.7;">${esc(arch.reasoning || '')}</p>
+      ${componentsHtml ? `<ul style="margin:0;padding-right:18px;color:var(--tx2);">${componentsHtml}</ul>` : ''}
+    </div>
+
+    <div class="prd-sb">
+      <div class="prd-lbl">🗄️ מקור האמת (Single Source of Truth)</div>
+      <p style="margin:0 0 4px;color:var(--tx2);font-weight:600;">${esc(ds.recommendation || '')}</p>
+      <p style="margin:0;color:var(--tx3);font-size:12px;font-style:italic;">${esc(ds.schema || '')}</p>
+    </div>
+
+    <div class="prd-sb">
+      <div class="prd-lbl">🚀 MVP — שלבי הבנייה</div>
+      <ol style="margin:0;padding-right:20px;color:var(--tx2);">${mvpHtml}</ol>
+    </div>
+
+    ${techHtml ? `<div class="prd-sb">
+      <div class="prd-lbl">🛠️ Stack טכנולוגי</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">${techHtml}</div>
+    </div>` : ''}
+
+    <div class="prd-sb" style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
+      <div class="prd-lbl" style="color:#10b981;">📊 ROI משוער</div>
+      <div style="color:var(--tx2);display:flex;flex-direction:column;gap:5px;">
+        <div>⏱️ <strong>זמן:</strong> ${esc(roi.timeSaving || '')}</div>
+        <div>💰 <strong>עלות:</strong> ${esc(roi.costSaving || '')}</div>
+        <div>📈 <strong>עסקי:</strong> ${esc(roi.businessImpact || '')}</div>
+      </div>
+    </div>
+
+    ${pitfallsHtml ? `<div class="prd-sb">
+      <div class="prd-lbl" style="color:#ef4444;">⚠️ מלכודות — שים לב</div>
+      <div style="display:flex;flex-direction:column;gap:7px;">${pitfallsHtml}</div>
+    </div>` : ''}
+
+    <div class="prd-sb" style="background:rgba(124,106,247,0.07);border-right:3px solid var(--ac);border-radius:0 10px 10px 0;padding:12px 14px;">
+      <div class="prd-lbl">💡 משפט הזיקוק</div>
+      <p style="margin:0;color:var(--tx);font-style:italic;font-size:13.5px;line-height:1.7;">"${esc(prd.zikukSentence || '')}"</p>
+    </div>
+
+    <div style="display:flex;gap:10px;margin-top:18px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="downloadPRDasPDF()" class="cta-s" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">📄 הורד PDF</button>
+      <button onclick="openVisitorContactFromPRD()" class="cta-p" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">📞 שיחת אפיון חינם</button>
+    </div>
+
+    <div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--bor);border-radius:10px;text-align:center;color:var(--tx2);font-size:13px;line-height:1.6;">
+      ${esc(prd.cta || '')}
+    </div>
+  </div>`;
+
+  const resultContent = document.getElementById('arch-result-content');
+  if (resultContent) {
+    resultContent.innerHTML = html;
+    resultContent.style.display = 'flex';
+    resultContent.style.flexDirection = 'column';
+    resultContent.style.overflowY = 'auto';
   }
-  
-  const detail = ARCH_DETAILS[finalArch];
-  
-  // Update result card title & description
-  document.getElementById('arch-recommended-title').innerHTML = `💡 ארכיטקטורה מתאימה: ${detail.name}`;
-  document.getElementById('arch-recommended-desc').innerHTML = detail.desc;
-  
-  // Render SVG diagram
-  const svgHtml = drawDynamicSVG(finalArch, userAnswers.qa === 'qa_required', userAnswers.io);
-  document.getElementById('arch-svg-container').innerHTML = svgHtml;
-  
-  // Render recommendations list
-  const listEl = document.getElementById('arch-recommendations-list');
-  const qaText = userAnswers.qa === 'qa_required' 
-    ? '<strong>✓ מנגנון בקרת איכות (QA Evaluator):</strong> משולב בתוך ה-Workflow ומבצע השוואה ובדיקה סמנטית של הפלט לפני שליחה. במקרה של כשל, מתבצע ניתוב מחדש (Redo) או בקשת אישור אנושי.' 
-    : '<strong>◌ בקרת איכות:</strong> תתבצע בקרת איכות מובנית ברמת הפרומפטים ללא עצירה לאישור ידני (אוטונומי לחלוטין).';
-  
-  listEl.innerHTML = `
-    <div style="font-weight:700; color:var(--tx); margin-bottom:8px;">📌 המלצות אינטגרציה וזרימת עבודה (Workflow):</div>
-    <ul style="padding-right:16px; margin:0; display:flex; flex-direction:column; gap:8px;">
-      <li><strong>ערוץ קלט/פלט:</strong> ממשק מבוסס ${userAnswers.io === 'whatsapp' ? 'WhatsApp API' : userAnswers.io === 'web' ? 'Web Interface' : 'CRM/Email Integration'} לקבלת פקודות ודיווח תוצאות בזמן אמת.</li>
-      <li>${qaText}</li>
-      <li><strong>בקרת שגיאות וטיפול בכשלים (Error Handling):</strong> שילוב מנגנון Fallback אוטומטי המבצע ניסיונות הרצה חוזרים (Retries) ומנתב את המידע ל-Dead-letter Queue במקרה של כשל מתמשך במודל השפה.</li>
-      <li><strong>סוכני קצה מוצעים:</strong> סוכן קליטת קלט, סוכן עיבוד וניתוח נתונים, וסוכן ניסוח פלטים מותאם אישית.</li>
-    </ul>
-  `;
-  
-  // Hide placeholder and show content
-  document.getElementById('arch-result-placeholder').style.display = 'none';
-  document.getElementById('arch-result-content').style.display = 'flex';
-  
-  // Print final success message in chat
-  const text = `🎉 <strong>האפיון הושלם בהצלחה!</strong><br><br>
-    התאמתי עבורך ארכיטקטורת <strong>${detail.name}</strong>.<br>
-    תוכל לראות את תרשים ה-Workflow המלא ואת המלצות השילוב מצד שמאל.<br><br>
-    כדי להתחיל לקדם את הפרויקט ולבנות את המערכת הזו בפועל, לחץ על הכפתור <strong>"שיחת אפיון חינם"</strong> למטה ונציג את הפרויקט שלך יחד.`;
-  addChatMessage('agent', text, true);
+  const placeholder = document.getElementById('arch-result-placeholder');
+  if (placeholder) placeholder.style.display = 'none';
 }
 
-function drawDynamicSVG(arch, hasQA, io) {
-  const detail = ARCH_DETAILS[arch];
-  const color = detail.color;
-  const glow = detail.glow;
-  
-  let nodesHtml = '';
-  let linesHtml = '';
-  
-  // Arrow marker definitions
-  const defs = `
-    <defs>
-      <marker id="arrow" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ffffff" opacity="0.6"/>
-      </marker>
-      <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-        <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
-      </marker>
-    </defs>
-  `;
-  
-  if (arch === 'pipeline') {
-    // 3 Sequential nodes + Optional QA Node
-    linesHtml = `
-      <line x1="50" y1="130" x2="140" y2="130" stroke="rgba(255,255,255,0.2)" stroke-width="2.5" class="svg-flow-line" marker-end="url(#arrow)" />
-      <line x1="220" y1="130" x2="310" y2="130" stroke="rgba(255,255,255,0.2)" stroke-width="2.5" class="svg-flow-line" marker-end="url(#arrow)" />
-    `;
-    
-    if (hasQA) {
-      linesHtml += `
-        <line x1="350" y1="130" x2="350" y2="70" stroke="#10b981" stroke-dasharray="4" stroke-width="2" class="svg-flow-line" marker-end="url(#arrow-green)" />
-        <line x1="390" y1="50" x2="440" y2="50" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(#arrow)" />
-      `;
-    } else {
-      linesHtml += `
-        <line x1="390" y1="130" x2="440" y2="130" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(#arrow)" />
-      `;
-    }
-    
-    nodesHtml = `
-      <!-- Input Node -->
-      <g class="svg-flow-node" transform="translate(10, 105)">
-        <rect width="40" height="50" rx="8" fill="rgba(255,255,255,0.05)" stroke="var(--bor2)" stroke-width="1.5" />
-        <text x="20" y="30" fill="var(--tx2)" font-size="11" text-anchor="middle" font-weight="bold">קלט</text>
-      </g>
-      
-      <!-- Node 1 -->
-      <g class="svg-flow-node" transform="translate(140, 100)">
-        <rect width="80" height="60" rx="12" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="2" style="filter:drop-shadow(0 4px 10px rgba(0,0,0,0.3))" />
-        <text x="40" y="35" fill="var(--tx)" font-size="11" text-anchor="middle">סריקה וניתוח</text>
-      </g>
-      
-      <!-- Node 2 -->
-      <g class="svg-flow-node" transform="translate(310, 100)">
-        <rect width="80" height="60" rx="12" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="2" />
-        <text x="40" y="35" fill="var(--tx)" font-size="11" text-anchor="middle">עיבוד וניסוח</text>
-      </g>
-      
-      <!-- Output Node -->
-      <g class="svg-flow-node" transform="translate(440, 105)">
-        <rect width="40" height="50" rx="8" fill="rgba(255,255,255,0.05)" stroke="var(--bor2)" stroke-width="1.5" />
-        <text x="20" y="30" fill="var(--tx2)" font-size="11" text-anchor="middle" font-weight="bold">פלט</text>
-      </g>
-    `;
-    
-    if (hasQA) {
-      nodesHtml += `
-        <!-- QA Node -->
-        <g class="svg-flow-node" transform="translate(310, 20)">
-          <rect width="80" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="2" />
-          <text x="40" y="28" fill="#10b981" font-size="10" text-anchor="middle" font-weight="bold">בקרת איכות</text>
-          <text x="40" y="42" fill="var(--tx2)" font-size="8" text-anchor="middle">QA Evaluator</text>
-        </g>
-      `;
-    }
-  } else if (arch === 'network') {
-    // Mesh Network - Nodes in circle connected to each other
-    linesHtml = `
-      <path d="M 120 70 L 280 70 M 280 70 L 320 170 M 320 170 L 200 230 M 200 230 L 80 170 M 80 170 L 120 70" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-      <path d="M 120 70 L 320 170 M 280 70 L 80 170 M 120 70 L 200 230 M 280 70 L 200 230" stroke="rgba(255,255,255,0.1)" stroke-width="1" stroke-dasharray="3,3" />
-    `;
-    
-    nodesHtml = `
-      <!-- Node A -->
-      <circle cx="120" cy="70" r="30" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" class="svg-flow-node" />
-      <text x="120" y="74" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן א׳</text>
-      
-      <!-- Node B -->
-      <circle cx="280" cy="70" r="30" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" class="svg-flow-node" />
-      <text x="280" y="74" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן ב׳</text>
-      
-      <!-- Node C -->
-      <circle cx="320" cy="170" r="30" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" class="svg-flow-node" />
-      <text x="320" y="174" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן ג׳</text>
-      
-      <!-- Node D -->
-      <circle cx="200" cy="230" r="30" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" class="svg-flow-node" />
-      <text x="200" y="234" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן ד׳</text>
-      
-      <!-- Node E -->
-      <circle cx="80" cy="170" r="30" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" class="svg-flow-node" />
-      <text x="80" y="174" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן ה׳</text>
-    `;
-    
-    if (hasQA) {
-      nodesHtml += `
-        <!-- QA Node at bottom center -->
-        <g class="svg-flow-node" transform="translate(160, 110)">
-          <rect width="80" height="40" rx="8" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" />
-          <text x="40" y="24" fill="#10b981" font-size="10" text-anchor="middle" font-weight="bold">QA Monitor</text>
-        </g>
-        <line x1="200" y1="110" x2="200" y2="70" stroke="#10b981" stroke-dasharray="3" stroke-width="1.5" />
-      `;
-    }
-  } else if (arch === 'router') {
-    // Router Node splitting to 3 branches
-    linesHtml = `
-      <line x1="50" y1="130" x2="130" y2="130" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(#arrow)" />
-      <path d="M 210 130 L 290 60 M 210 130 L 290 130 M 210 130 L 290 200" stroke="rgba(255,255,255,0.2)" stroke-width="2" class="svg-flow-line" marker-end="url(#arrow)" />
-    `;
-    
-    nodesHtml = `
-      <!-- User Input -->
-      <g class="svg-flow-node" transform="translate(10, 105)">
-        <rect width="40" height="50" rx="8" fill="rgba(255,255,255,0.05)" stroke="var(--bor2)" stroke-width="1.5" />
-        <text x="20" y="30" fill="var(--tx2)" font-size="10" text-anchor="middle">קלט</text>
-      </g>
-      
-      <!-- Router (Diamond) -->
-      <g class="svg-flow-node" transform="translate(130, 95)">
-        <polygon points="40,0 80,35 40,70 0,35" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" />
-        <text x="40" y="38" fill="var(--tx)" font-size="10" text-anchor="middle" font-weight="bold">נתב AI</text>
-      </g>
-      
-      <!-- Expert 1 -->
-      <g class="svg-flow-node" transform="translate(290, 30)">
-        <rect width="90" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="45" y="30" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן מכירות</text>
-      </g>
-      
-      <!-- Expert 2 -->
-      <g class="svg-flow-node" transform="translate(290, 105)">
-        <rect width="90" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="45" y="30" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן תמיכה</text>
-      </g>
-      
-      <!-- Expert 3 -->
-      <g class="svg-flow-node" transform="translate(290, 180)">
-        <rect width="90" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="45" y="30" fill="var(--tx)" font-size="10" text-anchor="middle">סוכן הנה"ח</text>
-      </g>
-    `;
-    
-    if (hasQA) {
-      nodesHtml += `
-        <!-- QA Node at output end -->
-        <g class="svg-flow-node" transform="translate(410, 105)">
-          <rect width="60" height="50" rx="8" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" />
-          <text x="30" y="30" fill="#10b981" font-size="9" text-anchor="middle" font-weight="bold">בקרת QA</text>
-        </g>
-        <path d="M 380 55 L 410 110 M 380 130 L 410 130 M 380 205 L 410 150" stroke="#10b981" stroke-width="1.5" />
-      `;
-    }
-  } else if (arch === 'hierarchical') {
-    // Hierarchical: Top node -> Middle nodes -> Bottom nodes
-    linesHtml = `
-      <line x1="200" y1="70" x2="100" y2="110" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(#arrow)" />
-      <line x1="200" y1="70" x2="300" y2="110" stroke="rgba(255,255,255,0.2)" stroke-width="2" marker-end="url(#arrow)" />
-      <line x1="100" y1="160" x2="60" y2="190" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" marker-end="url(#arrow)" />
-      <line x1="100" y1="160" x2="140" y2="190" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" marker-end="url(#arrow)" />
-      <line x1="300" y1="160" x2="260" y2="190" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" marker-end="url(#arrow)" />
-      <line x1="300" y1="160" x2="340" y2="190" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" marker-end="url(#arrow)" />
-    `;
-    
-    nodesHtml = `
-      <!-- Top Manager -->
-      <g class="svg-flow-node" transform="translate(150, 15)">
-        <rect width="100" height="50" rx="10" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2" />
-        <text x="50" y="30" fill="var(--tx)" font-size="10" text-anchor="middle" font-weight="bold">מנהל על (CTO)</text>
-      </g>
-      
-      <!-- Sub-Orchestrator 1 -->
-      <g class="svg-flow-node" transform="translate(50, 110)">
-        <rect width="100" height="50" rx="8" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="50" y="30" fill="var(--tx)" font-size="9" text-anchor="middle">סגנית תפעול</text>
-      </g>
-      
-      <!-- Sub-Orchestrator 2 -->
-      <g class="svg-flow-node" transform="translate(250, 110)">
-        <rect width="100" height="50" rx="8" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="50" y="30" fill="var(--tx)" font-size="9" text-anchor="middle">סגנית פיתוח</text>
-      </g>
-      
-      <!-- Workers -->
-      <circle cx="60" cy="210" r="16" fill="rgba(255,255,255,0.03)" stroke="var(--bor2)" class="svg-flow-node" />
-      <text x="60" y="213" fill="var(--tx2)" font-size="8" text-anchor="middle">W1</text>
-      
-      <circle cx="140" cy="210" r="16" fill="rgba(255,255,255,0.03)" stroke="var(--bor2)" class="svg-flow-node" />
-      <text x="140" y="213" fill="var(--tx2)" font-size="8" text-anchor="middle">W2</text>
-      
-      <circle cx="260" cy="210" r="16" fill="rgba(255,255,255,0.03)" stroke="var(--bor2)" class="svg-flow-node" />
-      <text x="260" y="213" fill="var(--tx2)" font-size="8" text-anchor="middle">W3</text>
-      
-      <circle cx="340" cy="210" r="16" fill="rgba(255,255,255,0.03)" stroke="var(--bor2)" class="svg-flow-node" />
-      <text x="340" y="213" fill="var(--tx2)" font-size="8" text-anchor="middle">W4</text>
-    `;
-    
-    if (hasQA) {
-      nodesHtml += `
-        <!-- QA Monitor linked to Top Manager -->
-        <g class="svg-flow-node" transform="translate(300, 15)">
-          <rect width="80" height="40" rx="8" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="1.5" />
-          <text x="40" y="24" fill="#10b981" font-size="9" text-anchor="middle" font-weight="bold">בקרת איכות</text>
-        </g>
-        <line x1="250" y1="40" x2="300" y2="40" stroke="#10b981" stroke-dasharray="3" stroke-width="1.5" />
-      `;
-    }
-  } else {
-    // Orchestrator (default): Central node -> Workers below
-    linesHtml = `
-      <path d="M 200 80 L 100 160 M 200 80 L 200 160 M 200 80 L 300 160" stroke="rgba(255,255,255,0.2)" stroke-width="2.5" class="svg-flow-line" marker-end="url(#arrow)" />
-    `;
-    
-    nodesHtml = `
-      <!-- Orchestrator Box -->
-      <g class="svg-flow-node" transform="translate(140, 20)">
-        <rect width="120" height="60" rx="14" fill="rgba(3,7,18,0.7)" stroke="${color}" stroke-width="2.5" style="filter:drop-shadow(0 4px 15px ${glow})" />
-        <text x="60" y="35" fill="var(--tx)" font-size="11" text-anchor="middle" font-weight="bold">מנצח (Orchestrator)</text>
-      </g>
-      
-      <!-- Worker 1 -->
-      <g class="svg-flow-node" transform="translate(50, 160)">
-        <rect width="100" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="50" y="30" fill="var(--tx)" font-size="9" text-anchor="middle">סוכן איסוף מידע</text>
-      </g>
-      
-      <!-- Worker 2 -->
-      <g class="svg-flow-node" transform="translate(150, 160)">
-        <rect width="100" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="50" y="30" fill="var(--tx)" font-size="9" text-anchor="middle">סוכן ניתוח וסיווג</text>
-      </g>
-      
-      <!-- Worker 3 -->
-      <g class="svg-flow-node" transform="translate(250, 160)">
-        <rect width="100" height="50" rx="10" fill="rgba(3,7,18,0.6)" stroke="${color}" stroke-width="1.5" />
-        <text x="50" y="30" fill="var(--tx)" font-size="9" text-anchor="middle">סוכן יצירת פלטים</text>
-      </g>
-    `;
-    
-    if (hasQA) {
-      nodesHtml += `
-        <!-- QA Node linked to Orchestrator -->
-        <g class="svg-flow-node" transform="translate(310, 25)">
-          <rect width="80" height="50" rx="12" fill="rgba(16,185,129,0.1)" stroke="#10b981" stroke-width="2" />
-          <text x="40" y="28" fill="#10b981" font-size="9" text-anchor="middle" font-weight="bold">מנהל QA</text>
-          <text x="40" y="42" fill="var(--tx2)" font-size="8" text-anchor="middle">בקרת תוצאות</text>
-        </g>
-        <line x1="260" y1="50" x2="310" y2="50" stroke="#10b981" stroke-dasharray="3" stroke-width="2" class="svg-flow-line" marker-end="url(#arrow-green)" />
-      `;
-    }
-  }
-  
-  return `
-    <svg width="100%" height="100%" viewBox="0 0 500 270" fill="none" xmlns="http://www.w3.org/2000/svg" style="direction:ltr;">
-      ${defs}
-      ${linesHtml}
-      ${nodesHtml}
-    </svg>
-  `;
+function openVisitorContactFromPRD() {
+  const ctaText = (currentPRD && currentPRD.cta)
+    ? currentPRD.cta
+    : 'שלום מולאלי, רוצה לקדם את הפרויקט שאפיינו יחד בסוכן האפיון.';
+  openVisitorContact(ctaText);
 }
 
-function downloadArchPDF() {
-  window.print();
+function downloadPRDasPDF() {
+  if (!currentPRD) return;
+  const prd = currentPRD;
+  const PATTERN_COLORS = {
+    orchestrator: '#6d28d9', pipeline: '#0d9488',
+    hierarchical: '#b45309', router: '#c2410c',
+    network: '#be185d', simple_automation: '#065f46'
+  };
+  const arch = prd.architecture || {};
+  const ai = prd.aiDecision || {};
+  const ds = prd.dataSource || {};
+  const roi = prd.roi || {};
+  const color = PATTERN_COLORS[arch.pattern] || '#6d28d9';
+  const isAI = !ai.recommendation || ai.recommendation !== 'simple_automation';
+
+  const mvpHtml = (prd.mvp || []).map((s, i) =>
+    `<li><strong>שלב ${i + 1}:</strong> ${esc(s)}</li>`).join('');
+  const techHtml = (prd.techStack || []).map(t =>
+    `<div class="ti"><strong>${esc(t.tool)}</strong><span>${esc(t.role)}</span></div>`).join('');
+  const pitfallsHtml = (prd.pitfalls || []).map(p =>
+    `<div class="pf">⚠️ <strong>${esc(p.name)}:</strong> ${esc(p.warning)}</div>`).join('');
+  const compsHtml = (arch.components || []).map(c => `<li>${esc(c)}</li>`).join('');
+
+  const pw = window.open('', '_blank', 'width=900,height=700');
+  pw.document.write(`<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
+<title>PRD — ${esc(prd.projectName || 'פרויקט')}</title>
+<style>
+  body{font-family:Arial,sans-serif;direction:rtl;text-align:right;color:#1a1a2e;background:#fff;padding:40px;max-width:800px;margin:0 auto;font-size:14px;line-height:1.6;}
+  h1{font-size:26px;font-weight:900;margin:0 0 6px;}
+  .tag{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:1px;color:#666;margin-bottom:4px;}
+  .tagline{color:#555;font-style:italic;margin:0 0 20px;}
+  .badge{display:inline-block;padding:4px 14px;border-radius:20px;font-weight:700;font-size:13px;margin-bottom:14px;}
+  .ai-badge{background:#ede9fe;color:${color};}
+  .auto-badge{background:#d1fae5;color:#065f46;}
+  .sec{margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid #eee;}
+  .sec-lbl{font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.8px;color:${color};margin-bottom:6px;}
+  ul,ol{margin:6px 0;padding-right:20px;}
+  li{margin-bottom:5px;}
+  .ti{display:flex;justify-content:space-between;padding:7px 10px;background:#f8f8f8;border-radius:6px;margin-bottom:5px;font-size:13px;}
+  .roi{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;}
+  .roi-i{padding:10px;background:#f0fdf4;border-radius:8px;text-align:center;font-size:12px;}
+  .pf{padding:8px 12px;background:#fff5f5;border-right:3px solid #f87171;margin-bottom:7px;border-radius:4px;font-size:13px;}
+  .zikuk{background:#faf5ff;border-right:4px solid ${color};padding:14px 16px;border-radius:4px;font-style:italic;margin-bottom:18px;}
+  .cta{padding:18px;background:#f0f4ff;border-radius:10px;text-align:center;color:#333;font-size:13px;line-height:1.7;}
+  h1 small{font-size:12px;font-weight:400;color:#888;display:block;margin-top:2px;}
+  @media print{button{display:none!important}}
+</style></head><body>
+<div class="tag">📋 PRD — מסמך דרישות מוצר</div>
+<h1>${esc(prd.projectName || '')}<small>${esc(prd.tagline || '')}</small></h1>
+
+<div class="badge ${isAI ? 'ai-badge' : 'auto-badge'}">${isAI ? '🤖 נדרש AI Agent' : '⚙️ אוטומציה פשוטה מספיקה'}</div>
+<p style="color:#555;margin:0 0 18px;">${esc(ai.reasoning || '')}</p>
+
+<div class="sec">
+<div class="sec-lbl">🎯 הבעיה העסקית</div>
+<p style="margin:0;">${esc(prd.businessProblem || '')}</p>
+</div>
+
+<div class="sec">
+<div class="sec-lbl" style="color:${color};">🏛️ ארכיטקטורה: ${esc(arch.patternHeb || arch.pattern || '')}</div>
+<p style="margin:0 0 8px;">${esc(arch.reasoning || '')}</p>
+${compsHtml ? `<ul>${compsHtml}</ul>` : ''}
+</div>
+
+<div class="sec">
+<div class="sec-lbl">🗄️ Single Source of Truth</div>
+<p style="margin:0;font-weight:600;">${esc(ds.recommendation || '')}</p>
+<p style="margin:0;color:#666;font-size:12px;">${esc(ds.schema || '')}</p>
+</div>
+
+<div class="sec">
+<div class="sec-lbl">🚀 MVP — שלבי הבנייה</div>
+<ol>${mvpHtml}</ol>
+</div>
+
+${techHtml ? `<div class="sec"><div class="sec-lbl">🛠️ Stack טכנולוגי</div>${techHtml}</div>` : ''}
+
+<div class="sec">
+<div class="sec-lbl" style="color:#065f46;">📊 ROI משוער</div>
+<div class="roi">
+  <div class="roi-i">⏱️<br><strong>זמן</strong><br>${esc(roi.timeSaving || '')}</div>
+  <div class="roi-i">💰<br><strong>עלות</strong><br>${esc(roi.costSaving || '')}</div>
+  <div class="roi-i">📈<br><strong>עסקי</strong><br>${esc(roi.businessImpact || '')}</div>
+</div>
+</div>
+
+${pitfallsHtml ? `<div class="sec"><div class="sec-lbl" style="color:#dc2626;">⚠️ מלכודות</div>${pitfallsHtml}</div>` : ''}
+
+<div class="zikuk">
+<div class="sec-lbl">💡 משפט הזיקוק</div>
+<p style="margin:0;font-size:14px;">"${esc(prd.zikukSentence || '')}"</p>
+</div>
+
+<div class="cta">${esc(prd.cta || '')}</div>
+
+<script>window.onload=function(){window.print();}<\/script>
+</body></html>`);
+  pw.document.close();
 }
 
 function shareArchLink() {
-  const params = new URLSearchParams();
-  params.set('arch', detectedArch);
-  params.set('flow', userAnswers.flowType);
-  params.set('qa', userAnswers.qa);
-  params.set('io', userAnswers.io);
-  
-  const shareUrl = window.location.origin + window.location.pathname + '?' + params.toString();
-  
-  navigator.clipboard.writeText(shareUrl).then(() => {
-    alert('הקישור הועתק ללוח! שתפו אותו עם אחרים כדי להציג את הארכיטקטורה.');
-  }).catch(err => {
-    alert('לא ניתן להעתיק אוטומטית, אנא העתיק את הכתובת הבאה: ' + shareUrl);
+  navigator.clipboard.writeText(window.location.href).then(() => {
+    alert('הקישור הועתק ללוח!');
+  }).catch(() => {
+    alert('אנא העתק את כתובת הדף הנוכחי.');
   });
 }
 
+function downloadArchPDF() { downloadPRDasPDF(); } // alias for static HTML button
+
 function handleQueryParams() {
-  const params = new URLSearchParams(window.location.search);
-  const arch = params.get('arch');
-  const flow = params.get('flow');
-  const qa = params.get('qa');
-  const io = params.get('io');
-  
-  if (arch && flow && qa && io) {
-    detectedArch = arch;
-    userAnswers = { idea: 'אפיון ששותף באמצעות קישור', flowType: flow, qa: qa, io: io };
-    archStep = 4;
-    
-    // Switch to tab
-    switchTab('architect');
-    
-    // Generate result
-    generateArchitectResult();
-    
-    // Add success chat message
-    addChatMessage('agent', '👋 שלום! טענתי עבורך את הארכיטקטורה ששותפה בקישור. תוכל לעיין בפרטים מצד שמאל, להוריד כ-PDF או להשאיר פרטים ליצירת קשר.');
-  }
+  // No URL-based state in the new Claude-powered agent
 }
 
 // ── INIT ──
