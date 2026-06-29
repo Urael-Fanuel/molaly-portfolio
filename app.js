@@ -313,7 +313,7 @@ function renderSidebar(){
   const cvHref=(!D.contact.cv||D.contact.cv==='#')?'./CV.pdf':D.contact.cv;
   const liHref=D.contact.linkedin||'https://www.linkedin.com/in/molaly-mekonen-416a57111/';
   const cvEl=document.getElementById('cta-cv');const liEl=document.getElementById('cta-li');
-  if(cvEl){cvEl.href=cvHref;cvEl.setAttribute('download','Moti_Mekonen_CV.pdf');}
+  if(cvEl){cvEl.href=cvHref;cvEl.setAttribute('download','Molaly_Mekonen_CV.pdf');}
   if(liEl){liEl.href=liHref;}
 }
 
@@ -502,7 +502,7 @@ function viewArticle(id){
   <span style="font-size:12.5px;color:var(--tx2);display:block;margin-bottom:13px;">דברו עם איתי ישירות: <a href="tel:0528742884" style="color:var(--ac);font-weight:700;font-size:14px;direction:ltr;display:inline-block;text-decoration:none;">052-874-2884</a> — שיחת אפיון חינם וללא התחייבות.</span>
   <div style="display:flex;gap:10px;flex-wrap:wrap;align-items:center;">
     <a href="tel:0528742884" style="padding:10px 20px;border-radius:10px;background:linear-gradient(135deg,#10b981 0%,#059669 100%);color:white;font-weight:700;font-size:13px;text-decoration:none;display:inline-flex;align-items:center;gap:6px;box-shadow:0 4px 12px rgba(16,185,129,0.3);">📞 התקשרו עכשיו</a>
-    <button onclick="closeArtView(); openVisitorContact('היי מוטי, קראתי את המאמר בנושא &quot;' + esc(a.name) + '&quot; ואשמח לשיחת אפיון לעסק שלי.');" style="padding:10px 18px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--bor2);color:var(--tx);font-size:13px;font-weight:600;font-family:inherit;">✉️ שלחו הודעה</button>
+    <button onclick="closeArtView(); openVisitorContact('היי איתי, קראתי את המאמר בנושא &quot;${esc(a.name)}&quot; ואשמח לשיחת אפיון לעסק שלי.');" style="padding:10px 18px;border-radius:10px;cursor:pointer;background:transparent;border:1px solid var(--bor2);color:var(--tx);font-size:13px;font-weight:600;font-family:inherit;">✉️ שלחו הודעה</button>
   </div>
 </div>`;
   
@@ -872,7 +872,7 @@ function sendContact(method){
   if(method === 'whatsapp'){
     const cleanPhone = myPhone.replace(/[^0-9]/g, '');
     const formattedPhone = cleanPhone.startsWith('0') ? '972' + cleanPhone.substring(1) : cleanPhone;
-    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent('היי מוטי, אשמח לשיחת אפיון.\n' + textMsg)}`;
+    const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent('היי Molaly, אשמח לשיחת אפיון.\n' + textMsg)}`;
     window.open(url, '_blank');
     
     showSuccessNotification();
@@ -977,7 +977,7 @@ function shareSite(e) {
   }
   const shareUrl = `${window.location.origin}${window.location.pathname}`;
   const shareTitle = `הפורטפוליו של איתי מקונן - AI Solutions Architect`;
-  const shareText = `היי, מומלץ לבקר בפורטפוליו של איתי מקונן (מוטי) - מומחה AI ואוטומציה תהליכים עסקיים:`;
+  const shareText = `היי, מומלץ לבקר בפורטפוליו של Molaly מקונן - מומחה AI ואוטומציה תהליכים עסקיים:`;
   
   openCustomShareModal("שתף את האתר", shareText, shareUrl);
 }
