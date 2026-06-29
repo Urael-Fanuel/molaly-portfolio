@@ -87,7 +87,6 @@
     </div>
     <div class="hb-sub" id="hb-sub" contenteditable="false" onblur="saveAll()" dir="auto">מומחה אוטומציה עם פריסות פרודקשן אמיתיות לעסקים. בנה ופרס פתרונות אוטומציה מקצה לקצה. שבע שנים באינטל בנו תשתית חזקה של חשיבה תהליכית ועבודה בתוך ארגונים גדולים.</div>
     <div class="hb-ctas">
-      <a class="cta-p" id="cta-cv" href="./CV.pdf" download="Moti_Mekonen_CV.pdf">📄 הורד CV</a>
       <a class="cta-s" id="cta-li" href="https://www.linkedin.com/in/molaly-mekonen-416a57111/" target="_blank" rel="noopener">💼 LinkedIn</a>
     </div>
   </div>
@@ -118,14 +117,16 @@
     
     <div style="background:var(--sur); backdrop-filter:blur(16px); -webkit-backdrop-filter:blur(16px); border:1px solid var(--bor); border-radius:24px; padding:28px; margin-bottom:28px; box-shadow:0 10px 30px rgba(0,0,0,0.3);">
       <p style="color:var(--tx2); font-size:16px; margin-bottom:20px; line-height:1.6; text-align:right; direction:rtl;">
-        כארכיטקט פתרונות AI, אני מתכנן מערכות קצה-לקצה סקיילביליות, מאובטחות ועמידות לייצור (Production-Grade). להלן דיאגרמות הארכיטקטורה של 3 פתרונות הדגל שלי. לחצו על הכפתורים כדי לחקור את זרימת הנתונים והטכנולוגיות בכל מערכת:
+        כארכיטקט פתרונות AI, אני מתכנן מערכות קצה-לקצה סקיילביליות, מאובטחות ועמידות לייצור (Production-Grade). להלן 5 דפוסי הארכיטקטורה הנפוצים ביותר — כל אחד עם דוגמה אמיתית ממערכות שפיתחתי. העבירו את העכבר על כל NODE כדי להבין מה הוא עושה:
       </p>
-      
+
       <!-- Selector buttons -->
       <div style="display:flex; gap:10px; margin-bottom:30px; flex-wrap:wrap; justify-content:center;">
-        <button class="ftab on" id="bp-btn-agent" onclick="selectBlueprint('agent')" style="font-size:13px; padding:8px 18px;">🤖 סוכן AI עם זיכרון (Agentic Workflow)</button>
-        <button class="ftab" id="bp-btn-idp" onclick="selectBlueprint('idp')" style="font-size:13px; padding:8px 18px;">📄 עיבוד מסמכים חכם (IDP Pipeline)</button>
-        <button class="ftab" id="bp-btn-security" onclick="selectBlueprint('security')" style="font-size:13px; padding:8px 18px;">🛡️ סורק אבטחה (Cyber-Guardian Engine)</button>
+        <button class="ftab on" id="bp-btn-orchestrator" onclick="selectBlueprint('orchestrator')" style="font-size:13px; padding:8px 18px;">🤖 Orchestrator — שליחת פניות B2B</button>
+        <button class="ftab" id="bp-btn-pipeline" onclick="selectBlueprint('pipeline')" style="font-size:13px; padding:8px 18px;">📄 Pipeline — עיבוד חשבוניות (IDP)</button>
+        <button class="ftab" id="bp-btn-hierarchical" onclick="selectBlueprint('hierarchical')" style="font-size:13px; padding:8px 18px;">🏢 Hierarchical — תפעול ארגוני</button>
+        <button class="ftab" id="bp-btn-router" onclick="selectBlueprint('router')" style="font-size:13px; padding:8px 18px;">🔀 Router — שירות לקוחות חכם</button>
+        <button class="ftab" id="bp-btn-network" onclick="selectBlueprint('network')" style="font-size:13px; padding:8px 18px;">🌐 Network — תרגום ספר עם QA</button>
       </div>
       
       <!-- Diagram display area -->

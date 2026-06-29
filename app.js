@@ -30,7 +30,7 @@ const DEF={
     {id:3,icon:'🤖',name:'סוכני שיחה מותאמים אישית (WhatsApp & Web)',category:'אוטומציה עסקית',desc:'פיתוח והטמעת סוכני בינה מלאכותית עצמאיים לחלוטין העונים ללקוחות, מתאמים פגישות, מסווגים לידים ומעדכנים את מערכות ה-CRM בזמן אמת, 24/7.',who:'קליניקות, חברות שירותים, משרדים מקצועיים',priceMin:'5,000',priceMax:'12,000'},
     {id:4,icon:'📄',name:'עיבוד מסמכים חכם (IDP - Intelligent Document Processing)',category:'AI לעסק',desc:'מבלגן פיננסי לארכיון דיגיטלי חכם: שילוב מנצח של OCR ומודלי שפה (LLMs) לעיבוד אוטומטי של חשבוניות וחוזים, חילוץ נתונים ללא שגיאות והזרמה ישירה למערכות ה-CRM והתיוק הארגוניות.',who:'רואי חשבון, עורכי דין, חברות ביטוח ופיננסים',priceMin:'4,500',priceMax:'10,000'},
     {id:5,icon:'📊',name:'דשבורדים ניהוליים ומערכות BI בזמן אמת',category:'הייטק ותעשייה',desc:'תכנון והקמת מסכי שליטה ובקרה מתקדמים המאחדים נתונים ממקורות שונים ומציגים מדדים עסקיים קריטיים בזמן אמת למנהלים בכירים (CTO/CEO/COO).',who:'מנהלים בכירים, מקבלי החלטות, מנהלי ייצור ותפעול',priceMin:'7,000',priceMax:'20,000'},
-    {id:6,icon:'📣',name:'הכשרת הנהלות וצוותים להובלת AI',category:'תוכן ושיווק',desc:'סדנאות עבודה מעשיות (Hands-on) וימי עיון למנהלים וצוותי פיתוח על כלי AI ופלטפורמות אוטומציה ליצירת חדשנות פנים-ארגונית.',who:'חברות מבוססות שרוצות להכשיר את עובדיהן לביצועי קצה',priceMin:'3,500',priceMax:'9,000'},
+
     {id:7,icon:'📱',name:'פיתוח אפליקציות מובייל חכמות עם AI',category:'AI לעסק',desc:'תכנון ופיתוח אפליקציות מובייל (iOS/Android) המשלבות מנועי AI — TTS, STT ו-LLM — לחוויית משתמש חכמה ורב-שפתית. מבוסס על ניסיון מוכח עם React Native, Expo ו-Supabase בסביבת ייצור אמיתית.',who:'סטארטאפים, חברות חינוך, עמותות ועסקים שרוצים נוכחות מובייל חכמה'},
     {id:8,icon:'🕸️',name:'Data Scraping & AI Intelligence Pipelines',category:'AI & Data',desc:'בניית צינורות מידע אוטומטיים (Data Pipelines) המשלבים זחילת רשת (Apify), ניתוח LLM וניהול DB — לשליפת לידים, ניטור מתחרים, מחקר שוק ודיווח אוטומטי שמגיע ישירות לתיבת המייל.',who:'חברות B2B, צוותי מכירות, משקיעים ואנליסטים עסקיים'},
     {id:9,icon:'🛡️',name:'אוטומציה של אבטחת סייבר עם AI',category:'אבטחת מידע',desc:'בניית מערכות סריקה, ניטור ודיווח אבטחה אוטומטיות המשלבות AI לזיהוי חולשות, ניתוח סיכונים והתראות בזמן אמת. מבוסס על ניסיון מעשי בפיתוח כלי סריקה ייצורי בקנה מידה אמיתי.',who:'חברות טכנולוגיה, ספקי שירות מנוהל (MSP), ארגונים מפוקחים'},
@@ -270,7 +270,7 @@ function switchTab(tab){
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
   ['projects','services','articles','blueprints','architect'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
   if(tab==='blueprints') {
-    selectBlueprint('agent');
+    selectBlueprint('orchestrator');
   }
 }
 
@@ -1183,305 +1183,316 @@ function migrateImages(){
 function selectBlueprint(type) {
   const viewer = document.getElementById('blueprint-viewer');
   if(!viewer) return;
-  
-  // Highlight active button
-  ['agent', 'idp', 'security'].forEach(t => {
-    const btn = document.getElementById(`bp-btn-${t}`);
+
+  ['orchestrator','pipeline','hierarchical','router','network'].forEach(t => {
+    const btn = document.getElementById('bp-btn-' + t);
     if (btn) btn.classList.toggle('on', t === type);
   });
   
-  let svgContent = '';
-  
-  if (type === 'agent') {
-    svgContent = `<svg viewBox="0 0 800 450" width="100%" height="100%" style="background:transparent; font-family:'Space Grotesk', sans-serif;">
-  <defs>
-    <linearGradient id="grad-purple" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c6af7" />
-      <stop offset="100%" stop-color="#4f46e5" />
-    </linearGradient>
-    <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981" />
-      <stop offset="100%" stop-color="#059669" />
-    </linearGradient>
-    <linearGradient id="grad-amber" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#d97706" />
-    </linearGradient>
-    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#1d4ed8" />
-    </linearGradient>
-    <filter id="glow-purple" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-    <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-    <filter id="glow-line" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="3" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
+  const SHARED_DEFS = `<defs>
+    <linearGradient id="gp" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#7c6af7"/><stop offset="100%" stop-color="#4f46e5"/></linearGradient>
+    <linearGradient id="gt" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#14b8a6"/><stop offset="100%" stop-color="#0d9488"/></linearGradient>
+    <linearGradient id="ga" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f59e0b"/><stop offset="100%" stop-color="#b45309"/></linearGradient>
+    <linearGradient id="go" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#f97316"/><stop offset="100%" stop-color="#c2410c"/></linearGradient>
+    <linearGradient id="gk" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ec4899"/><stop offset="100%" stop-color="#be185d"/></linearGradient>
+    <linearGradient id="gb" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#3b82f6"/><stop offset="100%" stop-color="#1d4ed8"/></linearGradient>
+    <linearGradient id="gg" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#10b981"/><stop offset="100%" stop-color="#059669"/></linearGradient>
+    <linearGradient id="gr" x1="0%" y1="0%" x2="100%" y2="100%"><stop offset="0%" stop-color="#ef4444"/><stop offset="100%" stop-color="#b91c1c"/></linearGradient>
+    <marker id="ah" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 1 L 10 5 L 0 9 z" fill="rgba(255,255,255,0.45)"/>
+    </marker>
   </defs>
-
   <style>
-    .bp-node { cursor: pointer; transition: transform 0.2s ease; }
-    .bp-node:hover { transform: scale(1.03) translate(-3px, -3px); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5)); }
-    .glow-path { stroke-dasharray: 8, 8; animation: flow 25s linear infinite; }
-    @keyframes flow { to { stroke-dashoffset: -500; } }
-    .bp-text-title { fill: #f9fafb; font-weight: 700; font-size: 13.5px; }
-    .bp-text-sub { fill: #9ca3af; font-size: 10px; }
-  </style>
+    .bp-node { cursor: pointer; }
+    .bp-node rect, .bp-node polygon, .bp-node circle { transition: filter 0.15s ease; }
+    .bp-node:hover rect, .bp-node:hover polygon, .bp-node:hover circle { filter: brightness(1.28) drop-shadow(0 0 14px rgba(255,255,255,0.22)); }
+    .fl { stroke-dasharray: 7 6; animation: bpfl 22s linear infinite; }
+    @keyframes bpfl { to { stroke-dashoffset: -400; } }
+    .nt { fill: #f1f5f9; font-weight: 700; font-size: 13px; }
+    .ns { fill: #94a3b8; font-size: 9.5px; }
+  </style>`;
 
-  <!-- Connection Lines with Flow Animation -->
-  <path d="M 120 225 L 240 225" stroke="#7c6af7" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-line)" />
-  <path d="M 285 200 L 285 110 L 400 110" stroke="#10b981" stroke-width="2" fill="none" class="glow-path" />
-  <path d="M 330 225 L 450 225" stroke="#7c6af7" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-line)" />
-  <path d="M 495 250 L 495 340 L 400 340" stroke="#f59e0b" stroke-width="2" fill="none" class="glow-path" />
-  <path d="M 450 110 L 495 110 L 495 200" stroke="#10b981" stroke-width="2" fill="none" class="glow-path" />
-  <path d="M 400 340 L 510 340 L 510 250" stroke="#f59e0b" stroke-width="2" fill="none" />
-  <path d="M 540 225 L 680 225" stroke="#3b82f6" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-line)" />
+  let svg = '';
 
-  <!-- Node 1: User Input -->
-  <g class="bp-node" transform="translate(20, 185)" data-title="קלט משתמש (User Input)" data-desc="קבלת הודעות טקסט או קבצים מערוצי תקשורת כמו WhatsApp, טלגרם או ווידג'ט באתר.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">📱</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">ערוץ קלט</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">WhatsApp/Web</text>
-  </g>
-
-  <!-- Node 2: API Gateway -->
-  <g class="bp-node" transform="translate(240, 185)" data-title="נתב בקשות (API Gateway / Router)" data-desc="נתב מהיר מבוסס n8n או FastAPI המאזין ל-Webhooks, מפעיל לוגיקת סיווג בקשות ראשונית ומנתב את המידע.">
-    <rect width="90" height="80" rx="14" fill="url(#grad-purple)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#glow-purple)" />
-    <text x="45" y="32" text-anchor="middle" font-size="22">⚙️</text>
-    <text x="45" y="55" text-anchor="middle" class="bp-text-title">נתב בקשות</text>
-    <text x="45" y="68" text-anchor="middle" class="bp-text-sub">n8n Orchestration</text>
-  </g>
-
-  <!-- Node 3: Memory Manager -->
-  <g class="bp-node" transform="translate(400, 70)" data-title="ניהול זיכרון (Vector DB & Memory)" data-desc="שמירת היסטוריית שיחות של הלקוח וחיפוש סמנטי (Vector Embeddings) כדי לשלוף מידע מותאם אישית רלוונטי לשיחה הנוכחית.">
-    <rect width="120" height="80" rx="14" fill="url(#grad-green)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="60" y="32" text-anchor="middle" font-size="22">💾</text>
-    <text x="60" y="55" text-anchor="middle" class="bp-text-title">זיכרון ונתונים</text>
-    <text x="60" y="68" text-anchor="middle" class="bp-text-sub">Supabase Vector</text>
-  </g>
-
-  <!-- Node 4: LLM Cognitive Engine -->
-  <g class="bp-node" transform="translate(450, 185)" data-title="מנוע קוגניטיבי (LLM Engine)" data-desc="קבלת החלטות מבוססת Claude 3.5 Sonnet. ה-AI מנתח את ההודעה, מבין את כוונת המשתמש, ומחליט איזה כלי להפעיל כדי להשיב.">
-    <rect width="90" height="80" rx="14" fill="url(#grad-purple)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#glow-purple)" />
-    <text x="45" y="32" text-anchor="middle" font-size="22">🧠</text>
-    <text x="45" y="55" text-anchor="middle" class="bp-text-title">מנוע AI</text>
-    <text x="45" y="68" text-anchor="middle" class="bp-text-sub">Claude 3.5 Sonnet</text>
-  </g>
-
-  <!-- Node 5: Tool Execution Hub -->
-  <g class="bp-node" transform="translate(280, 300)" data-title="הפעלת כלים (Tool Execution)" data-desc="ביצוע פעולות מעשיות. ה-AI יכול לתזמן פגישות ביומן Google, לבצע שאילתות ב-CRM הארגוני, לשלוח מייל או לחפש באינטרנט בזמן אמת.">
-    <rect width="120" height="80" rx="14" fill="url(#grad-amber)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="60" y="32" text-anchor="middle" font-size="22">🛠️</text>
-    <text x="60" y="55" text-anchor="middle" class="bp-text-title">ביצוע משימות</text>
-    <text x="60" y="68" text-anchor="middle" class="bp-text-sub">Google Calendar/CRM</text>
-  </g>
-
-  <!-- Node 6: Output / Response -->
-  <g class="bp-node" transform="translate(680, 185)" data-title="תשובה ללקוח (Output Response)" data-desc="שליחת תשובה מנוסחת היטב בשפה הטבעית של הלקוח ישירות לערוץ ממנו הגיעה הבקשה, תוך פחות מ-2 שניות.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">✉️</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">תשובה סופית</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">נשלח למשתמש</text>
-  </g>
+  if (type === 'orchestrator') {
+    svg = `<svg viewBox="0 0 760 430" width="100%" height="100%" style="background:transparent;font-family:'Space Grotesk',sans-serif;">
+${SHARED_DEFS}
+<path d="M 373 163 L 373 103" stroke="#7c6af7" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 453 203 L 548 203" stroke="#7c6af7" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 373 253 L 373 323" stroke="#7c6af7" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 293 203 L 208 203" stroke="#7c6af7" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 368 98 L 368 168" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" fill="none" stroke-dasharray="4 7" class="fl"/>
+<path d="M 543 198 L 458 198" stroke="rgba(255,255,255,0.18)" stroke-width="1.5" fill="none" stroke-dasharray="4 7" class="fl"/>
+<text x="380" y="422" text-anchor="middle" fill="#475569" font-size="10.5" font-family="'Space Grotesk',sans-serif">ארכיטקטורת Orchestrator — סוכן מרכזי מנהל ומתאם בין הסוכנים המתמחים</text>
+<g class="bp-node" transform="translate(293,163)" data-title="מנצח מרכזי — Orchestrator (n8n + Claude API)" data-desc="הסוכן המרכזי מקבל את יעד המשימה, מפרק אותו לתת-משימות, ומחלק כל משימה לסוכן המתמחה המתאים. לאחר שכל הסוכנים מסיימים — אוסף את התוצאות לפלט מאוחד ושולח ללקוח.">
+  <rect width="160" height="90" rx="14" fill="url(#gp)" stroke="rgba(255,255,255,0.2)" stroke-width="2"/>
+  <text x="80" y="33" text-anchor="middle" font-size="22">🧠</text>
+  <text x="80" y="57" text-anchor="middle" class="nt">Orchestrator</text>
+  <text x="80" y="73" text-anchor="middle" class="ns">n8n + Claude API</text>
+</g>
+<g class="bp-node" transform="translate(293,25)" data-title="סוכן שליפת לידים — Apify + LinkedIn API" data-desc="מחפש ברשת (LinkedIn Sales Navigator, Google Maps, מאגרים עסקיים) ומוצא חברות ואנשי קשר לפי פרמטרים: תחום, גודל חברה, מיקום. מחזיר רשימה מפורטת בחזרה למנצח.">
+  <rect width="160" height="78" rx="13" fill="url(#gb)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="80" y="28" text-anchor="middle" font-size="20">🕵️</text>
+  <text x="80" y="52" text-anchor="middle" class="nt">שליפת לידים</text>
+  <text x="80" y="67" text-anchor="middle" class="ns">Apify / LinkedIn API</text>
+</g>
+<g class="bp-node" transform="translate(548,160)" data-title="סוכן כשירות לידים — LLM Qualifier (Claude)" data-desc="מנתח כל ליד שהתקבל: האם הוא מתאים לפרופיל הלקוח האידיאלי (ICP)? בודק תפקיד, גודל חברה ומחלקה. מחזיר ציון כשירות 0–100 — רק לידים מעל 65 מועברים הלאה.">
+  <rect width="160" height="90" rx="14" fill="url(#gg)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="80" y="33" text-anchor="middle" font-size="20">🎯</text>
+  <text x="80" y="57" text-anchor="middle" class="nt">כשירות ליד</text>
+  <text x="80" y="73" text-anchor="middle" class="ns">Claude API + DB</text>
+</g>
+<g class="bp-node" transform="translate(293,323)" data-title="סוכן CRM — Data Writer (HubSpot / Airtable)" data-desc="שומר כל ליד, סטטוס הפנייה, תשובת הלקוח ורמת העניין ישירות ב-CRM הארגוני. מוסיף תיוגים אוטומטיים ויוצר תזכורת מעקב לנציג המכירות.">
+  <rect width="160" height="78" rx="13" fill="url(#ga)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="80" y="28" text-anchor="middle" font-size="20">💾</text>
+  <text x="80" y="52" text-anchor="middle" class="nt">עדכון CRM</text>
+  <text x="80" y="67" text-anchor="middle" class="ns">HubSpot / Airtable</text>
+</g>
+<g class="bp-node" transform="translate(48,160)" data-title="סוכן ניסוח — Outreach Writer (GPT-4o / Claude)" data-desc="כותב הודעת פנייה מותאמת אישית לכל ליד. מתייחס לתפקיד, לשם החברה ולכאב הספציפי שזוהה בשלב הכשירות. כל הודעה נשמעת אנושית וייחודית.">
+  <rect width="160" height="90" rx="14" fill="url(#go)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="80" y="33" text-anchor="middle" font-size="20">✍️</text>
+  <text x="80" y="57" text-anchor="middle" class="nt">ניסוח פנייה</text>
+  <text x="80" y="73" text-anchor="middle" class="ns">Claude / GPT-4o</text>
+</g>
 </svg>`;
-  } else if (type === 'idp') {
-    svgContent = `<svg viewBox="0 0 800 450" width="100%" height="100%" style="background:transparent; font-family:'Space Grotesk', sans-serif;">
-  <defs>
-    <linearGradient id="grad-purple" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c6af7" />
-      <stop offset="100%" stop-color="#4f46e5" />
-    </linearGradient>
-    <linearGradient id="grad-green" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#10b981" />
-      <stop offset="100%" stop-color="#059669" />
-    </linearGradient>
-    <linearGradient id="grad-amber" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#d97706" />
-    </linearGradient>
-    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#1d4ed8" />
-    </linearGradient>
-    <filter id="glow-green" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-    <filter id="glow-amber" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
-
-  <style>
-    .bp-node { cursor: pointer; transition: transform 0.2s ease; }
-    .bp-node:hover { transform: scale(1.03) translate(-3px, -3px); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5)); }
-    .glow-path { stroke-dasharray: 8, 8; animation: flow 25s linear infinite; }
-    @keyframes flow { to { stroke-dashoffset: -500; } }
-    .bp-text-title { fill: #f9fafb; font-weight: 700; font-size: 13px; }
-    .bp-text-sub { fill: #9ca3af; font-size: 9.5px; }
-  </style>
-
-  <!-- Connection Lines -->
-  <path d="M 120 225 L 220 225" stroke="#f59e0b" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-amber)" />
-  <path d="M 320 225 L 420 225" stroke="#7c6af7" stroke-width="2.5" fill="none" class="glow-path" />
-  <path d="M 520 225 L 620 225" stroke="#10b981" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-green)" />
-  <path d="M 670 200 L 670 110 L 520 110" stroke="#10b981" stroke-width="2" fill="none" class="glow-path" />
-  <path d="M 670 250 L 670 340 L 520 340" stroke="#3b82f6" stroke-width="2" fill="none" class="glow-path" />
-
-  <!-- Node 1: File Input -->
-  <g class="bp-node" transform="translate(20, 185)" data-title="מקור המסמך (Document Source)" data-desc="הזרמת מסמכים (חשבוניות, חוזים) באמצעות העלאת קבצים ישירה, סריקה מהנייד, או שליפה אוטומטית מתיבת אימייל ייעודית.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-amber)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">📤</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">קבלת קובץ</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">PDF / Scan / Email</text>
-  </g>
-
-  <!-- Node 2: OCR Engine -->
-  <g class="bp-node" transform="translate(220, 185)" data-title="מנוע ה-OCR (Optical Character Recognition)" data-desc="סריקת קבצי התמונה או ה-PDF וחילוץ שכבת הטקסט הגולמית ומיקומי אלמנטים על גבי הדף בדיוק מקסימלי.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-amber)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#glow-amber)" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">🔍</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">מנוע OCR</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Google Vision API</text>
-  </g>
-
-  <!-- Node 3: LLM Parsing Engine -->
-  <g class="bp-node" transform="translate(420, 185)" data-title="מחלץ LLM סמנטי (Semantic Parser)" data-desc="ה-AI מנתח את הטקסט הגולמי ומבין את משמעותו: זיהוי סכומים, מספרי עוסק מורשה, פירוט פריטים ותאריכי תשלום ללא תבנית קבועה מראש (Template-Free).">
-    <rect width="100" height="80" rx="14" fill="url(#grad-purple)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">🧠</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">חילוץ LLM</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Claude 3.5 Sonnet</text>
-  </g>
-
-  <!-- Node 4: Validation & Normalization -->
-  <g class="bp-node" transform="translate(620, 185)" data-title="בקרת איכות ואימות נתונים (Data Validator)" data-desc="קוד Python שמבצע בדיקות לוגיות: השוואה בין סכום הפריטים לסה&quot;כ, אימות מול מאגרי רשם החברות, מניעת כפילויות, ונרמול הפורמטים.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-green)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#glow-green)" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">🛠️</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">אימות נתונים</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Python Validation</text>
-  </g>
-
-  <!-- Node 5: Database / ERP Sync -->
-  <g class="bp-node" transform="translate(400, 70)" data-title="סינכרון ERP ומאגר נתונים (Supabase Database)" data-desc="רישום מסודר של כל נתוני החשבונית במערכות הפיננסיות של הארגון או במסד נתונים מאובטח לצורך הפקת דוחות וחיפושים עתידיים.">
-    <rect width="120" height="80" rx="14" fill="url(#grad-green)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="60" y="32" text-anchor="middle" font-size="22">💾</text>
-    <text x="60" y="55" text-anchor="middle" class="bp-text-title">רישום למסד נתונים</text>
-    <text x="60" y="68" text-anchor="middle" class="bp-text-sub">Supabase SQL / CRM</text>
-  </g>
-
-  <!-- Node 6: Cloud Archiving -->
-  <g class="bp-node" transform="translate(400, 300)" data-title="תיוק דיגיטלי חכם (Google Drive Storage)" data-desc="שינוי שם הקובץ אוטומטית לפורמט סטנדרטי (למשל: [תאריך]-[ספק]-[סכום]) ותיוק אוטומטי בתיקיות מסודרות לפי נושא, שנה וחודש.">
-    <rect width="120" height="80" rx="14" fill="url(#grad-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="60" y="32" text-anchor="middle" font-size="22">📁</text>
-    <text x="60" y="55" text-anchor="middle" class="bp-text-title">ארכוב בענן</text>
-    <text x="60" y="68" text-anchor="middle" class="bp-text-sub">Google Drive API</text>
-  </g>
+  } else if (type === 'pipeline') {
+    svg = `<svg viewBox="0 0 790 310" width="100%" height="100%" style="background:transparent;font-family:'Space Grotesk',sans-serif;">
+${SHARED_DEFS}
+<path d="M 120 135 L 150 135" stroke="#f59e0b" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 250 135 L 280 135" stroke="#f59e0b" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 380 135 L 410 135" stroke="#7c6af7" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 510 135 L 540 135" stroke="#10b981" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 640 135 L 668 135" stroke="#3b82f6" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<text x="70" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 1</text>
+<text x="200" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 2</text>
+<text x="330" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 3</text>
+<text x="460" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 4</text>
+<text x="590" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 5</text>
+<text x="720" y="225" text-anchor="middle" fill="#475569" font-size="10" font-family="'Space Grotesk',sans-serif">שלב 6</text>
+<text x="395" y="300" text-anchor="middle" fill="#475569" font-size="10.5" font-family="'Space Grotesk',sans-serif">ארכיטקטורת Pipeline — כל שלב מעביר את פלטו ישירות לשלב הבא. אין קפיצות, אין מעקפים.</text>
+<g class="bp-node" transform="translate(20,95)" data-title="קבלת מסמך (Document Input)" data-desc="קבלת מסמכים (חשבוניות, חוזים, טפסים) ממספר מקורות: העלאה ידנית, סריקה מהנייד, או שליפה אוטומטית מתיבת אימייל ייעודית ב-Gmail / Outlook — 24/7, ללא מגע אנושי.">
+  <rect width="100" height="80" rx="13" fill="url(#ga)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="50" y="28" text-anchor="middle" font-size="19">📤</text>
+  <text x="50" y="52" text-anchor="middle" class="nt">קבלת מסמך</text>
+  <text x="50" y="67" text-anchor="middle" class="ns">PDF / Scan / Mail</text>
+</g>
+<g class="bp-node" transform="translate(150,95)" data-title="מנוע OCR — Optical Character Recognition (Google Vision API)" data-desc="מנוע ראייה ממוחשבת שסורק את הדף ומוציא ממנו שכבת טקסט גולמית כולל מיקומי אלמנטים, טבלאות ומספרים — גם מסריקות באיכות נמוכה. מדויקות 98%+.">
+  <rect width="100" height="80" rx="13" fill="url(#ga)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="50" y="28" text-anchor="middle" font-size="19">🔍</text>
+  <text x="50" y="52" text-anchor="middle" class="nt">מנוע OCR</text>
+  <text x="50" y="67" text-anchor="middle" class="ns">Google Vision</text>
+</g>
+<g class="bp-node" transform="translate(280,95)" data-title="חילוץ סמנטי — LLM Parser (Claude Sonnet)" data-desc="מודל שפה קורא את הטקסט הגולמי ומבין את משמעותו ללא תבניות קבועות: שם ספק, סכום לתשלום, מספר חשבונית, תאריך פירעון, פירוט פריטים. עובד גם עם פורמטים שמעולם לא ראה.">
+  <rect width="100" height="80" rx="13" fill="url(#gp)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="50" y="28" text-anchor="middle" font-size="19">🧠</text>
+  <text x="50" y="52" text-anchor="middle" class="nt">חילוץ LLM</text>
+  <text x="50" y="67" text-anchor="middle" class="ns">Claude Sonnet</text>
+</g>
+<g class="bp-node" transform="translate(410,95)" data-title="בקרת איכות ואימות (Data Validator — Python)" data-desc="קוד Python שמבצע בדיקות לוגיות: האם סכום הפריטים תואם לסה&quot;כ? האם מספר עוסק תקין? מניעת כפילויות. אם נמצאה שגיאה — מחזיר לשלב הקודם לתיקון אוטומטי.">
+  <rect width="100" height="80" rx="13" fill="url(#gg)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="50" y="28" text-anchor="middle" font-size="19">🛡️</text>
+  <text x="50" y="52" text-anchor="middle" class="nt">בקרת QA</text>
+  <text x="50" y="67" text-anchor="middle" class="ns">Python Validator</text>
+</g>
+<g class="bp-node" transform="translate(540,95)" data-title="שמירה במסד נתונים (Database Write — Supabase SQL)" data-desc="רישום מסודר של כל שדות החשבונית בטבלת SQL עם ID ייחודי, status, created_at, last_updated_by. נגיש לחיפוש מיידי ולדוחות BI בזמן אמת.">
+  <rect width="100" height="80" rx="13" fill="url(#gb)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="50" y="28" text-anchor="middle" font-size="19">💾</text>
+  <text x="50" y="52" text-anchor="middle" class="nt">שמירה ב-DB</text>
+  <text x="50" y="67" text-anchor="middle" class="ns">Supabase SQL</text>
+</g>
+<g class="bp-node" transform="translate(668,95)" data-title="תיוק דיגיטלי חכם (Cloud Archive — Google Drive API)" data-desc="שינוי שם הקובץ לפורמט סטנדרטי ([תאריך]-[ספק]-[סכום].pdf) ותיוק בתיקיות מסודרות לפי שנה, חודש וספק. נגיש ומאורגן אוטומטית — גם בעוד 5 שנים.">
+  <rect width="102" height="80" rx="13" fill="url(#gt)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="51" y="28" text-anchor="middle" font-size="19">📁</text>
+  <text x="51" y="52" text-anchor="middle" class="nt">תיוק בענן</text>
+  <text x="51" y="67" text-anchor="middle" class="ns">Google Drive API</text>
+</g>
 </svg>`;
-  } else if (type === 'security') {
-    svgContent = `<svg viewBox="0 0 800 450" width="100%" height="100%" style="background:transparent; font-family:'Space Grotesk', sans-serif;">
-  <defs>
-    <linearGradient id="grad-purple" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#7c6af7" />
-      <stop offset="100%" stop-color="#4f46e5" />
-    </linearGradient>
-    <linearGradient id="grad-red" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#ef4444" />
-      <stop offset="100%" stop-color="#b91c1c" />
-    </linearGradient>
-    <linearGradient id="grad-amber" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#f59e0b" />
-      <stop offset="100%" stop-color="#d97706" />
-    </linearGradient>
-    <linearGradient id="grad-blue" x1="0%" y1="0%" x2="100%" y2="100%">
-      <stop offset="0%" stop-color="#3b82f6" />
-      <stop offset="100%" stop-color="#1d4ed8" />
-    </linearGradient>
-    <filter id="glow-red" x="-20%" y="-20%" width="140%" height="140%">
-      <feGaussianBlur stdDeviation="6" result="blur" />
-      <feComposite in="SourceGraphic" in2="blur" operator="over" />
-    </filter>
-  </defs>
-
-  <style>
-    .bp-node { cursor: pointer; transition: transform 0.2s ease; }
-    .bp-node:hover { transform: scale(1.03) translate(-3px, -3px); filter: drop-shadow(0 8px 16px rgba(0,0,0,0.5)); }
-    .glow-path { stroke-dasharray: 8, 8; animation: flow 25s linear infinite; }
-    @keyframes flow { to { stroke-dashoffset: -500; } }
-    .bp-text-title { fill: #f9fafb; font-weight: 700; font-size: 13px; }
-    .bp-text-sub { fill: #9ca3af; font-size: 9.5px; }
-  </style>
-
-  <!-- Connection Lines -->
-  <path d="M 120 225 L 220 225" stroke="#3b82f6" stroke-width="2.5" fill="none" class="glow-path" />
-  <path d="M 320 225 L 420 225" stroke="#ef4444" stroke-width="2.5" fill="none" class="glow-path" filter="url(#glow-red)" />
-  <path d="M 520 225 L 620 225" stroke="#7c6af7" stroke-width="2.5" fill="none" class="glow-path" />
-  <path d="M 470 200 L 470 110 L 620 110" stroke="#f59e0b" stroke-width="2" fill="none" class="glow-path" />
-  <path d="M 670 200 L 670 150 M 670 110 L 670 110" stroke="#f59e0b" stroke-width="2" fill="none" />
-  <path d="M 670 250 L 670 150" stroke="#f59e0b" stroke-width="2" fill="none" />
-
-  <!-- Node 1: Target Files -->
-  <g class="bp-node" transform="translate(20, 185)" data-title="סריקת קבצי קלט (Workspace Input)" data-desc="קריאה של קוד הפרויקט, קבצי ההגדרות (package.json, lockfiles, requirements.txt) וקובצי תצורה של סוכנים ו-MCP.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">📂</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">סריקת פרויקט</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Local Code / Git Repo</text>
-  </g>
-
-  <!-- Node 2: Config Parser -->
-  <g class="bp-node" transform="translate(220, 185)" data-title="מנתח תצורות ותלויות (Dependency Parser)" data-desc="ניתוח עץ התלויות של הפרויקט, חיבורי רשת ורישום ה-Registry כדי לגלות שינויים חשודים או חבילות פגיעות.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-blue)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">📦</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">מנתח תלויות</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Manifests Parser</text>
-  </g>
-
-  <!-- Node 3: Static Security Scanner -->
-  <g class="bp-node" transform="translate(420, 185)" data-title="סורק אבטחה סטטי (Vulnerability Scanner)" data-desc="הצלבת תלויות וקוד מול מאגרי איומי סייבר ידועים וחוקי אבטחה ארגוניים לזיהוי קריאות רשת חשודות או דלף מפתחות.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-red)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" filter="url(#glow-red)" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">🛡️</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">סורק חולשות</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Rules Matching Engine</text>
-  </g>
-
-  <!-- Node 4: Prompt Injection Analyzer -->
-  <g class="bp-node" transform="translate(620, 185)" data-title="מנתח הזרקות פרומפטים (Prompt Injection Analyzer)" data-desc="סריקה מעמיקה מבוססת מודל שפה של הגדרות הסוכן ופרומפטים כדי לזהות הנחיות זדוניות שיגרמו ל-AI לפעול נגד הכללים.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-purple)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">🧠</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">מנתח פרומפטים</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">AI Prompt Guard</text>
-  </g>
-
-  <!-- Node 5: Report Generator -->
-  <g class="bp-node" transform="translate(620, 70)" data-title="דוח אבטחה מפורט (Security Report)" data-desc="יצירה מיידית של דוח סריקה מלא המפרט את כל האיומים שנמצאו, רמת הסיכון של כל אחד, והוראות לתיקון מהיר של הפרצות.">
-    <rect width="100" height="80" rx="14" fill="url(#grad-amber)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5" />
-    <text x="50" y="32" text-anchor="middle" font-size="22">📄</text>
-    <text x="50" y="55" text-anchor="middle" class="bp-text-title">הפקת דוח</text>
-    <text x="50" y="68" text-anchor="middle" class="bp-text-sub">Report PDF / JSON</text>
-  </g>
+  } else if (type === 'hierarchical') {
+    svg = `<svg viewBox="0 0 760 400" width="100%" height="100%" style="background:transparent;font-family:'Space Grotesk',sans-serif;">
+${SHARED_DEFS}
+<path d="M 375 95 L 185 148" stroke="#f59e0b" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 375 95 L 568 148" stroke="#f59e0b" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 180 148 L 372 98" stroke="rgba(255,255,255,0.14)" stroke-width="1.2" fill="none" stroke-dasharray="3 7" class="fl"/>
+<path d="M 572 148 L 378 98" stroke="rgba(255,255,255,0.14)" stroke-width="1.2" fill="none" stroke-dasharray="3 7" class="fl"/>
+<path d="M 185 230 L 80 292" stroke="rgba(245,158,11,0.6)" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 185 230 L 218 292" stroke="rgba(245,158,11,0.6)" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 568 230 L 487 292" stroke="rgba(245,158,11,0.6)" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 568 230 L 640 292" stroke="rgba(245,158,11,0.6)" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<text x="380" y="393" text-anchor="middle" fill="#475569" font-size="10.5" font-family="'Space Grotesk',sans-serif">ארכיטקטורת Hierarchical — ניהול מרובד עם אחריות מוגדרת לכל דרג. כל דרג פועל רק בתחום הרשאותיו.</text>
+<g class="bp-node" transform="translate(297,22)" data-title="סוכן אסטרטגיה (CEO Agent)" data-desc="הסוכן הבכיר ביותר. מקבל את יעד הארגון, מפרק אותו לתוכניות עבודה מחלקתיות ומנחה את מנהלי הביניים. לא מבצע פעולות בעצמו — רק מקבל דוחות ומחליט על שינויי כיוון.">
+  <rect width="156" height="80" rx="14" fill="url(#ga)" stroke="rgba(255,255,255,0.18)" stroke-width="2"/>
+  <text x="78" y="28" text-anchor="middle" font-size="20">👑</text>
+  <text x="78" y="54" text-anchor="middle" class="nt">מנהל אסטרטגיה</text>
+  <text x="78" y="70" text-anchor="middle" class="ns">CEO Agent</text>
+</g>
+<g class="bp-node" transform="translate(110,148)" data-title="מנהל תפעול (Ops Manager Agent)" data-desc="אחראי על תהליכי העבודה השוטפים: איסוף נתונים, תיאום בין מחלקות ומעקב אחר SLAs. מקבל הנחיות מהמנהל הבכיר, מחלק משימות לסוכני הקצה שתחתיו ומדווח על התקדמות.">
+  <rect width="150" height="82" rx="13" fill="url(#go)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="75" y="28" text-anchor="middle" font-size="20">⚙️</text>
+  <text x="75" y="53" text-anchor="middle" class="nt">מנהל תפעול</text>
+  <text x="75" y="69" text-anchor="middle" class="ns">Ops Manager Agent</text>
+</g>
+<g class="bp-node" transform="translate(494,148)" data-title="מנהל פיננסים (Finance Manager Agent)" data-desc="אחראי על כל הזרימות הפיננסיות: בקרת חשבוניות, אישורי תשלום והפקת דוחות. עובד רק על נתוני חשבונות בלבד — עיקרון Zero Trust מונע גישה לנתונים מחוץ לתחום אחריותו.">
+  <rect width="150" height="82" rx="13" fill="url(#gp)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="75" y="28" text-anchor="middle" font-size="20">📊</text>
+  <text x="75" y="53" text-anchor="middle" class="nt">מנהל פיננסים</text>
+  <text x="75" y="69" text-anchor="middle" class="ns">Finance Agent</text>
+</g>
+<g class="bp-node" transform="translate(20,292)" data-title="סוכן איסוף נתונים (Data Collector Worker)" data-desc="מבצע שליפות ממקורות חיצוניים: APIs, סריקת רשת, קריאת קבצים. מחזיר נתונים גולמיים למנהל התפעול בלבד — ללא גישה ישירה לשאר המערכת. מינימום הרשאות.">
+  <rect width="120" height="72" rx="12" fill="url(#gb)" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <text x="60" y="26" text-anchor="middle" font-size="18">🔍</text>
+  <text x="60" y="48" text-anchor="middle" class="nt" style="font-size:12px;">איסוף נתונים</text>
+  <text x="60" y="63" text-anchor="middle" class="ns">Scraper Worker</text>
+</g>
+<g class="bp-node" transform="translate(155,292)" data-title="סוכן תקשורת (Email / Notification Agent)" data-desc="שולח הודעות, דוחות ועדכונים לגורמים הרלוונטיים לפי הנחיות מנהל התפעול. אחראי על ניסוח, תזמון ומעקב אחר מיילים שנשלחו (opens, clicks, bounces).">
+  <rect width="120" height="72" rx="12" fill="url(#gt)" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <text x="60" y="26" text-anchor="middle" font-size="18">📧</text>
+  <text x="60" y="48" text-anchor="middle" class="nt" style="font-size:12px;">שליחת מיילים</text>
+  <text x="60" y="63" text-anchor="middle" class="ns">Email Agent</text>
+</g>
+<g class="bp-node" transform="translate(427,292)" data-title="סוכן אישור תשלומים (Payment Verifier Agent)" data-desc="מאמת חשבוניות מול הסכמים קיימים ומאשר תשלום עד לגבול הרשאתו. תשלומים מעל הסף עוברים לאישור ידני של מנהל פיננסים — ה-AI לא מבצע העברות כספיות מעצמו.">
+  <rect width="120" height="72" rx="12" fill="url(#gg)" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <text x="60" y="26" text-anchor="middle" font-size="18">✅</text>
+  <text x="60" y="48" text-anchor="middle" class="nt" style="font-size:12px;">אישור תשלומים</text>
+  <text x="60" y="63" text-anchor="middle" class="ns">Payment Verifier</text>
+</g>
+<g class="bp-node" transform="translate(562,292)" data-title="סוכן הפקת דוחות (Report Generator Agent)" data-desc="מייצר דוחות BI ודוחות ביצועים אוטומטיים בסוף כל יום/שבוע. מסנתז נתונים ממקורות מרובים ושולח ל-Slack / אימייל בפורמט ויזואלי ברור, כולל גרפים ומגמות.">
+  <rect width="120" height="72" rx="12" fill="url(#gr)" stroke="rgba(255,255,255,0.10)" stroke-width="1.5"/>
+  <text x="60" y="26" text-anchor="middle" font-size="18">📄</text>
+  <text x="60" y="48" text-anchor="middle" class="nt" style="font-size:12px;">הפקת דוחות</text>
+  <text x="60" y="63" text-anchor="middle" class="ns">Report Generator</text>
+</g>
+</svg>`;
+  } else if (type === 'router') {
+    svg = `<svg viewBox="0 0 760 400" width="100%" height="100%" style="background:transparent;font-family:'Space Grotesk',sans-serif;">
+${SHARED_DEFS}
+<path d="M 130 195 L 198 195" stroke="#f97316" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 298 168 L 398 80" stroke="#f97316" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 310 195 L 398 195" stroke="#f97316" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 298 222 L 398 310" stroke="#f97316" stroke-width="2" fill="none" class="fl" marker-end="url(#ah)"/>
+<path d="M 538 80 L 610 80" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+<path d="M 538 195 L 610 195" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+<path d="M 538 310 L 610 310" stroke="rgba(255,255,255,0.25)" stroke-width="2" fill="none" marker-end="url(#ah)"/>
+<text x="380" y="393" text-anchor="middle" fill="#475569" font-size="10.5" font-family="'Space Grotesk',sans-serif">ארכיטקטורת Router — נתב AI מזהה כוונה בשיחה ומפנה לסוכן המתמחה המדויק בלא התערבות ידנית</text>
+<g class="bp-node" transform="translate(20,155)" data-title="הודעה נכנסת (User Message — WhatsApp / Web Chat)" data-desc="הלקוח שולח הודעה חופשית בכל נושא: תלונה, שאלה על מוצר, בקשת מידע, בעיית תשלום. המערכת לא מחייבת מבנה קבוע — הלקוח מדבר בשפה טבעית ומקבל מענה תוך שניות.">
+  <rect width="110" height="80" rx="13" fill="url(#gb)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="55" y="28" text-anchor="middle" font-size="20">💬</text>
+  <text x="55" y="52" text-anchor="middle" class="nt">הודעה נכנסת</text>
+  <text x="55" y="67" text-anchor="middle" class="ns">WhatsApp / Web</text>
+</g>
+<g class="bp-node" transform="translate(198,152)" data-title="נתב בינה מלאכותית (AI Router / Intent Classifier)" data-desc="מנוע LLM שמנתח את כוונת המשתמש תוך פחות מ-300ms ומחליט לאיזה סוכן להפנות. פלט לדוגמה: intent=sales, confidence=0.94. בביטחון נמוך מ-70% — מעביר לנציג אנושי.">
+  <polygon points="56,0 112,43 56,86 0,43" fill="url(#go)" stroke="rgba(255,255,255,0.18)" stroke-width="1.5"/>
+  <text x="56" y="32" text-anchor="middle" font-size="18">🔀</text>
+  <text x="56" y="54" text-anchor="middle" class="nt" style="font-size:12px;">נתב AI</text>
+  <text x="56" y="69" text-anchor="middle" class="ns">Intent Classifier</text>
+</g>
+<g class="bp-node" transform="translate(398,42)" data-title="סוכן מכירות (Sales Specialist Agent)" data-desc="מתמחה בשאלות על מחירים, חבילות, הנחות וסגירת עסקאות. מחובר לקטלוג המוצרים ולמחירון הדינמי. יכול ליזום הצעת מחיר ולשלוח PDF ישירות ללקוח תוך 20 שניות.">
+  <rect width="140" height="78" rx="13" fill="url(#gg)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="70" y="27" text-anchor="middle" font-size="19">💰</text>
+  <text x="70" y="50" text-anchor="middle" class="nt">סוכן מכירות</text>
+  <text x="70" y="66" text-anchor="middle" class="ns">Sales Specialist</text>
+</g>
+<g class="bp-node" transform="translate(398,155)" data-title="סוכן תמיכה טכנית (Support Specialist Agent)" data-desc="מתמחה בפתרון בעיות ושאלות טכניות. מחובר ל-Knowledge Base עם אלפי מאמרים ו-FAQ. אם אינו מוצא פתרון בביטחון מספיק — מעביר לנציג אנושי עם סיכום מלא של השיחה.">
+  <rect width="140" height="80" rx="13" fill="url(#gp)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="70" y="28" text-anchor="middle" font-size="19">🛠️</text>
+  <text x="70" y="53" text-anchor="middle" class="nt">סוכן תמיכה</text>
+  <text x="70" y="69" text-anchor="middle" class="ns">Tech Support</text>
+</g>
+<g class="bp-node" transform="translate(398,271)" data-title="סוכן חיובים (Billing Specialist Agent)" data-desc="מתמחה בבעיות תשלום, החזרים וחשבוניות. גישה מוגבלת לנתוני החיוב של הלקוח הספציפי בלבד (Zero Trust). יכול לאשר זיכוי עד $50 ולשלוח חשבונית מתוקנת אוטומטית.">
+  <rect width="140" height="78" rx="13" fill="url(#gr)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="70" y="27" text-anchor="middle" font-size="19">💳</text>
+  <text x="70" y="50" text-anchor="middle" class="nt">סוכן חיובים</text>
+  <text x="70" y="66" text-anchor="middle" class="ns">Billing Specialist</text>
+</g>
+<g transform="translate(610,42)">
+  <rect width="118" height="78" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="59" y="28" text-anchor="middle" fill="#94a3b8" font-size="18">✅</text>
+  <text x="59" y="50" text-anchor="middle" fill="#94a3b8" font-size="11.5" font-family="'Space Grotesk',sans-serif">הצעת מחיר</text>
+  <text x="59" y="66" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="'Space Grotesk',sans-serif">נשלח ב-20 שניות</text>
+</g>
+<g transform="translate(610,155)">
+  <rect width="118" height="80" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="59" y="29" text-anchor="middle" fill="#94a3b8" font-size="18">✅</text>
+  <text x="59" y="53" text-anchor="middle" fill="#94a3b8" font-size="11.5" font-family="'Space Grotesk',sans-serif">מאמר / פתרון</text>
+  <text x="59" y="69" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="'Space Grotesk',sans-serif">מ-KB הארגוני</text>
+</g>
+<g transform="translate(610,271)">
+  <rect width="118" height="78" rx="12" fill="rgba(255,255,255,0.04)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="59" y="28" text-anchor="middle" fill="#94a3b8" font-size="18">✅</text>
+  <text x="59" y="50" text-anchor="middle" fill="#94a3b8" font-size="11.5" font-family="'Space Grotesk',sans-serif">זיכוי / חשבונית</text>
+  <text x="59" y="66" text-anchor="middle" fill="#64748b" font-size="9.5" font-family="'Space Grotesk',sans-serif">אוטומטי עד $50</text>
+</g>
+</svg>`;
+  } else if (type === 'network') {
+    svg = `<svg viewBox="0 0 760 430" width="100%" height="100%" style="background:transparent;font-family:'Space Grotesk',sans-serif;">
+${SHARED_DEFS}
+<path d="M 195 78 L 325 178" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="7 6" class="fl"/>
+<path d="M 375 100 L 375 168" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="7 6" class="fl"/>
+<path d="M 560 78 L 430 178" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="7 6" class="fl"/>
+<path d="M 330 238 L 220 288" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="7 6" class="fl"/>
+<path d="M 420 238 L 530 288" stroke="#ec4899" stroke-width="2" fill="none" stroke-dasharray="7 6" class="fl"/>
+<path d="M 375 248 L 375 305" stroke="#ec4899" stroke-width="2.5" fill="none" class="fl" marker-end="url(#ah)"/>
+<text x="380" y="422" text-anchor="middle" fill="#475569" font-size="10.5" font-family="'Space Grotesk',sans-serif">ארכיטקטורת Network — סוכנים עמיתים עובדים במקביל, כולם קוראים וכותבים ממקור אמת אחד משותף</text>
+<g class="bp-node" transform="translate(65,22)" data-title="מתרגם א׳ — Translator Agent A (פרקים 1–5)" data-desc="תרגום מקבילי של פרקים 1–5 מעברית לאנגלית. כותב כל פרק מוגמר ל-DB עם status=qa_ready. אינו מחכה למתרגמים האחרים — עובד בו-זמנית ועצמאית לחלוטין מהם.">
+  <rect width="130" height="72" rx="13" fill="url(#gk)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="65" y="26" text-anchor="middle" font-size="19">🇮🇱</text>
+  <text x="65" y="49" text-anchor="middle" class="nt">מתרגם א׳</text>
+  <text x="65" y="65" text-anchor="middle" class="ns">פרקים 1–5</text>
+</g>
+<g class="bp-node" transform="translate(310,14)" data-title="מתרגם ב׳ — Translator Agent B (פרקים 6–10)" data-desc="תרגום מקבילי של פרקים 6–10. בארכיטקטורה זו במקום 5 שעות תרגום סדרתי — כל שלושת המתרגמים מסיימים תוך שעה וחצי (חיסכון של 70% בזמן).">
+  <rect width="130" height="72" rx="13" fill="url(#gk)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="65" y="26" text-anchor="middle" font-size="19">📖</text>
+  <text x="65" y="49" text-anchor="middle" class="nt">מתרגם ב׳</text>
+  <text x="65" y="65" text-anchor="middle" class="ns">פרקים 6–10</text>
+</g>
+<g class="bp-node" transform="translate(560,22)" data-title="מתרגם ג׳ — Translator Agent C (פרקים 11–15)" data-desc="תרגום מקבילי של פרקים 11–15. כל מתרגם פועל על תת-קבוצה ללא תלות. ה-Shared DB מאפשר תיאום סמוי — כל סוכן רואה מה האחרים כתבו, מבלי לתקשר ישירות.">
+  <rect width="130" height="72" rx="13" fill="url(#gk)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="65" y="26" text-anchor="middle" font-size="19">🌐</text>
+  <text x="65" y="49" text-anchor="middle" class="nt">מתרגם ג׳</text>
+  <text x="65" y="65" text-anchor="middle" class="ns">פרקים 11–15</text>
+</g>
+<g class="bp-node" transform="translate(295,168)" data-title="מקור האמת המשותף — Shared DB (Single Source of Truth)" data-desc="כל הסוכנים כותבים וקוראים מאותה טבלה — לא מתקשרים ישירות זה עם זה. כל רשומה כוללת: מזהה פרק, status, תרגום נוכחי, הערות QA, ו-last_updated_by.">
+  <rect width="160" height="80" rx="14" fill="rgba(10,18,40,0.88)" stroke="#ec4899" stroke-width="2.2"/>
+  <text x="80" y="29" text-anchor="middle" font-size="20">🗄️</text>
+  <text x="80" y="53" text-anchor="middle" fill="#f1f5f9" font-weight="700" font-size="13" font-family="'Space Grotesk',sans-serif">Shared DB</text>
+  <text x="80" y="69" text-anchor="middle" fill="#94a3b8" font-size="9.5" font-family="'Space Grotesk',sans-serif">Single Source of Truth</text>
+</g>
+<g class="bp-node" transform="translate(80,288)" data-title="סוכן בקרת איכות (QA Agent — Grammar + Style Check)" data-desc="סוקר כל פרק שעבר לסטטוס qa_ready. בודק: דיוק תרגום, שמירה על קול הכותב המקורי, ניסוח טבעי באנגלית, עקביות מונחים. מחזיר status=approved או needs_fix עם הסבר ספציפי.">
+  <rect width="140" height="75" rx="13" fill="url(#gg)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="70" y="27" text-anchor="middle" font-size="19">✅</text>
+  <text x="70" y="50" text-anchor="middle" class="nt">בקרת QA</text>
+  <text x="70" y="66" text-anchor="middle" class="ns">Grammar + Style</text>
+</g>
+<g class="bp-node" transform="translate(540,288)" data-title="עורך סגנון (Style Harmonizer Agent)" data-desc="לאחר אישור QA, העורך קורא את כל הפרקים המאושרים ומאחד את הסגנון בין שלושת המתרגמים: עקביות במונחים, טון, פיסוק ומבנה משפטים — כאילו אדם אחד תירגם את כל הספר.">
+  <rect width="140" height="75" rx="13" fill="url(#gp)" stroke="rgba(255,255,255,0.12)" stroke-width="1.5"/>
+  <text x="70" y="27" text-anchor="middle" font-size="19">✍️</text>
+  <text x="70" y="50" text-anchor="middle" class="nt">עורך סגנון</text>
+  <text x="70" y="66" text-anchor="middle" class="ns">Style Harmonizer</text>
+</g>
+<g class="bp-node" transform="translate(295,305)" data-title="פלט סופי — ספר מתורגם מוכן לפרסום (EPUB / KDP)" data-desc="לאחר שכל הפרקים אושרו על ידי QA ועברו עריכת סגנון, מופק קובץ EPUB/PDF מוכן להגשה ל-Amazon KDP. הספר מתורגם בשבר הזמן של תרגום ידני — וחוסך 80% מעלות המתרגמים.">
+  <rect width="160" height="80" rx="14" fill="url(#gt)" stroke="rgba(255,255,255,0.15)" stroke-width="1.5"/>
+  <text x="80" y="29" text-anchor="middle" font-size="20">📚</text>
+  <text x="80" y="53" text-anchor="middle" fill="#f1f5f9" font-weight="700" font-size="13" font-family="'Space Grotesk',sans-serif">פלט סופי</text>
+  <text x="80" y="69" text-anchor="middle" fill="rgba(255,255,255,0.65)" font-size="9.5" font-family="'Space Grotesk',sans-serif">EPUB / KDP Ready</text>
+</g>
 </svg>`;
   }
-  
-  viewer.innerHTML = svgContent + `<div id="bp-tooltip" style="position: absolute; display: none; background: rgba(15, 23, 42, 0.95); backdrop-filter: blur(8px); border: 1px solid var(--bor2); color: white; padding: 12px 16px; border-radius: 12px; font-size: 13.5px; line-height: 1.5; pointer-events: none; z-index: 100; max-width: 280px; text-align: right; direction: rtl; box-shadow: 0 10px 25px rgba(0,0,0,0.5);"><strong id="bp-tooltip-title" style="color:var(--ac); display:block; margin-bottom:4px;"></strong><span id="bp-tooltip-desc"></span></div>`;
-  
+
+  viewer.innerHTML = svg + `<div id="bp-tooltip" style="position:absolute;display:none;background:rgba(10,18,40,0.96);backdrop-filter:blur(10px);border:1px solid var(--bor2);color:white;padding:14px 17px;border-radius:14px;font-size:13.5px;line-height:1.55;pointer-events:none;z-index:100;max-width:290px;text-align:right;direction:rtl;box-shadow:0 12px 30px rgba(0,0,0,0.55);"><strong id="bp-tooltip-title" style="color:var(--ac);display:block;margin-bottom:5px;font-size:13px;"></strong><span id="bp-tooltip-desc" style="color:#cbd5e1;"></span></div>`;
+
   initBlueprintEvents();
 }
 
 function initBlueprintEvents() {
   const nodes = document.querySelectorAll('.bp-node');
   const tooltip = document.getElementById('bp-tooltip');
+  if (!tooltip) return;
   const ttTitle = document.getElementById('bp-tooltip-title');
   const ttDesc = document.getElementById('bp-tooltip-desc');
-  if(!tooltip) return;
-  
+  let hideTimer = null;
+
   nodes.forEach(node => {
-    node.addEventListener('mouseenter', (e) => {
+    node.addEventListener('mouseenter', () => {
+      clearTimeout(hideTimer);
       const title = node.getAttribute('data-title');
       const desc = node.getAttribute('data-desc');
       if (title && desc) {
@@ -1490,20 +1501,22 @@ function initBlueprintEvents() {
         tooltip.style.display = 'block';
       }
     });
-    
+
     node.addEventListener('mousemove', (e) => {
       const viewer = document.getElementById('blueprint-viewer');
-      if(!viewer) return;
+      if (!viewer) return;
       const rect = viewer.getBoundingClientRect();
-      const x = e.clientX - rect.left + 15;
-      const y = e.clientY - rect.top + 15;
-      
-      tooltip.style.left = `${x}px`;
-      tooltip.style.top = `${y}px`;
+      let x = e.clientX - rect.left + 16;
+      let y = e.clientY - rect.top + 16;
+      const tw = 310, th = 160;
+      if (x + tw > rect.width - 8) x = e.clientX - rect.left - tw - 12;
+      if (y + th > rect.height - 8) y = e.clientY - rect.top - th - 8;
+      tooltip.style.left = Math.max(4, x) + 'px';
+      tooltip.style.top = Math.max(4, y) + 'px';
     });
-    
+
     node.addEventListener('mouseleave', () => {
-      tooltip.style.display = 'none';
+      hideTimer = setTimeout(() => { tooltip.style.display = 'none'; }, 90);
     });
   });
 }
