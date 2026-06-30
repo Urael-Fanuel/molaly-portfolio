@@ -1661,7 +1661,7 @@ async function sendArchMessage() {
     handleClaudeResponse(responseText);
   } catch (err) {
     if (loader) loader.remove();
-    addChatMessage('agent', '⚠️ שגיאה בחיבור לשרת. בדוק את החיבור לאינטרנט ונסה שוב.', false);
+    addChatMessage('agent', `⚠️ שגיאה: ${err.message || 'Unknown error'}`, false);
     console.error('Claude Worker error:', err);
   } finally {
     archIsLoading = false;
