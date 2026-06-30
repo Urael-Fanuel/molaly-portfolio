@@ -1547,6 +1547,57 @@ function handleHashRoute() {
 
 
 // ==========================================
+// ♿ ACCESSIBILITY WIDGET
+// ==========================================
+
+let a11yOpen = false;
+let a11yFontLvl = 0;
+const a11yActive = { contrast: false, links: false, anim: false };
+
+function toggleA11yPanel() {
+  a11yOpen = !a11yOpen;
+  const p = document.getElementById('a11y-panel');
+  if (p) p.style.display = a11yOpen ? 'block' : 'none';
+}
+
+function a11yFont(dir) {
+  if (dir === 0) { a11yFontLvl = 0; }
+  else { a11yFontLvl = Math.max(-2, Math.min(4, a11yFontLvl + dir)); }
+  document.documentElement.style.fontSize = a11yFontLvl === 0 ? '' : (100 + a11yFontLvl * 12.5) + '%';
+  try { localStorage.setItem('a11y_font', a11yFontLvl); } catch(e) {}
+}
+
+function a11yToggle(key) {
+  a11yActive[key] = !a11yActive[key];
+  const cls = { contrast: 'a11y-hc', links: 'a11y-hl', anim: 'a11y-na' };
+  document.body.classList.toggle(cls[key], a11yActive[key]);
+  const btn = document.getElementById('a11y-' + key);
+  if (btn) {
+    btn.textContent = a11yActive[key] ? 'כבה' : 'הפעל';
+    btn.style.background = a11yActive[key] ? '#1a56db' : 'rgba(255,255,255,0.1)';
+    btn.style.borderColor = a11yActive[key] ? '#1a56db' : 'rgba(255,255,255,0.2)';
+  }
+  try { localStorage.setItem('a11y_' + key, a11yActive[key]); } catch(e) {}
+}
+
+function a11yReset() {
+  a11yFont(0);
+  Object.keys(a11yActive).forEach(k => { if (a11yActive[k]) a11yToggle(k); });
+  try { ['a11y_font','a11y_contrast','a11y_links','a11y_anim'].forEach(k => localStorage.removeItem(k)); } catch(e) {}
+}
+
+// Restore saved accessibility preferences
+setTimeout(() => {
+  try {
+    const f = parseInt(localStorage.getItem('a11y_font') || '0');
+    if (f) { a11yFontLvl = f - 1; a11yFont(1); }
+    ['contrast','links','anim'].forEach(k => {
+      if (localStorage.getItem('a11y_' + k) === 'true') a11yToggle(k);
+    });
+  } catch(e) {}
+}, 200);
+
+// ==========================================
 // 🤖 CLAUDE AI ARCHITECT AGENT
 // ==========================================
 
@@ -1713,6 +1764,24 @@ function renderPRD(prd) {
   const cx = prd.complexity || {};
   const tl = prd.timeline || {};
   const budget = prd.budgetEstimate || {};
+  const crm = prd.crm || {};
+  const autoPlatform = prd.automationPlatform || {};
+  const comp = prd.compliance || {};
+
+  const dbAltHtml = (ds.alternatives || []).map(a =>
+    `<div style="font-size:11.5px;padding:5px 8px;background:rgba(255,255,255,0.03);border-radius:6px;border:1px solid var(--bor);margin-top:4px;">
+      <strong style="color:var(--tx2);">${esc(a.name)}</strong>
+      ${a.pros ? `<span style="color:#10b981;"> ✓ ${esc(a.pros)}</span>` : ''}
+      ${a.cons ? `<span style="color:var(--tx3);"> · ${esc(a.cons)}</span>` : ''}
+    </div>`
+  ).join('');
+
+  const secRisksHtml = (comp.securityRisks || []).map(r =>
+    `<div style="font-size:12px;color:#f87171;padding:3px 0;">⚠️ ${esc(r)}</div>`
+  ).join('');
+  const secRecsHtml = (comp.securityRecommendations || []).map(r =>
+    `<div style="font-size:12px;color:#10b981;padding:3px 0;">✅ ${esc(r)}</div>`
+  ).join('');
 
   const complexityColors = { 1:'#10b981', 2:'#4ecca3', 3:'#f7c948', 4:'#f7a26a', 5:'#ef4444' };
   const cxColor = complexityColors[cx.score] || '#7c6af7';
@@ -1760,10 +1829,30 @@ function renderPRD(prd) {
     </div>` : ''}
 
     <div class="prd-sb">
-      <div class="prd-lbl">🗄️ מקור האמת (Single Source of Truth)</div>
-      <p style="margin:0 0 4px;color:var(--tx2);font-weight:600;">${esc(ds.recommendation || '')}</p>
-      <p style="margin:0;color:var(--tx3);font-size:12px;font-style:italic;">${esc(ds.schema || '')}</p>
+      <div class="prd-lbl">🗄️ בסיס נתונים — ${esc(ds.recommendation || 'Single Source of Truth')}</div>
+      ${ds.why ? `<p style="margin:0 0 8px;color:var(--tx2);line-height:1.6;">${esc(ds.why)}</p>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
+        ${ds.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(ds.freeTier)}</div>` : ''}
+        ${ds.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(ds.paidTier)}</div>` : ''}
+      </div>
+      ${ds.schema ? `<p style="margin:0 0 4px;color:var(--tx3);font-size:12px;font-style:italic;">${esc(ds.schema)}</p>` : ''}
+      ${dbAltHtml ? `<div style="margin-top:8px;"><div style="font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px;">חלופות:</div>${dbAltHtml}</div>` : ''}
     </div>
+
+    ${(crm.recommendation && crm.recommendation !== 'N/A') ? `<div class="prd-sb">
+      <div class="prd-lbl">👥 CRM מומלץ — ${esc(crm.recommendation)}</div>
+      ${crm.why ? `<p style="margin:0 0 8px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(crm.why)}</p>` : ''}
+      ${crm.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;display:inline-block;"><strong>חינם:</strong> ${esc(crm.freeTier)}</div>` : ''}
+    </div>` : ''}
+
+    ${(autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A') ? `<div class="prd-sb">
+      <div class="prd-lbl">⚙️ פלטפורמת אוטומציה — ${esc(autoPlatform.recommendation)}</div>
+      ${autoPlatform.why ? `<p style="margin:0 0 8px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(autoPlatform.why)}</p>` : ''}
+      <div style="display:flex;gap:8px;flex-wrap:wrap;">
+        ${autoPlatform.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(autoPlatform.freeTier)}</div>` : ''}
+        ${autoPlatform.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(autoPlatform.paidTier)}</div>` : ''}
+      </div>
+    </div>` : ''}
 
     <div class="prd-sb">
       <div class="prd-lbl">🚀 MVP — שלבי הבנייה</div>
@@ -1815,10 +1904,33 @@ function renderPRD(prd) {
       <div style="display:flex;flex-direction:column;gap:8px;">${pitfallsHtml}</div>
     </div>` : ''}
 
+    ${(secRisksHtml || comp.amendment13 || comp.is5568) ? `<div class="prd-sb" style="border-right:3px solid #f87171;">
+      <div class="prd-lbl" style="color:#f87171;">🔐 אבטחה, פרטיות ונגישות</div>
+      ${(comp.amendment13 && comp.amendment13 !== 'N/A') ? `<div style="margin-bottom:10px;padding:8px 10px;background:rgba(248,113,113,0.05);border:1px solid rgba(248,113,113,0.15);border-radius:8px;">
+        <div style="font-size:11px;font-weight:800;color:#f87171;margin-bottom:4px;">📋 תיקון 13 — חוק הגנת הפרטיות (2025)</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.6;">${esc(comp.amendment13)}</div>
+      </div>` : ''}
+      ${(comp.is5568 && comp.is5568 !== 'N/A') ? `<div style="margin-bottom:10px;padding:8px 10px;background:rgba(26,86,219,0.05);border:1px solid rgba(26,86,219,0.2);border-radius:8px;">
+        <div style="font-size:11px;font-weight:800;color:#1a56db;margin-bottom:4px;">♿ תקן נגישות IS 5568 (WCAG 2.0 AA)</div>
+        <div style="font-size:12px;color:var(--tx2);line-height:1.6;">${esc(comp.is5568)}</div>
+      </div>` : ''}
+      ${secRisksHtml ? `<div style="margin-bottom:6px;">${secRisksHtml}</div>` : ''}
+      ${secRecsHtml ? `<div>${secRecsHtml}</div>` : ''}
+    </div>` : ''}
+
     <div class="prd-sb" style="background:rgba(124,106,247,0.07);border-right:3px solid var(--ac);border-radius:0 10px 10px 0;padding:12px 14px;">
       <div class="prd-lbl">💡 משפט הזיקוק</div>
       <p style="margin:0;color:var(--tx);font-style:italic;font-size:13.5px;line-height:1.7;">"${esc(prd.zikukSentence || '')}"</p>
     </div>
+
+    ${prd.devPrompt ? `<div class="prd-sb" style="background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:14px;">
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
+        <div class="prd-lbl" style="color:#10b981;margin:0;">🎁 בונוס — פרומפט לפרוטוטייפ ראשוני</div>
+        <button onclick="copyDevPrompt()" id="btn-copy-prompt" style="background:rgba(16,185,129,0.15);border:1px solid rgba(16,185,129,0.3);color:#10b981;border-radius:7px;padding:5px 12px;cursor:pointer;font-size:12px;font-weight:700;font-family:inherit;">📋 העתק</button>
+      </div>
+      <div style="font-size:11px;color:var(--tx3);margin-bottom:8px;">הדבק ב-Cursor / Claude / v0 להתחלה מהירה · <strong style="color:#f7c948;">פרוטוטייפ בלבד — לא production</strong></div>
+      <pre id="dev-prompt-text" style="margin:0;padding:10px 12px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:11.5px;color:var(--tx2);white-space:pre-wrap;word-break:break-word;max-height:180px;overflow-y:auto;direction:rtl;text-align:right;font-family:inherit;line-height:1.6;">${esc(prd.devPrompt)}</pre>
+    </div>` : ''}
 
     <div style="display:flex;gap:10px;margin-top:18px;justify-content:center;flex-wrap:wrap;">
       <button onclick="downloadPRDasPDF()" class="cta-s" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">📄 הורד PDF</button>
@@ -2011,6 +2123,20 @@ function buildArchDiagramHTML(prd) {
     <div class="prd-lbl" style="color:${color};">🔀 ויזואליזציה — ${NAMES[pattern] || pattern}</div>
     <div style="overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;">${svg}</div>
   </div>`;
+}
+
+function copyDevPrompt() {
+  const el = document.getElementById('dev-prompt-text');
+  if (!el) return;
+  navigator.clipboard.writeText(el.innerText).then(() => {
+    const btn = document.getElementById('btn-copy-prompt');
+    if (btn) { btn.textContent = '✅ הועתק!'; setTimeout(() => { btn.textContent = '📋 העתק'; }, 2000); }
+  }).catch(() => {
+    const range = document.createRange();
+    range.selectNodeContents(el);
+    window.getSelection().removeAllRanges();
+    window.getSelection().addRange(range);
+  });
 }
 
 function openVisitorContactFromPRD() {

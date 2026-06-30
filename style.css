@@ -357,6 +357,10 @@ body.edit-mode [contenteditable]:focus{background:rgba(124,58,237,.1);box-shadow
 .fab{position:fixed;bottom:24px;left:24px;z-index:999;width:48px;height:48px;border-radius:50%;background:rgba(251,249,244,0.92);backdrop-filter:blur(8px);border:1px solid var(--bor2);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:18px;box-shadow:0 6px 20px rgba(124,58,237,0.15);transition:all .3s cubic-bezier(0.16, 1, 0.3, 1)}
 .fab:hover{background:var(--ac);border-color:var(--ac);transform:scale(1.08) translateY(-2px)}
 body.edit-mode .fab{background:var(--ac);border-color:var(--ac)}
+/* Accessibility states */
+body.a11y-hc{filter:contrast(1.6) brightness(1.1);}
+body.a11y-hl a{text-decoration:underline!important;outline:2px solid #facc15!important;outline-offset:2px!important;}
+body.a11y-na *{animation:none!important;transition:none!important;}
 .fab-wa{position:fixed;bottom:24px;right:24px;z-index:999;width:54px;height:54px;border-radius:50%;background:linear-gradient(135deg,#25D366 0%,#128C7E 100%);display:flex;align-items:center;justify-content:center;box-shadow:0 6px 22px rgba(37,211,102,0.45);transition:all .3s cubic-bezier(0.16,1,0.3,1);text-decoration:none}
 .fab-wa:hover{transform:scale(1.1) translateY(-2px);box-shadow:0 10px 30px rgba(37,211,102,0.6)}
 @keyframes wa-pulse{0%,100%{box-shadow:0 6px 22px rgba(37,211,102,0.45)}50%{box-shadow:0 6px 28px rgba(37,211,102,0.7),0 0 0 8px rgba(37,211,102,0.1)}}
