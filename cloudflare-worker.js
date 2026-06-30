@@ -364,22 +364,30 @@ export default {
         body: JSON.stringify({
           model: 'claude-sonnet-4-6',
           max_tokens: 8192,
+          stream: true,
           system: SYSTEM_PROMPT,
           messages: body.messages,
         }),
       });
 
-      const data = await response.json();
-
+      // If the API rejected the request, surface the error as JSON
       if (!response.ok) {
-        return new Response(JSON.stringify({ error: data.error || 'Claude API error' }), {
+        let errData;
+        try { errData = await response.json(); } catch (e) { errData = { error: 'Claude API error ' + response.status }; }
+        return new Response(JSON.stringify({ error: errData.error || 'Claude API error' }), {
           status: response.status,
           headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
         });
       }
 
-      return new Response(JSON.stringify(data), {
-        headers: { ...CORS_HEADERS, 'Content-Type': 'application/json' },
+      // Stream the SSE response straight through to the browser.
+      // Streaming keeps the connection alive so Cloudflare never hits its 100s timeout (error 524).
+      return new Response(response.body, {
+        headers: {
+          ...CORS_HEADERS,
+          'Content-Type': 'text/event-stream; charset=utf-8',
+          'Cache-Control': 'no-cache',
+        },
       });
 
     } catch (error) {

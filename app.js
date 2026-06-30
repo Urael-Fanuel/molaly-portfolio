@@ -1676,10 +1676,53 @@ async function callClaudeWorker(messages) {
     headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify({ messages: trimmed }),
   });
-  if (!res.ok) throw new Error('Worker HTTP ' + res.status);
-  const data = await res.json();
-  if (data.error) throw new Error(JSON.stringify(data.error));
-  return data.content[0].text;
+
+  const ctype = res.headers.get('content-type') || '';
+
+  // Error responses come back as plain JSON (not a stream)
+  if (!res.ok || ctype.includes('application/json')) {
+    let data = {};
+    try { data = await res.json(); } catch (e) {}
+    if (data.error) throw new Error(typeof data.error === 'string' ? data.error : JSON.stringify(data.error));
+    if (!res.ok) throw new Error('Worker HTTP ' + res.status);
+    // Fallback: non-streamed success (older worker) returns full message object
+    if (data.content && data.content[0]) return data.content[0].text;
+    throw new Error('תשובה לא צפויה מהשרת');
+  }
+
+  // Read the SSE stream and accumulate the text deltas.
+  const reader = res.body.getReader();
+  const decoder = new TextDecoder();
+  let buffer = '';
+  let fullText = '';
+
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    buffer += decoder.decode(value, { stream: true });
+    const lines = buffer.split('\n');
+    buffer = lines.pop(); // keep incomplete line for next chunk
+    for (const line of lines) {
+      const trimmedLine = line.trim();
+      if (!trimmedLine.startsWith('data:')) continue;
+      const payload = trimmedLine.slice(5).trim();
+      if (!payload || payload === '[DONE]') continue;
+      try {
+        const evt = JSON.parse(payload);
+        if (evt.type === 'content_block_delta' && evt.delta && evt.delta.text) {
+          fullText += evt.delta.text;
+        } else if (evt.type === 'error') {
+          throw new Error(evt.error && evt.error.message ? evt.error.message : 'Claude API error');
+        }
+      } catch (e) {
+        if (e instanceof SyntaxError) continue; // partial JSON, ignore
+        throw e;
+      }
+    }
+  }
+
+  if (!fullText) throw new Error('לא התקבלה תשובה מהסוכן');
+  return fullText;
 }
 
 function handleClaudeResponse(text) {
