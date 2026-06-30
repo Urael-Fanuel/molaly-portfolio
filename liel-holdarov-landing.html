@@ -1,0 +1,800 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ליאל הולדרוב | קוצ'ינג עסקי לנשים</title>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --rose: #C8446A;
+    --rose-light: #F4C0D1;
+    --rose-pale: #FDF0F4;
+    --rose-dark: #8B2347;
+    --gold: #C9972A;
+    --gold-light: #F5E4C0;
+    --cream: #FDF8F5;
+    --dark: #1A1218;
+    --text: #3D2535;
+    --muted: #7A5E6B;
+    --border: #EDD8E0;
+    --white: #ffffff;
+    --radius: 16px;
+    --shadow: 0 4px 32px rgba(200, 68, 106, 0.10);
+    --shadow-lg: 0 16px 64px rgba(200, 68, 106, 0.16);
+  }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    font-family: 'Heebo', sans-serif;
+    background: var(--cream);
+    color: var(--text);
+    line-height: 1.7;
+    overflow-x: hidden;
+  }
+
+  /* ── NAV ── */
+  nav {
+    position: fixed; top: 0; right: 0; left: 0; z-index: 100;
+    background: rgba(253, 248, 245, 0.92);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid var(--border);
+    padding: 0 2rem;
+    height: 68px;
+    display: flex; align-items: center; justify-content: space-between;
+  }
+  .nav-logo {
+    font-size: 1.2rem; font-weight: 800; color: var(--rose);
+    letter-spacing: -0.02em;
+  }
+  .nav-links { display: flex; gap: 2rem; list-style: none; }
+  .nav-links a {
+    font-size: 0.95rem; font-weight: 500; color: var(--text);
+    text-decoration: none; transition: color 0.2s;
+  }
+  .nav-links a:hover { color: var(--rose); }
+  .nav-cta {
+    background: var(--rose); color: var(--white) !important;
+    padding: 0.5rem 1.25rem; border-radius: 50px;
+    font-weight: 600 !important; transition: background 0.2s, transform 0.15s !important;
+  }
+  .nav-cta:hover { background: var(--rose-dark) !important; transform: translateY(-1px); }
+
+  /* ── HERO ── */
+  #hero {
+    min-height: 100vh;
+    padding: 100px 2rem 4rem;
+    display: flex; align-items: center; justify-content: center;
+    background: linear-gradient(160deg, #FFF5F8 0%, #FDF8F5 50%, #FFF0E8 100%);
+    position: relative; overflow: hidden;
+    text-align: center;
+  }
+  #hero::before {
+    content: '';
+    position: absolute; top: -120px; right: -120px;
+    width: 500px; height: 500px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(200,68,106,0.10) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  #hero::after {
+    content: '';
+    position: absolute; bottom: -80px; left: -80px;
+    width: 380px; height: 380px; border-radius: 50%;
+    background: radial-gradient(circle, rgba(201,151,42,0.08) 0%, transparent 70%);
+    pointer-events: none;
+  }
+  .hero-inner { max-width: 820px; position: relative; z-index: 1; }
+  .hero-badge {
+    display: inline-flex; align-items: center; gap: 0.5rem;
+    background: var(--rose-pale); border: 1px solid var(--rose-light);
+    color: var(--rose-dark); font-size: 0.9rem; font-weight: 600;
+    padding: 0.45rem 1.25rem; border-radius: 50px;
+    margin-bottom: 2rem;
+  }
+  .hero-badge span { font-size: 1rem; }
+  h1 {
+    font-size: clamp(2.4rem, 6vw, 4rem);
+    font-weight: 900; line-height: 1.18;
+    color: var(--dark); letter-spacing: -0.03em;
+    margin-bottom: 1.5rem;
+  }
+  h1 em { color: var(--rose); font-style: normal; }
+  .hero-sub {
+    font-size: clamp(1.05rem, 2.5vw, 1.25rem);
+    color: var(--muted); max-width: 580px; margin: 0 auto 2.5rem;
+    font-weight: 400;
+  }
+  .hero-actions { display: flex; gap: 1rem; justify-content: center; flex-wrap: wrap; }
+  .btn-primary {
+    display: inline-block;
+    background: var(--rose); color: var(--white);
+    padding: 1rem 2.25rem; border-radius: 50px;
+    font-size: 1.05rem; font-weight: 700; text-decoration: none;
+    transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(200,68,106,0.30);
+  }
+  .btn-primary:hover { background: var(--rose-dark); transform: translateY(-2px); box-shadow: 0 8px 28px rgba(200,68,106,0.38); }
+  .btn-secondary {
+    display: inline-block;
+    background: transparent; color: var(--rose);
+    border: 2px solid var(--rose);
+    padding: 1rem 2.25rem; border-radius: 50px;
+    font-size: 1.05rem; font-weight: 700; text-decoration: none;
+    transition: all 0.2s;
+  }
+  .btn-secondary:hover { background: var(--rose-pale); transform: translateY(-2px); }
+  .hero-stats {
+    display: flex; gap: 2.5rem; justify-content: center; flex-wrap: wrap;
+    margin-top: 3.5rem; padding-top: 2.5rem;
+    border-top: 1px solid var(--border);
+  }
+  .stat { text-align: center; }
+  .stat-num { font-size: 2rem; font-weight: 900; color: var(--rose); line-height: 1; }
+  .stat-label { font-size: 0.9rem; color: var(--muted); margin-top: 0.3rem; }
+
+  /* ── SECTIONS ── */
+  section { padding: 6rem 2rem; }
+  .container { max-width: 1100px; margin: 0 auto; }
+  .section-tag {
+    display: inline-block;
+    background: var(--rose-pale); color: var(--rose-dark);
+    font-size: 0.85rem; font-weight: 700; letter-spacing: 0.05em;
+    padding: 0.3rem 1rem; border-radius: 50px;
+    margin-bottom: 1rem; text-transform: uppercase;
+  }
+  h2 {
+    font-size: clamp(2rem, 4vw, 2.8rem);
+    font-weight: 900; line-height: 1.2;
+    color: var(--dark); letter-spacing: -0.025em;
+    margin-bottom: 1rem;
+  }
+  h2 em { color: var(--rose); font-style: normal; }
+  .section-sub {
+    font-size: 1.1rem; color: var(--muted);
+    max-width: 560px; margin-bottom: 3.5rem;
+  }
+
+  /* ── ABOUT ── */
+  #about { background: var(--white); }
+  .about-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 5rem;
+    align-items: center;
+  }
+  .about-image-wrap {
+    position: relative;
+  }
+  .about-img-placeholder {
+    width: 100%; aspect-ratio: 4/5; border-radius: 24px;
+    background: linear-gradient(135deg, #F4C0D1 0%, #C8446A 60%, #8B2347 100%);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 5rem; color: rgba(255,255,255,0.5);
+    position: relative; overflow: hidden;
+  }
+  .about-img-placeholder::after {
+    content: 'ליאל\A הולדרוב';
+    white-space: pre;
+    position: absolute; bottom: 2rem; right: 2rem;
+    color: white; font-size: 1.5rem; font-weight: 800; text-align: right;
+    line-height: 1.3;
+  }
+  .about-badge-float {
+    position: absolute; bottom: -1.5rem; left: -1.5rem;
+    background: var(--white); border-radius: 14px;
+    padding: 1rem 1.5rem;
+    box-shadow: var(--shadow-lg);
+    display: flex; align-items: center; gap: 0.75rem;
+  }
+  .about-badge-icon { font-size: 1.8rem; }
+  .about-badge-text { font-size: 0.85rem; color: var(--muted); }
+  .about-badge-text strong { display: block; font-size: 1.1rem; color: var(--dark); font-weight: 800; }
+  .about-list { list-style: none; margin: 2rem 0; display: flex; flex-direction: column; gap: 1rem; }
+  .about-list li {
+    display: flex; align-items: flex-start; gap: 0.75rem;
+    font-size: 1.05rem; color: var(--text);
+  }
+  .about-list li::before {
+    content: '✦';
+    color: var(--rose); font-size: 0.9rem; margin-top: 0.2rem; flex-shrink: 0;
+  }
+  .cred-row { display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem; }
+  .cred-pill {
+    background: var(--rose-pale); border: 1px solid var(--rose-light);
+    color: var(--rose-dark); font-size: 0.82rem; font-weight: 600;
+    padding: 0.35rem 1rem; border-radius: 50px;
+  }
+
+  /* ── SERVICES ── */
+  #services { background: var(--cream); }
+  .services-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
+  }
+  .service-card {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 2rem; position: relative; overflow: hidden;
+    transition: transform 0.25s, box-shadow 0.25s;
+    cursor: default;
+  }
+  .service-card:hover { transform: translateY(-4px); box-shadow: var(--shadow-lg); }
+  .service-card.featured {
+    border-color: var(--rose); background: linear-gradient(160deg, #FFF0F4 0%, #FDF8F5 100%);
+  }
+  .service-card.featured::before {
+    content: '⭐ הכי פופולרי';
+    position: absolute; top: 1.25rem; left: 1.25rem;
+    background: var(--rose); color: white;
+    font-size: 0.78rem; font-weight: 700;
+    padding: 0.3rem 0.8rem; border-radius: 50px;
+  }
+  .service-icon {
+    width: 52px; height: 52px; border-radius: 14px;
+    background: var(--rose-pale);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 1.5rem; margin-bottom: 1.25rem;
+  }
+  .service-title {
+    font-size: 1.15rem; font-weight: 800; color: var(--dark);
+    margin-bottom: 0.5rem;
+  }
+  .service-desc { font-size: 0.95rem; color: var(--muted); line-height: 1.6; }
+  .service-arrow {
+    margin-top: 1.5rem; color: var(--rose); font-weight: 700;
+    font-size: 0.9rem; display: flex; align-items: center; gap: 0.4rem;
+  }
+
+  /* ── PROCESS ── */
+  #process { background: var(--dark); }
+  #process h2 { color: var(--white); }
+  #process .section-sub { color: rgba(255,255,255,0.55); }
+  #process .section-tag { background: rgba(200,68,106,0.2); color: var(--rose-light); }
+  .process-steps {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1.5rem;
+  }
+  .process-step {
+    text-align: center; padding: 2rem 1.5rem;
+    background: rgba(255,255,255,0.05); border-radius: var(--radius);
+    border: 1px solid rgba(255,255,255,0.08);
+    transition: background 0.25s, border-color 0.25s, transform 0.25s;
+  }
+  .process-step:hover {
+    background: rgba(200,68,106,0.15); border-color: rgba(200,68,106,0.4);
+    transform: translateY(-4px);
+  }
+  .step-num {
+    font-size: 2.5rem; font-weight: 900; color: var(--rose);
+    line-height: 1; margin-bottom: 0.75rem; opacity: 0.8;
+  }
+  .step-title { font-size: 1rem; font-weight: 700; color: var(--white); margin-bottom: 0.5rem; }
+  .step-desc { font-size: 0.88rem; color: rgba(255,255,255,0.5); line-height: 1.5; }
+
+  /* ── TESTIMONIALS ── */
+  #testimonials { background: var(--white); }
+  .testimonials-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 1.5rem;
+  }
+  .testimonial-card {
+    background: var(--cream); border-radius: var(--radius);
+    border: 1px solid var(--border);
+    padding: 2rem; position: relative;
+    transition: transform 0.25s, box-shadow 0.25s;
+  }
+  .testimonial-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .testimonial-stars { color: #F5A623; font-size: 1rem; margin-bottom: 1rem; letter-spacing: 2px; }
+  .testimonial-text {
+    font-size: 1rem; color: var(--text); line-height: 1.7;
+    margin-bottom: 1.5rem; font-style: italic;
+  }
+  .testimonial-text::before { content: '"'; color: var(--rose); font-size: 1.5rem; line-height: 0; vertical-align: -0.3em; margin-left: 2px; }
+  .testimonial-text::after { content: '"'; color: var(--rose); font-size: 1.5rem; line-height: 0; vertical-align: -0.3em; margin-right: 2px; }
+  .testimonial-author { display: flex; align-items: center; gap: 0.75rem; }
+  .author-avatar {
+    width: 42px; height: 42px; border-radius: 50%;
+    background: linear-gradient(135deg, var(--rose-light), var(--rose));
+    display: flex; align-items: center; justify-content: center;
+    font-weight: 800; color: white; font-size: 0.9rem; flex-shrink: 0;
+  }
+  .author-name { font-weight: 700; color: var(--dark); font-size: 0.95rem; }
+  .author-role { font-size: 0.82rem; color: var(--muted); }
+
+  /* ── WHY ── */
+  #why { background: linear-gradient(160deg, #FFF5F8 0%, #FDF8F5 100%); }
+  .why-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 1.25rem;
+  }
+  .why-card {
+    background: var(--white); border-radius: var(--radius);
+    border: 1px solid var(--border); padding: 1.75rem;
+    text-align: center;
+    transition: transform 0.2s, box-shadow 0.2s;
+  }
+  .why-card:hover { transform: translateY(-3px); box-shadow: var(--shadow); }
+  .why-icon { font-size: 2.2rem; margin-bottom: 0.75rem; }
+  .why-title { font-size: 1rem; font-weight: 800; color: var(--dark); margin-bottom: 0.4rem; }
+  .why-text { font-size: 0.88rem; color: var(--muted); line-height: 1.5; }
+
+  /* ── CTA / FORM ── */
+  #contact {
+    background: linear-gradient(150deg, var(--rose-dark) 0%, var(--rose) 60%, #E8607A 100%);
+    padding: 7rem 2rem; text-align: center;
+    position: relative; overflow: hidden;
+  }
+  #contact::before {
+    content: '';
+    position: absolute; top: -100px; right: -100px;
+    width: 400px; height: 400px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); pointer-events: none;
+  }
+  #contact::after {
+    content: '';
+    position: absolute; bottom: -80px; left: -80px;
+    width: 300px; height: 300px; border-radius: 50%;
+    background: rgba(255,255,255,0.06); pointer-events: none;
+  }
+  .contact-inner { max-width: 600px; margin: 0 auto; position: relative; z-index: 1; }
+  #contact h2 { color: var(--white); font-size: clamp(2rem, 4.5vw, 3rem); }
+  #contact p { color: rgba(255,255,255,0.75); font-size: 1.1rem; margin: 1rem 0 2.5rem; }
+  .form-card {
+    background: var(--white); border-radius: 24px;
+    padding: 2.5rem; box-shadow: 0 24px 80px rgba(0,0,0,0.25);
+  }
+  .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1rem; }
+  .form-group { display: flex; flex-direction: column; gap: 0.4rem; }
+  .form-group label { font-size: 0.88rem; font-weight: 600; color: var(--text); }
+  .form-group input, .form-group select {
+    padding: 0.85rem 1rem;
+    border: 1.5px solid var(--border);
+    border-radius: 10px; font-family: 'Heebo', sans-serif;
+    font-size: 1rem; color: var(--text); background: var(--cream);
+    transition: border-color 0.2s, box-shadow 0.2s;
+    outline: none; direction: rtl;
+  }
+  .form-group input:focus, .form-group select:focus {
+    border-color: var(--rose);
+    box-shadow: 0 0 0 3px rgba(200,68,106,0.12);
+  }
+  .form-group input::placeholder { color: #BBABB2; }
+  .form-submit {
+    width: 100%; margin-top: 1.25rem;
+    background: var(--rose); color: var(--white);
+    border: none; border-radius: 50px;
+    padding: 1.1rem 2rem;
+    font-family: 'Heebo', sans-serif;
+    font-size: 1.1rem; font-weight: 800;
+    cursor: pointer; transition: background 0.2s, transform 0.15s, box-shadow 0.2s;
+    box-shadow: 0 4px 20px rgba(200,68,106,0.30);
+  }
+  .form-submit:hover { background: var(--rose-dark); transform: translateY(-2px); box-shadow: 0 8px 32px rgba(200,68,106,0.40); }
+  .form-note { font-size: 0.82rem; color: var(--muted); margin-top: 1rem; text-align: center; }
+
+  /* ── FOOTER ── */
+  footer {
+    background: var(--dark); color: rgba(255,255,255,0.45);
+    text-align: center; padding: 2rem;
+    font-size: 0.88rem;
+  }
+  footer a { color: var(--rose-light); text-decoration: none; }
+  footer strong { color: rgba(255,255,255,0.7); }
+
+  /* ── ANIMATIONS ── */
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(28px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  .fade-up { animation: fadeUp 0.7s ease both; }
+  .delay-1 { animation-delay: 0.1s; }
+  .delay-2 { animation-delay: 0.22s; }
+  .delay-3 { animation-delay: 0.35s; }
+  .delay-4 { animation-delay: 0.48s; }
+  .delay-5 { animation-delay: 0.6s; }
+
+  /* ── FLOATING BUTTONS ── */
+  .float-btns {
+    position: fixed; bottom: 1.75rem; left: 1.75rem;
+    display: flex; flex-direction: column; gap: 0.85rem;
+    z-index: 999;
+  }
+  .float-btn {
+    width: 58px; height: 58px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+    text-decoration: none; font-size: 1.55rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.22);
+    transition: transform 0.2s, box-shadow 0.2s;
+    border: none; cursor: pointer;
+  }
+  .float-btn:hover { transform: scale(1.1); box-shadow: 0 8px 28px rgba(0,0,0,0.28); }
+  .float-wa  { background: #25D366; }
+  .float-tel { background: var(--rose); }
+  .float-tooltip {
+    position: absolute; left: 68px;
+    background: var(--dark); color: white;
+    font-family: 'Heebo', sans-serif; font-size: 0.82rem; font-weight: 600;
+    padding: 0.35rem 0.85rem; border-radius: 8px; white-space: nowrap;
+    opacity: 0; pointer-events: none;
+    transition: opacity 0.2s;
+  }
+  .float-btn:hover .float-tooltip { opacity: 1; }
+
+  /* ── RESPONSIVE ── */
+  @media (max-width: 768px) {
+    nav { padding: 0 1.25rem; }
+    .nav-links { display: none; }
+    .about-grid { grid-template-columns: 1fr; gap: 3rem; }
+    .about-badge-float { left: 0.5rem; bottom: -1rem; }
+    .form-row { grid-template-columns: 1fr; }
+    #hero { padding: 90px 1.25rem 4rem; }
+    section { padding: 4.5rem 1.25rem; }
+    .hero-stats { gap: 1.5rem; }
+  }
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav>
+  <span class="nav-logo">ליאל הולדרוב ✦</span>
+  <ul class="nav-links">
+    <li><a href="#about">אודות</a></li>
+    <li><a href="#services">שירותים</a></li>
+    <li><a href="#process">התהליך</a></li>
+    <li><a href="#testimonials">המלצות</a></li>
+    <li><a href="#contact" class="nav-cta">יצירת קשר</a></li>
+  </ul>
+</nav>
+
+<!-- HERO -->
+<section id="hero">
+  <div class="hero-inner">
+    <div class="hero-badge fade-up"><span>✦</span> NLP Practitioner &bull; מאמנת עסקית מוסמכת</div>
+    <h1 class="fade-up delay-1">
+      בניתי את העסק שלי.<br>
+      עכשיו אני כאן<br>
+      <em>לבנות את שלך.</em>
+    </h1>
+    <p class="hero-sub fade-up delay-2">
+      מאות נשים כבר יצאו לעצמאות כלכלית אמיתית — בלי פרסום בתשלום חודשי, בלי מערכות מסובכות, בלי לוותר על המשפחה.
+    </p>
+    <div class="hero-actions fade-up delay-3">
+      <a href="#contact" class="btn-primary">📞 קבעי שיחת אבחון חינם</a>
+      <a href="https://wa.me/972XXXXXXXXX?text=היי+ליאל%2C+רציתי+לשמוע+על+ליווי+עסקי" target="_blank" class="btn-secondary">💬 וואטסאפ</a>
+      <a href="tel:+972XXXXXXXXX" class="btn-secondary" style="padding:1rem 1.5rem;">📲 חייגי</a>
+    </div>
+    <div class="hero-stats fade-up delay-4">
+      <div class="stat">
+        <div class="stat-num">מאות+</div>
+        <div class="stat-label">נשים יצאו לעצמאות</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">5+</div>
+        <div class="stat-label">שנות ניסיון</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">₪500K</div>
+        <div class="stat-label">השקעה בהתפתחות עצמית</div>
+      </div>
+      <div class="stat">
+        <div class="stat-num">48H</div>
+        <div class="stat-label">חזרה לכל פנייה</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+      <div class="about-image-wrap">
+        <div class="about-img-placeholder">
+          <span style="font-size:4rem; opacity:0.3;">👩</span>
+        </div>
+        <div class="about-badge-float">
+          <div class="about-badge-icon">🎓</div>
+          <div class="about-badge-text">
+            <strong>מוסמכת ע"י מכון אלון גל</strong>
+            מאמנת עסקית ואישית
+          </div>
+        </div>
+      </div>
+      <div>
+        <div class="section-tag">אודות</div>
+        <h2>היי, אני <em>ליאל</em> —<br>גם אמא לתאומים, גם יזמית.</h2>
+        <p style="color:var(--muted); font-size:1.05rem; margin-bottom:1.5rem;">
+          בגיל 26, עם שתי תעודות אוניברסיטאיות, עבודה בסוכנות פרסום מובילה — ואושיות של תאומים — הבנתי שהמסלול הרגיל לא מתאים לי. בחרתי לבנות משהו משלי.
+        </p>
+        <p style="color:var(--muted); font-size:1.05rem;">
+          השקעתי מעל חצי מיליון שקל בלמידה, בהכשרות, בקוצ'ינג. היום אני מעבירה את כל הידע הזה לנשים שרוצות לעשות את הקפיצה — בצורה חכמה, מדורגת, ובלי להסתכן.
+        </p>
+        <ul class="about-list">
+          <li>בוגרת מדעי ההתנהגות ומכון אדלר (פיתוח משפחתי וקבוצתי)</li>
+          <li>NLP Practitioner מוסמכת</li>
+          <li>לשעבר מנהלת משרד בסוכנות פרסום מובילה ברמת גן</li>
+          <li>בעלת ניסיון מעשי בבניית עסקים מאפס</li>
+        </ul>
+        <div class="cred-row">
+          <span class="cred-pill">NLP מוסמכת</span>
+          <span class="cred-pill">מאמנת עסקית</span>
+          <span class="cred-pill">מדעי ההתנהגות</span>
+          <span class="cred-pill">מכון אדלר</span>
+          <span class="cred-pill">קואצ'ינג קבוצתי</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services">
+  <div class="container">
+    <div class="section-tag">שירותים</div>
+    <h2>מה אני מציעה</h2>
+    <p class="section-sub">כל מסלול מותאם אישית — בין אם את עדיין בשלב הרעיון ובין אם כבר יש לך עסק שצריך קפיצה.</p>
+    <div class="services-grid">
+
+      <div class="service-card featured">
+        <div class="service-icon">🚀</div>
+        <div class="service-title">תוכנית ליווי אישי מלאה</div>
+        <div class="service-desc">ליווי מקיף עם מספר מפגשים — מהרעיון ועד ללקוחות משלמים. תוכנית עבודה מותאמת + זמינות מלאה לשאלות.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">🎯</div>
+        <div class="service-title">ייעוץ עסקי חד-פעמי</div>
+        <div class="service-desc">מפגש של 90 דקות — מגיעה עם בעיה, יוצאת עם תכנית פעולה ברורה. מתאים לכל שלב בחיי העסק.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">📱</div>
+        <div class="service-title">ייעוץ שיווקי ורשתות חברתיות</div>
+        <div class="service-desc">אסטרטגיית תוכן, בניית קהל, רכישת לקוחות — בלי לשלם על פרסום ממומן כל חודש.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">🎬</div>
+        <div class="service-title">יום צילומי TikTok</div>
+        <div class="service-desc">יום עבודה אינטנסיבי ממוקד — יוצרים יחד תוכן וויראלי שמושך לקוחות חדשים ומבסס אותך כמומחית.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">🎓</div>
+        <div class="service-title">סדנאות שיווק</div>
+        <div class="service-desc">סדנאות למוסדות אקדמיים וארגונים — כלים פרקטיים לשיווק, בניית מותג אישי ויציאה לעצמאות.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+      <div class="service-card">
+        <div class="service-icon">💼</div>
+        <div class="service-title">ייעוץ הקמת עסק</div>
+        <div class="service-desc">לנשים בתחילת הדרך — אבחון מקיף של הפוטנציאל שלך, בניית רעיון לעסק וצעדים ראשונים מעשיים.</div>
+        <div class="service-arrow">← ליצירת קשר</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- PROCESS -->
+<section id="process">
+  <div class="container">
+    <div class="section-tag">התהליך</div>
+    <h2 style="color:white;">5 שלבים לעסק <em>שמרוויח</em></h2>
+    <p class="section-sub">שיטה מוכחת שבנינו יחד עם מאות בוגרות — לא תיאוריה, רק מה שעובד בשטח.</p>
+    <div class="process-steps">
+      <div class="process-step">
+        <div class="step-num">01</div>
+        <div class="step-title">פיתוח עסקי</div>
+        <div class="step-desc">זיהוי הכוחות שלך, הגדרת קהל יעד, ובניית בסיס איתן לעסק.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">02</div>
+        <div class="step-title">פיתוח מוצר ותמחור</div>
+        <div class="step-desc">בניית השירות שלך, תמחור נכון שמכבד את הערך שאת נותנת.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">03</div>
+        <div class="step-title">שיווק ורשתות חברתיות</div>
+        <div class="step-desc">אסטרטגיית תוכן שמביאה לקוחות — בלי להוציא כסף על פרסום.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">04</div>
+        <div class="step-title">ניהול עסקי אסטרטגי</div>
+        <div class="step-desc">כלים לניהול זמן, כסף, לקוחות ולהגדלת ההכנסה בצורה מחושבת.</div>
+      </div>
+      <div class="process-step">
+        <div class="step-num">05</div>
+        <div class="step-title">מכירות והתנגדויות</div>
+        <div class="step-desc">כיצד למכור בביטחון מלא, לטפל בהתנגדויות ולסגור עסקאות.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-tag">המלצות</div>
+    <h2>הן כבר עשו את <em>הקפיצה</em></h2>
+    <p class="section-sub">מה שמאות בוגרות אומרות על התהליך איתי.</p>
+    <div class="testimonials-grid">
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">ההחלטה הכי טובה שעשיתי לעסק שלי. ראיתי את ההכנסה מכפילה את עצמה תוך חודש אחד בלבד. ליאל לא רק מלמדת — היא שם איתך כל הדרך.</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">ס.ו</div>
+          <div>
+            <div class="author-name">סתיו וייס</div>
+            <div class="author-role">יזמית עצמאית</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">ליאל עזרה לי להגשים חלום שהיה בראשי שנים ארוכות. היום אני מרוויחה כסף מהעסק שלי ומרגישה גאה בעצמי כל יום מחדש.</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">ר.ו</div>
+          <div>
+            <div class="author-name">רחל ונדמנש</div>
+            <div class="author-role">בוגרת תוכנית הליווי</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="testimonial-card">
+        <div class="testimonial-stars">★★★★★</div>
+        <div class="testimonial-text">לקחה אותי מהזמנה אחת בחודש ליומן לקוחות מלא — בפחות מחודש. השיטות שלה פרקטיות, ברורות ועובדות.</div>
+        <div class="testimonial-author">
+          <div class="author-avatar">ר.כ</div>
+          <div>
+            <div class="author-name">רון כהן</div>
+            <div class="author-role">עצמאי, בוגר הייעוץ</div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- WHY -->
+<section id="why">
+  <div class="container">
+    <div class="section-tag">למה ליאל?</div>
+    <h2>לא רק קוצ'ינג —<br><em>שינוי אמיתי</em></h2>
+    <p class="section-sub">מה שמבדיל את הגישה שלי מכל ייעוץ אחר שניסית.</p>
+    <div class="why-grid">
+      <div class="why-card">
+        <div class="why-icon">🎯</div>
+        <div class="why-title">מותאם 100% אלייך</div>
+        <div class="why-text">אין תבנית קבועה. כל תוכנית נבנית סביב הכוחות, הצרכים והמטרות שלך בלבד.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🏠</div>
+        <div class="why-title">עסק ומשפחה יחד</div>
+        <div class="why-text">גם אמא לתאומים — כך שאני יודעת בדיוק איך לבנות עסק שמכבד את הזמן המשפחתי.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💡</div>
+        <div class="why-title">ידע מהשטח</div>
+        <div class="why-text">500,000 ש"ח השקעה בהכשרות + ניסיון אישי בבניית עסק — לא תיאוריה, רק מה שעובד.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">📈</div>
+        <div class="why-title">תוצאות מהירות</div>
+        <div class="why-text">הבוגרות שלי רואות תוצאות תוך חודש — כי אני ממוקדת בצעדים מעשיים, לא בדיבורים.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">🤝</div>
+        <div class="why-title">זמינות מלאה</div>
+        <div class="why-text">לא נעלמת אחרי המפגש. אני זמינה לשאלות, לעידוד, ולפתרון בעיות לאורך כל הדרך.</div>
+      </div>
+      <div class="why-card">
+        <div class="why-icon">💰</div>
+        <div class="why-title">בלי פרסום ממומן</div>
+        <div class="why-text">בונים לך קהל ולקוחות אורגנית — אין תלות בתקציב פרסום חודשי שמעיק.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT / FORM -->
+<section id="contact">
+  <div class="contact-inner">
+    <h2>מוכנה להתחיל?</h2>
+    <p>השאירי פרטים ואחזור אלייך תוך 48 שעות לשיחת אבחון עסקי חינם — בלי התחייבות.</p>
+    <div class="form-card">
+      <div class="form-row">
+        <div class="form-group">
+          <label for="fname">שם מלא</label>
+          <input type="text" id="fname" placeholder="מה שמך?" />
+        </div>
+        <div class="form-group">
+          <label for="phone">טלפון</label>
+          <input type="tel" id="phone" placeholder="05X-XXXXXXX" />
+        </div>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="topic">במה את עוסקת / רוצה לעסוק?</label>
+          <input type="text" id="topic" placeholder="ספרי לי קצת..." />
+        </div>
+        <div class="form-group">
+          <label for="service">שירות שמעניין אותך</label>
+          <select id="service">
+            <option value="">בחרי שירות...</option>
+            <option>תוכנית ליווי אישי מלאה</option>
+            <option>ייעוץ עסקי חד-פעמי</option>
+            <option>ייעוץ שיווקי ורשתות חברתיות</option>
+            <option>יום צילומי TikTok</option>
+            <option>סדנאות שיווק</option>
+            <option>ייעוץ הקמת עסק</option>
+            <option>לא בטוחה עדיין</option>
+          </select>
+        </div>
+      </div>
+      <button class="form-submit" onclick="handleSubmit()">
+        שלחי פרטים ✦ אחזור אלייך תוך 48 שעות
+      </button>
+      <div class="form-note">🔒 הפרטים שלך שמורים אצלי בלבד. ללא ספאם, ללא מחויבות.</div>
+    </div>
+  </div>
+</section>
+
+<!-- FLOATING BUTTONS -->
+<div class="float-btns">
+  <a class="float-btn float-wa" href="https://wa.me/972XXXXXXXXX?text=היי+ליאל%2C+ראיתי+את+הדף+שלך+ורציתי+לשאול+על+ליווי+עסקי" target="_blank" aria-label="שלחי הודעה בוואטסאפ">
+    <span style="font-size:1.6rem;">💬</span>
+    <span class="float-tooltip">וואטסאפ מהיר</span>
+  </a>
+  <a class="float-btn float-tel" href="tel:+972XXXXXXXXX" aria-label="חייגי עכשיו">
+    <span style="font-size:1.5rem;">📞</span>
+    <span class="float-tooltip">חייגי עכשיו</span>
+  </a>
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <p>עיצוב ובנייה עם ❤️ &nbsp;|&nbsp; <strong>ליאל הולדרוב</strong> &nbsp;|&nbsp; מאמנת עסקית &amp; שיווקית לנשים &nbsp;|&nbsp; <a href="https://lielholdarov.com" target="_blank">lielholdarov.com</a></p>
+</footer>
+
+<script>
+function handleSubmit() {
+  const name = document.getElementById('fname').value.trim();
+  const phone = document.getElementById('phone').value.trim();
+  if (!name || !phone) {
+    alert('אנא מלאי שם וטלפון כדי שנוכל לחזור אלייך 💛');
+    return;
+  }
+  const btn = document.querySelector('.form-submit');
+  btn.textContent = '✅ קיבלתי! אחזור אלייך תוך 48 שעות 💕';
+  btn.style.background = '#2D9E6B';
+  btn.disabled = true;
+}
+
+// Scroll-triggered fade-in for sections
+const io = new IntersectionObserver((entries) => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      e.target.style.opacity = '1';
+      e.target.style.transform = 'translateY(0)';
+      io.unobserve(e.target);
+    }
+  });
+}, { threshold: 0.12 });
+
+document.querySelectorAll('.service-card, .process-step, .testimonial-card, .why-card').forEach(el => {
+  el.style.opacity = '0';
+  el.style.transform = 'translateY(22px)';
+  el.style.transition = 'opacity 0.55s ease, transform 0.55s ease';
+  io.observe(el);
+});
+</script>
+</body>
+</html>
