@@ -1669,14 +1669,16 @@ async function sendArchMessage() {
 }
 
 async function callClaudeWorker(messages) {
+  // Keep only last 20 messages to prevent context window overflow on long conversations
+  const trimmed = messages.length > 20 ? messages.slice(-20) : messages;
   const res = await fetch(ARCH_WORKER_URL, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ messages }),
+    body: JSON.stringify({ messages: trimmed }),
   });
   if (!res.ok) throw new Error('Worker HTTP ' + res.status);
   const data = await res.json();
-  if (data.error) throw new Error(data.error.message || 'Claude API error');
+  if (data.error) throw new Error(JSON.stringify(data.error));
   return data.content[0].text;
 }
 
