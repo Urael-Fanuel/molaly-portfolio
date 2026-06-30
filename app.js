@@ -2014,25 +2014,40 @@ function renderPRD(prd) {
 // ==========================================
 
 function svgLabel(text) {
-  const words = String(text).trim().split(/\s+/);
-  if (words.length <= 2) return [text, ''];
-  const mid = Math.ceil(words.length / 2);
-  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+  const s = String(text).trim();
+  // Components arrive as "English Name — תיאור בעברית". Split on the dash so the
+  // node shows a clean bold English title + a short Hebrew hint (no overlap).
+  const dash = s.indexOf('—') !== -1 ? s.indexOf('—') : s.indexOf(' - ');
+  if (dash !== -1) {
+    let main = s.slice(0, dash).replace(/[-—]\s*$/, '').trim();
+    let sub = s.slice(dash + 1).replace(/^[-—]\s*/, '').trim();
+    if (main.length > 20) main = main.slice(0, 19) + '…';
+    if (sub.length > 20) sub = sub.slice(0, 19) + '…';
+    return [main, sub];
+  }
+  if (s.length > 20) {
+    const words = s.split(/\s+/);
+    const mid = Math.ceil(words.length / 2);
+    return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+  }
+  return [s, ''];
 }
 
 function svgNode(x, y, w, h, r, color, strong, label, badge) {
-  const cx = x + w / 2, cy = y + h / 2;
+  const cx = x + w / 2;
   const [l1, l2] = svgLabel(label);
-  let html = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${color}${strong ? '28' : '15'}" stroke="${color}" stroke-width="${strong ? 2 : 1.5}" opacity="${strong ? 1 : 0.85}"/>`;
+  let html = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${color}${strong ? '33' : '1f'}" stroke="${color}" stroke-width="${strong ? 2.5 : 1.8}" opacity="1"/>`;
+  // full label available on hover
+  html += `<title>${esc(label)}</title>`;
   if (l2) {
-    html += `<text x="${cx}" y="${y + h * 0.42}" text-anchor="middle" fill="${color}" font-size="10" font-weight="${strong ? 800 : 700}" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
-    html += `<text x="${cx}" y="${y + h * 0.72}" text-anchor="middle" fill="${color}bb" font-size="9" font-family="system-ui,sans-serif">${esc(l2)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.44}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.74}" text-anchor="middle" fill="${color}" opacity="0.75" font-size="9" font-family="system-ui,sans-serif">${esc(l2)}</text>`;
   } else {
-    html += `<text x="${cx}" y="${y + h * 0.58}" text-anchor="middle" fill="${color}" font-size="10" font-weight="${strong ? 800 : 700}" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.6}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
   }
   if (badge != null) {
-    html += `<circle cx="${x + 13}" cy="${y + 13}" r="9" fill="${color}" opacity="0.9"/>`;
-    html += `<text x="${x + 13}" y="${y + 17}" text-anchor="middle" fill="white" font-size="9" font-weight="800" font-family="system-ui">${badge}</text>`;
+    html += `<circle cx="${x + 14}" cy="${y + 14}" r="10" fill="${color}" opacity="1"/>`;
+    html += `<text x="${x + 14}" y="${y + 18}" text-anchor="middle" fill="white" font-size="10" font-weight="800" font-family="system-ui">${badge}</text>`;
   }
   return html;
 }
@@ -2165,9 +2180,74 @@ function buildArchDiagramHTML(prd) {
   else if (pattern === 'network') svg = buildNetworkSVG(components, color);
   else svg = buildPipelineSVG(components, color);
   return `<div class="prd-sb" style="overflow:hidden;">
-    <div class="prd-lbl" style="color:${color};">🔀 ויזואליזציה — ${NAMES[pattern] || pattern}</div>
+    <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
+      <div class="prd-lbl" style="color:${color};margin:0;">🔀 ויזואליזציה — ${NAMES[pattern] || pattern}</div>
+      <button onclick="openDiagramFullView()" style="background:${color}22;border:1px solid ${color}66;color:${color};border-radius:7px;padding:5px 11px;cursor:pointer;font-size:11.5px;font-weight:700;font-family:inherit;white-space:nowrap;">🔍 תצוגה מלאה</button>
+    </div>
     <div style="overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;">${svg}</div>
+    <div style="font-size:10.5px;color:var(--tx3);margin-top:4px;text-align:center;">לחץ "תצוגה מלאה" לצפייה ברורה בכל הסוכנים ←</div>
   </div>`;
+}
+
+// Opens the architecture diagram in a clean, spacious new window — each agent
+// as a full row with a colored badge, English title, and Hebrew description.
+function openDiagramFullView() {
+  if (!currentPRD || !currentPRD.architecture) return;
+  const arch = currentPRD.architecture;
+  const COLORS = { orchestrator:'#7c6af7', pipeline:'#4ecca3', hierarchical:'#f7c948', router:'#f7a26a', network:'#f76a9c', simple_automation:'#10b981' };
+  const NAMES = { orchestrator:'Orchestrator — מתזמר', pipeline:'Pipeline — טורי', hierarchical:'Hierarchical — היררכי', router:'Router — נתב', network:'Network — רשת', simple_automation:'Automation — אוטומציה' };
+  const color = COLORS[arch.pattern] || '#7c6af7';
+  const components = (arch.components || []);
+
+  const cards = components.map((c, i) => {
+    const s = String(c).trim();
+    const dash = s.indexOf('—') !== -1 ? s.indexOf('—') : s.indexOf(' - ');
+    const title = dash !== -1 ? s.slice(0, dash).replace(/[-—]\s*$/, '').trim() : s;
+    const desc = dash !== -1 ? s.slice(dash + 1).replace(/^[-—]\s*/, '').trim() : '';
+    return `<div class="agent">
+      <div class="badge">${i + 1}</div>
+      <div class="agent-body">
+        <div class="agent-title">${esc(title)}</div>
+        ${desc ? `<div class="agent-desc">${esc(desc)}</div>` : ''}
+      </div>
+      ${i < components.length - 1 ? '<div class="flow">↓</div>' : ''}
+    </div>`;
+  }).join('');
+
+  const w = window.open('', '_blank', 'width=820,height=860');
+  if (!w) { alert('הדפדפן חסם את החלון. אפשר חלונות קופצים לאתר זה ונסה שוב.'); return; }
+  w.document.write(`<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>דיאגרמת ארכיטקטורה — ${esc(currentPRD.projectName || 'פרויקט')}</title>
+<style>
+  *{box-sizing:border-box;}
+  body{font-family:'Segoe UI',Arial,sans-serif;direction:rtl;text-align:right;background:#0f172a;color:#e2e8f0;margin:0;padding:32px 20px;min-height:100vh;}
+  .wrap{max-width:680px;margin:0 auto;}
+  .head{text-align:center;margin-bottom:8px;}
+  h1{font-size:24px;font-weight:900;margin:0 0 4px;color:#fff;}
+  .pattern{display:inline-block;background:${color}22;border:1px solid ${color}88;color:${color};font-weight:800;font-size:14px;padding:6px 18px;border-radius:30px;margin:8px 0 6px;}
+  .reason{color:#94a3b8;font-size:13.5px;line-height:1.7;max-width:560px;margin:0 auto 26px;text-align:center;}
+  .agent{position:relative;}
+  .agent-body{display:flex;align-items:flex-start;gap:14px;background:linear-gradient(145deg,#1e293b,#172033);border:2px solid ${color}55;border-radius:16px;padding:16px 18px;}
+  .badge{position:absolute;top:-10px;right:18px;width:30px;height:30px;border-radius:50%;background:${color};color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px ${color}88;z-index:2;}
+  .agent-title{font-size:18px;font-weight:800;color:${color};margin-bottom:5px;direction:ltr;text-align:left;}
+  .agent-desc{font-size:14px;color:#cbd5e1;line-height:1.6;}
+  .flow{text-align:center;color:${color};font-size:26px;font-weight:800;margin:6px 0;animation:bounce 1.4s ease-in-out infinite;}
+  @keyframes bounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(5px);opacity:1}}
+  .foot{text-align:center;margin-top:30px;color:#64748b;font-size:12.5px;}
+  .pad{height:14px;}
+</style></head><body>
+<div class="wrap">
+  <div class="head">
+    <h1>${esc(currentPRD.projectName || 'דיאגרמת ארכיטקטורה')}</h1>
+    <div class="pattern">${NAMES[arch.pattern] || arch.pattern || ''}</div>
+  </div>
+  ${arch.reasoning ? `<div class="reason">${esc(arch.reasoning)}</div>` : '<div class="pad"></div>'}
+  ${cards}
+  <div class="foot">דיאגרמת ארכיטקטורה · נוצר על ידי סוכן האפיון של Molaly Mekonen</div>
+</div>
+</body></html>`);
+  w.document.close();
 }
 
 function copyDevPrompt() {
