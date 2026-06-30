@@ -271,6 +271,10 @@ function switchTab(tab){
   if(tab==='blueprints') {
     selectBlueprint('orchestrator');
   }
+  if(tab==='architect') {
+    const btn = document.getElementById('btn-restore-prd');
+    if (btn) btn.style.display = localStorage.getItem('molaly_last_prd') ? 'inline-flex' : 'none';
+  }
 }
 
 // ── RENDER ──
@@ -1643,7 +1647,24 @@ function handleClaudeResponse(text) {
   }
 }
 
+function restoreSavedPRD() {
+  try {
+    const saved = localStorage.getItem('molaly_last_prd');
+    if (!saved) return;
+    const prd = JSON.parse(saved);
+    currentPRD = prd;
+    renderPRD(prd);
+    addChatMessage('agent', '✅ <strong>ה-PRD האחרון שלך שוחזר</strong> — הדיאגרמה מוצגת מחדש עם העדכונים האחרונים.', true);
+  } catch(e) { console.warn('restore PRD failed', e); }
+}
+
 function renderPRD(prd) {
+  try {
+    localStorage.setItem('molaly_last_prd', JSON.stringify(prd));
+    const btn = document.getElementById('btn-restore-prd');
+    if (btn) btn.style.display = 'inline-flex';
+  } catch(e) {}
+
   const PATTERN_COLORS = {
     orchestrator: '#7c6af7', pipeline: '#4ecca3',
     hierarchical: '#f7c948', router: '#f7a26a',
@@ -1658,12 +1679,27 @@ function renderPRD(prd) {
     `<li style="margin-bottom:8px;"><strong>שלב ${i + 1}:</strong> ${esc(s)}</li>`
   ).join('');
 
+  const fullScopeHtml = (prd.fullScope || []).map((s, i) =>
+    `<li style="margin-bottom:6px;">${esc(s)}</li>`
+  ).join('');
+
   const techHtml = (prd.techStack || []).map(t =>
-    `<div class="prd-tech-item"><strong>${esc(t.tool)}</strong><span>${esc(t.role)}</span></div>`
+    `<div class="prd-tech-item"><strong>${esc(t.tool)}</strong><span>${esc(t.role)}</span>${t.cost ? `<span style="font-size:10px;color:var(--tx3);margin-right:auto;">${esc(t.cost)}</span>` : ''}</div>`
   ).join('');
 
   const pitfallsHtml = (prd.pitfalls || []).map(p =>
-    `<div class="prd-pitfall-item">⚠️ <strong>${esc(p.name)}:</strong> ${esc(p.warning)}</div>`
+    `<div class="prd-pitfall-item" style="padding:8px 10px;border-radius:8px;background:rgba(239,68,68,0.05);border:1px solid rgba(239,68,68,0.15);">
+      <div>⚠️ <strong>${esc(p.name)}:</strong> ${esc(p.warning)}</div>
+      ${p.mitigation ? `<div style="margin-top:4px;font-size:11.5px;color:#10b981;">✅ מניעה: ${esc(p.mitigation)}</div>` : ''}
+    </div>`
+  ).join('');
+
+  const prereqHtml = (prd.prerequisites || []).map(r =>
+    `<li style="margin-bottom:6px;color:var(--tx2);">${esc(r)}</li>`
+  ).join('');
+
+  const metricsHtml = (prd.successMetrics || []).map(m =>
+    `<div style="display:flex;align-items:flex-start;gap:8px;padding:6px 0;border-bottom:1px solid var(--bor);"><span style="color:#10b981;font-weight:800;flex-shrink:0;">✓</span><span style="color:var(--tx2);">${esc(m)}</span></div>`
   ).join('');
 
   const componentsHtml = (prd.architecture && prd.architecture.components || []).map(c =>
@@ -1674,20 +1710,35 @@ function renderPRD(prd) {
   const ai = prd.aiDecision || {};
   const ds = prd.dataSource || {};
   const roi = prd.roi || {};
+  const cx = prd.complexity || {};
+  const tl = prd.timeline || {};
+  const budget = prd.budgetEstimate || {};
+
+  const complexityColors = { 1:'#10b981', 2:'#4ecca3', 3:'#f7c948', 4:'#f7a26a', 5:'#ef4444' };
+  const cxColor = complexityColors[cx.score] || '#7c6af7';
+  const cxDots = [1,2,3,4,5].map(n =>
+    `<span style="width:10px;height:10px;border-radius:50%;background:${n <= (cx.score||0) ? cxColor : 'var(--bor)'};display:inline-block;"></span>`
+  ).join('');
 
   const html = `<div id="prd-display" style="direction:rtl;text-align:right;width:100%;font-size:13.5px;">
 
     <div style="margin-bottom:18px;padding-bottom:16px;border-bottom:1px solid var(--bor);">
       <div style="font-size:10px;font-weight:800;color:var(--tx3);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px;">📋 PRD — מסמך דרישות מוצר</div>
       <h2 style="margin:0 0 6px;font-size:20px;font-weight:900;color:var(--tx);">${esc(prd.projectName || '')}</h2>
-      <p style="margin:0;color:var(--tx2);font-size:13px;font-style:italic;">${esc(prd.tagline || '')}</p>
+      <p style="margin:0 0 8px;color:var(--tx2);font-size:13px;font-style:italic;">${esc(prd.tagline || '')}</p>
+      ${prd.clientProfile ? `<p style="margin:0;font-size:12px;color:var(--tx3);padding:6px 10px;background:rgba(255,255,255,0.03);border-radius:6px;border-right:2px solid var(--bor2);">${esc(prd.clientProfile)}</p>` : ''}
     </div>
 
-    <div style="background:${decisionColor}18;border:1px solid ${decisionColor}44;border-radius:10px;padding:12px 14px;margin-bottom:14px;display:flex;align-items:flex-start;gap:10px;">
-      <div>
-        <div style="font-weight:800;color:${decisionColor};font-size:14px;">${decisionLabel}</div>
-        <div style="font-size:12px;color:var(--tx2);margin-top:3px;">${esc(ai.reasoning || '')}</div>
+    <div style="display:flex;gap:10px;margin-bottom:14px;flex-wrap:wrap;">
+      <div style="flex:1;min-width:140px;background:${decisionColor}18;border:1px solid ${decisionColor}44;border-radius:10px;padding:12px 14px;">
+        <div style="font-weight:800;color:${decisionColor};font-size:13px;margin-bottom:3px;">${decisionLabel}</div>
+        <div style="font-size:11.5px;color:var(--tx2);">${esc(ai.reasoning || '')}</div>
       </div>
+      ${cx.score ? `<div style="min-width:130px;background:${cxColor}12;border:1px solid ${cxColor}44;border-radius:10px;padding:12px 14px;">
+        <div style="font-weight:800;color:${cxColor};font-size:13px;margin-bottom:5px;">🎚️ מורכבות: ${esc(cx.label || '')}</div>
+        <div style="display:flex;gap:4px;margin-bottom:4px;">${cxDots}</div>
+        <div style="font-size:11px;color:var(--tx3);">${esc(cx.explanation || '')}</div>
+      </div>` : ''}
     </div>
 
     <div class="prd-sb">
@@ -1701,6 +1752,13 @@ function renderPRD(prd) {
       ${componentsHtml ? `<ul style="margin:0;padding-right:18px;color:var(--tx2);">${componentsHtml}</ul>` : ''}
     </div>
 
+    ${buildArchDiagramHTML(prd)}
+
+    ${prereqHtml ? `<div class="prd-sb" style="border-right:3px solid #f7c948;">
+      <div class="prd-lbl" style="color:#f7c948;">🔑 תנאי קדם — חובה לפני תחילת הבנייה</div>
+      <ul style="margin:0;padding-right:18px;">${prereqHtml}</ul>
+    </div>` : ''}
+
     <div class="prd-sb">
       <div class="prd-lbl">🗄️ מקור האמת (Single Source of Truth)</div>
       <p style="margin:0 0 4px;color:var(--tx2);font-weight:600;">${esc(ds.recommendation || '')}</p>
@@ -1712,9 +1770,30 @@ function renderPRD(prd) {
       <ol style="margin:0;padding-right:20px;color:var(--tx2);">${mvpHtml}</ol>
     </div>
 
+    ${fullScopeHtml ? `<div class="prd-sb" style="background:rgba(124,106,247,0.04);">
+      <div class="prd-lbl" style="color:var(--ac);">🔭 שלב 2 — לאחר MVP</div>
+      <ul style="margin:0;padding-right:18px;color:var(--tx2);">${fullScopeHtml}</ul>
+    </div>` : ''}
+
     ${techHtml ? `<div class="prd-sb">
       <div class="prd-lbl">🛠️ Stack טכנולוגי</div>
       <div style="display:flex;flex-direction:column;gap:7px;">${techHtml}</div>
+    </div>` : ''}
+
+    ${(tl.mvpWeeks || tl.fullScopeMonths) ? `<div class="prd-sb">
+      <div class="prd-lbl">📅 ציר זמן</div>
+      <div style="display:flex;gap:12px;flex-wrap:wrap;color:var(--tx2);">
+        ${tl.mvpWeeks ? `<div style="padding:8px 12px;background:rgba(78,204,163,0.08);border:1px solid rgba(78,204,163,0.2);border-radius:8px;"><div style="font-size:11px;color:var(--tx3);">MVP</div><div style="font-weight:800;font-size:16px;color:#4ecca3;">${esc(String(tl.mvpWeeks))}</div><div style="font-size:11px;">שבועות</div></div>` : ''}
+        ${tl.fullScopeMonths ? `<div style="padding:8px 12px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:8px;"><div style="font-size:11px;color:var(--tx3);">scope מלא</div><div style="font-weight:800;font-size:16px;color:var(--ac);">${esc(String(tl.fullScopeMonths))}</div><div style="font-size:11px;">חודשים</div></div>` : ''}
+      </div>
+      ${tl.notes ? `<p style="margin:8px 0 0;font-size:12px;color:var(--tx3);">⚠️ ${esc(tl.notes)}</p>` : ''}
+    </div>` : ''}
+
+    ${budget.range ? `<div class="prd-sb" style="background:rgba(247,201,72,0.05);border:1px solid rgba(247,201,72,0.2);border-radius:10px;padding:12px;">
+      <div class="prd-lbl" style="color:#f7c948;">💰 הערכת עלות יישום</div>
+      <div style="font-size:18px;font-weight:900;color:#f7c948;margin-bottom:6px;">${esc(budget.range)}</div>
+      ${budget.breakdown ? `<div style="font-size:12px;color:var(--tx2);margin-bottom:4px;">${esc(budget.breakdown)}</div>` : ''}
+      ${budget.notes ? `<div style="font-size:11.5px;color:var(--tx3);font-style:italic;">${esc(budget.notes)}</div>` : ''}
     </div>` : ''}
 
     <div class="prd-sb" style="background:rgba(16,185,129,0.05);border:1px solid rgba(16,185,129,0.2);border-radius:10px;padding:12px;">
@@ -1726,9 +1805,14 @@ function renderPRD(prd) {
       </div>
     </div>
 
+    ${metricsHtml ? `<div class="prd-sb">
+      <div class="prd-lbl" style="color:#10b981;">🎯 מדדי הצלחה (KPIs)</div>
+      <div style="display:flex;flex-direction:column;">${metricsHtml}</div>
+    </div>` : ''}
+
     ${pitfallsHtml ? `<div class="prd-sb">
-      <div class="prd-lbl" style="color:#ef4444;">⚠️ מלכודות — שים לב</div>
-      <div style="display:flex;flex-direction:column;gap:7px;">${pitfallsHtml}</div>
+      <div class="prd-lbl" style="color:#ef4444;">⚠️ מלכודות ואיך להימנע מהן</div>
+      <div style="display:flex;flex-direction:column;gap:8px;">${pitfallsHtml}</div>
     </div>` : ''}
 
     <div class="prd-sb" style="background:rgba(124,106,247,0.07);border-right:3px solid var(--ac);border-radius:0 10px 10px 0;padding:12px 14px;">
@@ -1755,6 +1839,167 @@ function renderPRD(prd) {
   }
   const placeholder = document.getElementById('arch-result-placeholder');
   if (placeholder) placeholder.style.display = 'none';
+}
+
+// ==========================================
+// 🔀 ARCH DIAGRAM BUILDER
+// ==========================================
+
+function svgLabel(text) {
+  const words = String(text).trim().split(/\s+/);
+  if (words.length <= 2) return [text, ''];
+  const mid = Math.ceil(words.length / 2);
+  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+}
+
+function svgNode(x, y, w, h, r, color, strong, label, badge) {
+  const cx = x + w / 2, cy = y + h / 2;
+  const [l1, l2] = svgLabel(label);
+  let html = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${color}${strong ? '28' : '15'}" stroke="${color}" stroke-width="${strong ? 2 : 1.5}" opacity="${strong ? 1 : 0.85}"/>`;
+  if (l2) {
+    html += `<text x="${cx}" y="${y + h * 0.42}" text-anchor="middle" fill="${color}" font-size="10" font-weight="${strong ? 800 : 700}" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.72}" text-anchor="middle" fill="${color}bb" font-size="9" font-family="system-ui,sans-serif">${esc(l2)}</text>`;
+  } else {
+    html += `<text x="${cx}" y="${y + h * 0.58}" text-anchor="middle" fill="${color}" font-size="10" font-weight="${strong ? 800 : 700}" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+  }
+  if (badge != null) {
+    html += `<circle cx="${x + 13}" cy="${y + 13}" r="9" fill="${color}" opacity="0.9"/>`;
+    html += `<text x="${x + 13}" y="${y + 17}" text-anchor="middle" fill="white" font-size="9" font-weight="800" font-family="system-ui">${badge}</text>`;
+  }
+  return html;
+}
+
+function svgArrow(x1, y1, x2, y2, color, delay) {
+  const dx = x2 - x1, dy = y2 - y1;
+  const len = Math.sqrt(dx * dx + dy * dy);
+  const nx = dx / len, ny = dy / len;
+  const ax = x2 - nx * 6, ay = y2 - ny * 6;
+  return `<line x1="${x1}" y1="${y1}" x2="${ax}" y2="${ay}" stroke="${color}88" stroke-width="1.8" stroke-dasharray="4 3" style="animation:archFlow 1.1s linear infinite;animation-delay:${(delay || 0).toFixed(2)}s"/>
+<polygon points="${x2},${y2} ${ax - ny * 4},${ay + nx * 4} ${ax + ny * 4},${ay - nx * 4}" fill="${color}"/>`;
+}
+
+const ARCH_ANIM = `<style>@keyframes archFlow{to{stroke-dashoffset:-14}}@keyframes archPulse{0%,100%{opacity:.5}50%{opacity:1}}</style>`;
+
+function buildPipelineSVG(components, color) {
+  const N = Math.min(components.length, 5);
+  const W = 112, H = 52, r = 10, gap = 34, pad = 10;
+  const totalW = pad + N * W + (N - 1) * gap + pad;
+  const cy = 50 + H / 2;
+  let arrows = '', nodes = '';
+  for (let i = 0; i < N; i++) {
+    const x = pad + i * (W + gap);
+    nodes += svgNode(x, 50, W, H, r, color, true, components[i], i + 1);
+    if (i < N - 1) arrows += svgArrow(x + W, cy, x + W + gap, cy, color, i * 0.3);
+  }
+  return `<svg viewBox="0 0 ${totalW} ${H + 60}" xmlns="http://www.w3.org/2000/svg" style="width:100%;min-width:280px;direction:ltr;display:block;">${ARCH_ANIM}${arrows}${nodes}</svg>`;
+}
+
+function buildOrchestratorSVG(components, color) {
+  const N = Math.min(components.length, 6);
+  const W = 108, H = 50, r = 10;
+  const subN = Math.max(N - 1, 1);
+  const svgH = subN * 64 + 30;
+  const orchY = svgH / 2 - H / 2;
+  const subX = 168;
+  const totalW = subX + W + 10;
+  let arrows = '', nodes = '';
+  const orchCY = orchY + H / 2;
+  nodes += svgNode(8, orchY, W, H, r, color, true, components[0] || 'Orchestrator', '●');
+  for (let i = 0; i < N - 1 && i < 5; i++) {
+    const sy = 15 + i * 64, scx = subX + W / 2, scy = sy + H / 2;
+    arrows += svgArrow(8 + W, orchCY, subX, scy, color, i * 0.35);
+    nodes += svgNode(subX, sy, W, H, r, color, false, components[i + 1] || `Agent ${i + 1}`, i + 2);
+  }
+  return `<svg viewBox="0 0 ${totalW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${totalW}px;direction:ltr;display:block;">${ARCH_ANIM}${arrows}${nodes}</svg>`;
+}
+
+function buildRouterSVG(components, color) {
+  const N = Math.min(components.length, 6);
+  const W = 100, H = 48, r = 9;
+  const specs = N > 2 ? components.slice(2) : ['מסלול A', 'מסלול B', 'מסלול C'];
+  const specN = Math.min(specs.length, 4);
+  const svgH = specN * 62 + 30;
+  const rY = svgH / 2 - H / 2, rCY = rY + H / 2;
+  const specX = 248, totalW = specX + W + 8;
+  let arrows = '', nodes = '';
+  nodes += svgNode(6, rY, W, H, r, color, false, components[0] || 'Input', null);
+  const routX = 118;
+  nodes += svgNode(routX, rY, W, H, r, color, true, components[1] || 'Router', '⊕');
+  arrows += svgArrow(6 + W, rCY, routX, rCY, color, 0);
+  const routCY = rY + H / 2;
+  for (let i = 0; i < specN; i++) {
+    const sy = 15 + i * 62, scy = sy + H / 2;
+    arrows += svgArrow(routX + W, routCY, specX, scy, color, i * 0.3);
+    nodes += svgNode(specX, sy, W, H, r, color, false, specs[i], i + 1);
+  }
+  return `<svg viewBox="0 0 ${totalW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${totalW}px;direction:ltr;display:block;">${ARCH_ANIM}${arrows}${nodes}</svg>`;
+}
+
+function buildHierarchicalSVG(components, color) {
+  const N = Math.min(components.length, 7);
+  const W = 100, H = 44, r = 8, levelH = 80;
+  const root = [components[0] || 'Root'];
+  const mid = components.slice(1, Math.min(4, N));
+  const leaves = components.slice(Math.min(4, N));
+  const levels = [root, ...(mid.length ? [mid] : []), ...(leaves.length ? [leaves] : [])];
+  const maxN = Math.max(...levels.map(l => l.length));
+  const totalW = maxN * (W + 16) + 16;
+  const svgH = levels.length * levelH + H + 10;
+  let arrows = '', nodes = '';
+  const getX = (li, ni, n) => { const sp = totalW / (n + 1); return sp * (ni + 1) - W / 2; };
+  for (let li = 0; li < levels.length; li++) {
+    const lv = levels[li], ly = 10 + li * levelH;
+    for (let ni = 0; ni < lv.length; ni++) {
+      const x = getX(li, ni, lv.length), cx = x + W / 2, cy = ly + H / 2;
+      nodes += svgNode(x, ly, W, H, r, color, li === 0, lv[ni], null);
+      if (li < levels.length - 1) {
+        const nextLv = levels[li + 1], nly = 10 + (li + 1) * levelH;
+        const perNode = Math.ceil(nextLv.length / lv.length);
+        for (let ci = ni * perNode; ci < Math.min((ni + 1) * perNode, nextLv.length); ci++) {
+          const ncx = getX(li + 1, ci, nextLv.length) + W / 2;
+          arrows += svgArrow(cx, cy + H / 2, ncx, nly, color, (li + ci) * 0.2);
+        }
+      }
+    }
+  }
+  return `<svg viewBox="0 0 ${totalW} ${svgH}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${totalW}px;direction:ltr;display:block;">${ARCH_ANIM}${arrows}${nodes}</svg>`;
+}
+
+function buildNetworkSVG(components, color) {
+  const N = Math.min(components.length, 6);
+  const W = 88, H = 44, r = 8, cx0 = 220, cy0 = 140, rad = 95;
+  const pos = components.slice(0, N).map((_, i) => {
+    const a = (2 * Math.PI * i / N) - Math.PI / 2;
+    return { x: cx0 + rad * Math.cos(a), y: cy0 + rad * Math.sin(a) };
+  });
+  let arrows = '', nodes = '';
+  let d = 0;
+  for (let i = 0; i < N; i++)
+    for (let j = i + 1; j < N; j++, d++)
+      arrows += svgArrow(pos[i].x, pos[i].y, pos[j].x, pos[j].y, color, d * 0.18);
+  for (let i = 0; i < N; i++)
+    nodes += svgNode(pos[i].x - W / 2, pos[i].y - H / 2, W, H, r, color, true, components[i], i + 1);
+  return `<svg viewBox="0 0 ${cx0 * 2} ${cy0 * 2}" xmlns="http://www.w3.org/2000/svg" style="width:100%;max-width:${cx0 * 2}px;direction:ltr;display:block;">${ARCH_ANIM}${arrows}${nodes}</svg>`;
+}
+
+function buildArchDiagramHTML(prd) {
+  const arch = prd.architecture || {};
+  const pattern = arch.pattern || 'pipeline';
+  const components = (arch.components || []).slice(0, 6);
+  if (components.length === 0) return '';
+  const COLORS = { orchestrator:'#7c6af7', pipeline:'#4ecca3', hierarchical:'#f7c948', router:'#f7a26a', network:'#f76a9c', simple_automation:'#10b981' };
+  const NAMES = { orchestrator:'Orchestrator — מתזמר', pipeline:'Pipeline — טורי', hierarchical:'Hierarchical — היררכי', router:'Router — נתב', network:'Network — רשת', simple_automation:'Automation — אוטומציה' };
+  const color = COLORS[pattern] || '#7c6af7';
+  let svg = '';
+  if (pattern === 'orchestrator') svg = buildOrchestratorSVG(components, color);
+  else if (pattern === 'router') svg = buildRouterSVG(components, color);
+  else if (pattern === 'hierarchical') svg = buildHierarchicalSVG(components, color);
+  else if (pattern === 'network') svg = buildNetworkSVG(components, color);
+  else svg = buildPipelineSVG(components, color);
+  return `<div class="prd-sb" style="overflow:hidden;">
+    <div class="prd-lbl" style="color:${color};">🔀 ויזואליזציה — ${NAMES[pattern] || pattern}</div>
+    <div style="overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;">${svg}</div>
+  </div>`;
 }
 
 function openVisitorContactFromPRD() {

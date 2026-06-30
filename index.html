@@ -193,7 +193,10 @@
             <div style="font-size:28px;">🤖</div>
             <div>
               <h3 style="margin:0; font-size:16px; font-weight:800; color:var(--tx);">סוכן אפיון ארכיטקטורת AI</h3>
-              <span style="font-size:11px; color:#10b981; font-weight:700; display:flex; align-items:center; gap:4px;"><span class="live-dot"></span>מקוון ומוכן לאבחון</span>
+              <div style="display:flex;align-items:center;gap:10px;">
+                <span style="font-size:11px; color:#10b981; font-weight:700; display:flex; align-items:center; gap:4px;"><span class="live-dot"></span>מקוון ומוכן לאבחון</span>
+                <button onclick="restoreSavedPRD()" id="btn-restore-prd" style="display:none;font-size:11px;font-weight:700;padding:4px 10px;border-radius:8px;border:1px solid var(--bor2);background:transparent;color:var(--tx2);cursor:pointer;" title="הצג את האפיון האחרון שנשמר">🔄 PRD שמור</button>
+              </div>
             </div>
           </div>
           
@@ -522,9 +525,9 @@
     <button class="bsave" onclick="sendContact('whatsapp')" style="background:linear-gradient(135deg, #25D366 0%, #128C7E 100%); border:none; box-shadow:0 4px 12px rgba(37,211,102,0.25); display:flex; align-items:center; justify-content:center; gap:8px; width:100%; font-weight:700; padding:12px; cursor:pointer;">
       💬 שליחה ב-WhatsApp מהיר
     </button>
-    <button class="cta-s" onclick="sendContact('email')" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; font-weight:700; padding:12px; border-color:var(--ac); color:var(--tx); cursor:pointer;">
-      ✉️ שליחה במייל
-    </button>
+    <a class="cta-s" href="tel:+972528742884" style="display:flex; align-items:center; justify-content:center; gap:8px; width:100%; font-weight:700; padding:12px; border-color:var(--ac); color:var(--tx); cursor:pointer; text-decoration:none; border-radius:10px;">
+      📞 התקשר עכשיו — 052-874-2884
+    </a>
   </div>
 </div>
 </div>
