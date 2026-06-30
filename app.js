@@ -1828,6 +1828,17 @@ function renderPRD(prd) {
     <div style="margin-top:14px;padding:14px;background:rgba(255,255,255,0.03);border:1px solid var(--bor);border-radius:10px;text-align:center;color:var(--tx2);font-size:13px;line-height:1.6;">
       ${esc(prd.cta || '')}
     </div>
+
+    <div style="margin-top:16px;padding:14px 16px;background:rgba(247,201,72,0.06);border:1px solid rgba(247,201,72,0.25);border-radius:10px;direction:rtl;text-align:right;">
+      <div style="font-size:11px;font-weight:800;color:#f7c948;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">📌 הערה חשובה</div>
+      <p style="margin:0 0 10px;font-size:12.5px;color:var(--tx2);line-height:1.7;">
+        האפיון הזה נוצר על בסיס המידע שסיפקת בשיחה בלבד. פרטים נוספים על העסק, מערכות קיימות, נתונים, אילוצים תקציביים או תהליכי עבודה פנימיים — <strong>יכולים לשנות באופן משמעותי את הארכיטקטורה המומלצת</strong>.
+        שיחה ישירה של 20 דקות עם אדריכל ה-AI יכולה לדייק, לשפר, ולפעמים לחסוך לך חודשי עבודה על המסלול הלא נכון.
+      </p>
+      <button onclick="openVisitorContactFromPRD()" style="background:rgba(247,201,72,0.15);border:1px solid rgba(247,201,72,0.4);color:#f7c948;border-radius:8px;padding:8px 16px;font-size:12.5px;font-weight:700;cursor:pointer;font-family:inherit;">
+        📞 דייק את האפיון עם Molaly — ללא עלות
+      </button>
+    </div>
   </div>`;
 
   const resultContent = document.getElementById('arch-result-content');
