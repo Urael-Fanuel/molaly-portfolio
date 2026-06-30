@@ -1546,7 +1546,7 @@ function handleHashRoute() {
 // 🤖 CLAUDE AI ARCHITECT AGENT
 // ==========================================
 
-const ARCH_WORKER_URL = 'WORKER_URL_PLACEHOLDER'; // החלף בURL של ה-Cloudflare Worker לאחר ה-deploy
+const ARCH_WORKER_URL = 'https://molaly-portfolio-agent.molaly.workers.dev';
 
 let archMessages = [];
 let archIsLoading = false;
