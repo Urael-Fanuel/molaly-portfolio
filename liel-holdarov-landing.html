@@ -390,6 +390,76 @@
   .delay-4 { animation-delay: 0.48s; }
   .delay-5 { animation-delay: 0.6s; }
 
+  /* ── ACCESSIBILITY ── */
+  .a11y-btn {
+    position: fixed; bottom: 1.75rem; right: 1.75rem; z-index: 999;
+    width: 58px; height: 58px; border-radius: 50%;
+    background: var(--dark); color: white;
+    border: none; cursor: pointer; font-size: 1.5rem;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.25);
+    transition: transform 0.2s, box-shadow 0.2s;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .a11y-btn:hover { transform: scale(1.1); box-shadow: 0 8px 28px rgba(0,0,0,0.32); }
+  .a11y-panel {
+    position: fixed; bottom: 5.5rem; right: 1.75rem; z-index: 998;
+    background: var(--white); border-radius: 20px;
+    border: 1px solid var(--border);
+    box-shadow: 0 16px 48px rgba(0,0,0,0.18);
+    padding: 1.25rem; width: 230px;
+    display: none; flex-direction: column; gap: 0.6rem;
+    direction: rtl;
+  }
+  .a11y-panel.open { display: flex; }
+  .a11y-panel-title {
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.82rem; font-weight: 800; color: var(--muted);
+    text-transform: uppercase; letter-spacing: 0.06em;
+    margin-bottom: 0.25rem;
+  }
+  .a11y-row {
+    display: flex; align-items: center; justify-content: space-between;
+    font-family: 'Heebo', sans-serif;
+    font-size: 0.9rem; font-weight: 600; color: var(--text);
+  }
+  .a11y-controls { display: flex; align-items: center; gap: 0.4rem; }
+  .a11y-control-btn {
+    width: 32px; height: 32px; border-radius: 8px;
+    border: 1.5px solid var(--border);
+    background: var(--cream); cursor: pointer;
+    font-size: 1rem; font-weight: 700; color: var(--text);
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, border-color 0.15s;
+    font-family: 'Heebo', sans-serif;
+  }
+  .a11y-control-btn:hover { background: var(--rose-pale); border-color: var(--rose); color: var(--rose); }
+  .a11y-toggle {
+    width: 44px; height: 24px; border-radius: 50px;
+    background: var(--border); border: none; cursor: pointer;
+    position: relative; transition: background 0.2s;
+  }
+  .a11y-toggle.on { background: var(--rose); }
+  .a11y-toggle::after {
+    content: ''; position: absolute;
+    top: 3px; right: 3px;
+    width: 18px; height: 18px; border-radius: 50%;
+    background: white; transition: right 0.2s;
+  }
+  .a11y-toggle.on::after { right: calc(100% - 21px); }
+  .a11y-divider { border: none; border-top: 1px solid var(--border); margin: 0.25rem 0; }
+  .a11y-reset {
+    width: 100%; padding: 0.6rem; border-radius: 10px;
+    background: var(--rose-pale); border: 1px solid var(--rose-light);
+    color: var(--rose-dark); font-family: 'Heebo', sans-serif;
+    font-size: 0.88rem; font-weight: 700; cursor: pointer;
+    transition: background 0.15s;
+  }
+  .a11y-reset:hover { background: var(--rose-light); }
+
+  body.high-contrast { filter: contrast(1.5) brightness(1.05); }
+  body.grayscale { filter: grayscale(1); }
+  body.large-cursor * { cursor: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='32' height='32' viewBox='0 0 32 32'%3E%3Cpath d='M5 2l20 13-9 2-4 9z' fill='%23C8446A' stroke='white' stroke-width='2'/%3E%3C/svg%3E") 5 2, auto !important; }
+
   /* ── FLOATING BUTTONS ── */
   .float-btns {
     position: fixed; bottom: 1.75rem; left: 1.75rem;
@@ -747,6 +817,40 @@
   </div>
 </section>
 
+<!-- ACCESSIBILITY WIDGET -->
+<button class="a11y-btn" onclick="toggleA11y()" aria-label="אפשרויות נגישות">♿</button>
+<div class="a11y-panel" id="a11yPanel">
+  <div class="a11y-panel-title">♿ נגישות</div>
+
+  <div class="a11y-row">
+    <span>גודל טקסט</span>
+    <div class="a11y-controls">
+      <button class="a11y-control-btn" onclick="changeFontSize(-1)">A−</button>
+      <button class="a11y-control-btn" onclick="changeFontSize(1)">A+</button>
+    </div>
+  </div>
+
+  <hr class="a11y-divider">
+
+  <div class="a11y-row">
+    <span>ניגודיות גבוהה</span>
+    <button class="a11y-toggle" id="contrastToggle" onclick="toggleClass('high-contrast','contrastToggle')" aria-label="ניגודיות גבוהה"></button>
+  </div>
+
+  <div class="a11y-row">
+    <span>גווני אפור</span>
+    <button class="a11y-toggle" id="grayToggle" onclick="toggleClass('grayscale','grayToggle')" aria-label="גווני אפור"></button>
+  </div>
+
+  <div class="a11y-row">
+    <span>סמן גדול</span>
+    <button class="a11y-toggle" id="cursorToggle" onclick="toggleClass('large-cursor','cursorToggle')" aria-label="סמן גדול"></button>
+  </div>
+
+  <hr class="a11y-divider">
+  <button class="a11y-reset" onclick="resetA11y()">↺ איפוס הגדרות</button>
+</div>
+
 <!-- FLOATING BUTTONS -->
 <div class="float-btns">
   <a class="float-btn float-wa" href="https://wa.me/972XXXXXXXXX?text=היי+ליאל%2C+ראיתי+את+הדף+שלך+ורציתי+לשאול+על+ליווי+עסקי" target="_blank" aria-label="שלחי הודעה בוואטסאפ">
@@ -765,6 +869,33 @@
 </footer>
 
 <script>
+// Accessibility
+let fontSize = 100;
+function toggleA11y() {
+  document.getElementById('a11yPanel').classList.toggle('open');
+}
+function changeFontSize(dir) {
+  fontSize = Math.min(Math.max(fontSize + dir * 10, 80), 140);
+  document.documentElement.style.fontSize = fontSize + '%';
+}
+function toggleClass(cls, btnId) {
+  document.body.classList.toggle(cls);
+  document.getElementById(btnId).classList.toggle('on');
+}
+function resetA11y() {
+  fontSize = 100;
+  document.documentElement.style.fontSize = '100%';
+  ['high-contrast','grayscale','large-cursor'].forEach(c => document.body.classList.remove(c));
+  ['contrastToggle','grayToggle','cursorToggle'].forEach(id => document.getElementById(id).classList.remove('on'));
+}
+document.addEventListener('click', function(e) {
+  const panel = document.getElementById('a11yPanel');
+  const btn = document.querySelector('.a11y-btn');
+  if (panel.classList.contains('open') && !panel.contains(e.target) && e.target !== btn) {
+    panel.classList.remove('open');
+  }
+});
+
 function handleSubmit() {
   const name = document.getElementById('fname').value.trim();
   const phone = document.getElementById('phone').value.trim();
