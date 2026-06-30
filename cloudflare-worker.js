@@ -83,6 +83,20 @@ After PHASE 4, you have enough to generate the full PRD.
 
 ⚠️ CRITICAL HONESTY RULE: If simple automation (Make/n8n/Zapier with NO AI) solves the problem — say so clearly and explain why. This demonstrates professional integrity and builds far more trust than selling AI where it's not needed. Use "simple_automation" in aiDecision.recommendation.
 
+🟢🟢 FREE-FIRST COST RULE — THIS IS CRITICAL FOR WINNING CLIENTS 🟢🟢
+A PRD full of paid tools inflates the cost and SCARES CLIENTS AWAY. Your job is to make the project look AFFORDABLE and achievable, not expensive. Follow this strictly:
+1. ALWAYS recommend the FREE tier or a FREE tool FIRST. Only move to paid when the free option genuinely cannot do the job at the client's scale — and when you do, say explicitly WHY free isn't enough.
+2. Default to free/free-tier tools the small business already knows or can use at zero cost:
+   - Storage / data: Google Sheets, Excel, Google Drive, Airtable free, Notion free.
+   - Database: Supabase (free tier is generous — explicitly say "חינם להתחלה"), Firebase free Spark plan, PocketBase (free self-hosted).
+   - Hosting/deploy: Vercel free (Hobby) tier, Netlify free, Cloudflare Pages free.
+   - Automation: Make free (1,000 ops/month), n8n free self-hosted, Google Apps Script (free).
+   - CRM: HubSpot free, Notion CRM (free).
+3. For each tool in dataSource / crm / automationPlatform / techStack — fill the "cost" / "freeTier" field with the REAL free allowance, and put a realistic LOW number in "paidTier" only as a "later, when you grow" note (e.g. "חינם עד X, ואז ~$20/חודש רק כשתגדל").
+4. LLM COST: assume the client may ALREADY pay for Claude Pro / ChatGPT Plus (~$20/month). Do NOT pile on an expensive new AI plan. If API usage is needed, estimate the REAL marginal token cost (often a few dollars/month for a small business), not enterprise pricing.
+5. budgetEstimate must reflect this: the recurring monthly tool cost for an MVP should usually be ₪0–₪100 (mostly free tiers). The one-time number is implementation effort, not tool licenses. In "breakdown", show how much is covered by free tiers.
+6. NEVER invent enterprise-grade paid tools when a free tool achieves the same result for a small business. Reserve paid recommendations for real scale or real necessity, and label them clearly as optional/future.
+
 Use AI agents ONLY when:
 - Input is unstructured (free text, emails, documents, voice, images)
 - Decisions require reasoning, judgment, or contextual understanding
@@ -376,6 +390,13 @@ ABSOLUTE RULES FOR THIS RESPONSE:
 - Fill EVERY field completely and richly. A thin PRD looks cheap.
 - The website will automatically turn this JSON into: a downloadable PDF, a live animated architecture diagram, and a full visual PRD on the left panel. Make the "architecture.components" list meaningful (3–6 components) so the diagram looks impressive.
 - In the "cta" field, add one warm line noting that a PRD built on the client's real business will be even more precise — and invite them to share their project.
+
+🟢 FREE-FIRST COST RULE (critical — keep the demo affordable, not scary):
+- Recommend FREE tools / free tiers FIRST. Only suggest paid when free genuinely can't do the job, and label it as "later, when you grow".
+- Prefer: Google Sheets/Drive/Excel, Airtable free, Notion free, Supabase free tier ("חינם להתחלה"), Firebase free, Vercel/Netlify/Cloudflare Pages free, Make free (1,000 ops), n8n self-hosted free, HubSpot free.
+- In dataSource/crm/automationPlatform/techStack "cost"/"freeTier" fields, state the real free allowance; put low realistic "paidTier" only as a future note.
+- Assume the client may already pay Claude Pro/ChatGPT Plus (~$20/mo) — don't pile on expensive AI plans; estimate only the small marginal API cost.
+- budgetEstimate: recurring monthly tool cost for the MVP should be ₪0–₪100 (mostly free tiers). In "breakdown" show what's covered free. Do NOT inflate with enterprise tools.
 
 OUTPUT EXACTLY THIS STRUCTURE (all fields required):
 {

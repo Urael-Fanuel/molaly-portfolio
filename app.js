@@ -2013,37 +2013,42 @@ function renderPRD(prd) {
 // 🔀 ARCH DIAGRAM BUILDER
 // ==========================================
 
-function svgLabel(text) {
+// Splits a component label "English Name – תיאור בעברית" into [main, sub].
+// Handles em-dash (—), en-dash (–) and hyphen (-) surrounded by spaces, so it
+// won't break tokens like "GPT-4o" or "OCR+AI".
+function splitComponentLabel(text) {
   const s = String(text).trim();
-  // Components arrive as "English Name — תיאור בעברית". Split on the dash so the
-  // node shows a clean bold English title + a short Hebrew hint (no overlap).
-  const dash = s.indexOf('—') !== -1 ? s.indexOf('—') : s.indexOf(' - ');
-  if (dash !== -1) {
-    let main = s.slice(0, dash).replace(/[-—]\s*$/, '').trim();
-    let sub = s.slice(dash + 1).replace(/^[-—]\s*/, '').trim();
-    if (main.length > 20) main = main.slice(0, 19) + '…';
-    if (sub.length > 20) sub = sub.slice(0, 19) + '…';
-    return [main, sub];
-  }
-  if (s.length > 20) {
-    const words = s.split(/\s+/);
-    const mid = Math.ceil(words.length / 2);
-    return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+  const m = s.match(/\s[—–-]\s/);
+  if (m) {
+    return [s.slice(0, m.index).trim(), s.slice(m.index + m[0].length).trim()];
   }
   return [s, ''];
 }
 
+// For the small inline SVG we show ONLY the short title (usually English),
+// wrapped to at most 2 lines. The Hebrew description is kept for the full-view
+// window and the hover tooltip — this is what eliminates the text overlap.
+function svgTitleLines(label) {
+  const [main] = splitComponentLabel(label);
+  const words = main.split(/\s+/);
+  if (main.length <= 15 || words.length === 1) return [main, ''];
+  const mid = Math.ceil(words.length / 2);
+  return [words.slice(0, mid).join(' '), words.slice(mid).join(' ')];
+}
+
 function svgNode(x, y, w, h, r, color, strong, label, badge) {
   const cx = x + w / 2;
-  const [l1, l2] = svgLabel(label);
-  let html = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${color}${strong ? '33' : '1f'}" stroke="${color}" stroke-width="${strong ? 2.5 : 1.8}" opacity="1"/>`;
-  // full label available on hover
+  const [l1, l2] = svgTitleLines(label);
+  // Dark, high-contrast text (#1e1b4b) so it's readable on the light theme —
+  // the pattern color is used only for the border, fill tint and badge.
+  const TXT = '#1e1b4b';
+  let html = `<rect x="${x}" y="${y}" width="${w}" height="${h}" rx="${r}" fill="${color}${strong ? '2e' : '18'}" stroke="${color}" stroke-width="${strong ? 2.5 : 2}" opacity="1"/>`;
   html += `<title>${esc(label)}</title>`;
   if (l2) {
-    html += `<text x="${cx}" y="${y + h * 0.44}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
-    html += `<text x="${cx}" y="${y + h * 0.74}" text-anchor="middle" fill="${color}" opacity="0.75" font-size="9" font-family="system-ui,sans-serif">${esc(l2)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.45}" text-anchor="middle" fill="${TXT}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.73}" text-anchor="middle" fill="${TXT}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l2)}</text>`;
   } else {
-    html += `<text x="${cx}" y="${y + h * 0.6}" text-anchor="middle" fill="${color}" font-size="11" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
+    html += `<text x="${cx}" y="${y + h * 0.6}" text-anchor="middle" fill="${TXT}" font-size="11.5" font-weight="800" font-family="system-ui,sans-serif">${esc(l1)}</text>`;
   }
   if (badge != null) {
     html += `<circle cx="${x + 14}" cy="${y + 14}" r="10" fill="${color}" opacity="1"/>`;
@@ -2200,10 +2205,7 @@ function openDiagramFullView() {
   const components = (arch.components || []);
 
   const cards = components.map((c, i) => {
-    const s = String(c).trim();
-    const dash = s.indexOf('—') !== -1 ? s.indexOf('—') : s.indexOf(' - ');
-    const title = dash !== -1 ? s.slice(0, dash).replace(/[-—]\s*$/, '').trim() : s;
-    const desc = dash !== -1 ? s.slice(dash + 1).replace(/^[-—]\s*/, '').trim() : '';
+    const [title, desc] = splitComponentLabel(c);
     return `<div class="agent">
       <div class="badge">${i + 1}</div>
       <div class="agent-body">
