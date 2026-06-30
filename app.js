@@ -1868,8 +1868,8 @@ function renderPRD(prd) {
 
     ${buildArchDiagramHTML(prd)}
 
-    ${prereqHtml ? `<div class="prd-sb" style="border-right:3px solid #f7c948;">
-      <div class="prd-lbl" style="color:#f7c948;">🔑 תנאי קדם — חובה לפני תחילת הבנייה</div>
+    ${prereqHtml ? `<div class="prd-sb" style="border-right:3px solid #7c6af7;">
+      <div class="prd-lbl" style="color:#7c6af7;">🔑 תנאי קדם — חובה לפני תחילת הבנייה</div>
       <ul style="margin:0;padding-right:18px;">${prereqHtml}</ul>
     </div>` : ''}
 
@@ -1923,9 +1923,9 @@ function renderPRD(prd) {
       ${tl.notes ? `<p style="margin:8px 0 0;font-size:12px;color:var(--tx3);">⚠️ ${esc(tl.notes)}</p>` : ''}
     </div>` : ''}
 
-    ${budget.range ? `<div class="prd-sb" style="background:rgba(247,201,72,0.05);border:1px solid rgba(247,201,72,0.2);border-radius:10px;padding:12px;">
-      <div class="prd-lbl" style="color:#f7c948;">💰 הערכת עלות יישום</div>
-      <div style="font-size:18px;font-weight:900;color:#f7c948;margin-bottom:6px;">${esc(budget.range)}</div>
+    ${budget.range ? `<div class="prd-sb" style="background:rgba(124,106,247,0.06);border:1px solid rgba(124,106,247,0.25);border-radius:10px;padding:12px;">
+      <div class="prd-lbl" style="color:#7c6af7;">💰 הערכת עלות יישום</div>
+      <div style="font-size:18px;font-weight:900;color:#7c6af7;margin-bottom:6px;">${esc(budget.range)}</div>
       ${budget.breakdown ? `<div style="font-size:12px;color:var(--tx2);margin-bottom:4px;">${esc(budget.breakdown)}</div>` : ''}
       ${budget.notes ? `<div style="font-size:11.5px;color:var(--tx3);font-style:italic;">${esc(budget.notes)}</div>` : ''}
     </div>` : ''}
@@ -1978,6 +1978,7 @@ function renderPRD(prd) {
     </div>` : ''}
 
     <div style="display:flex;gap:10px;margin-top:18px;justify-content:center;flex-wrap:wrap;">
+      <button onclick="openPRDFullPage()" class="cta-s" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">🔗 פתח דף מלא</button>
       <button onclick="downloadPRDasPDF()" class="cta-s" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">📄 הורד PDF</button>
       <button onclick="openVisitorContactFromPRD()" class="cta-p" style="display:inline-flex;align-items:center;gap:6px;font-weight:700;padding:10px 18px;cursor:pointer;border-radius:10px;">📞 שיחת אפיון חינם</button>
     </div>
@@ -2187,66 +2188,166 @@ function buildArchDiagramHTML(prd) {
   return `<div class="prd-sb" style="overflow:hidden;">
     <div style="display:flex;justify-content:space-between;align-items:center;gap:8px;margin-bottom:6px;">
       <div class="prd-lbl" style="color:${color};margin:0;">🔀 ויזואליזציה — ${NAMES[pattern] || pattern}</div>
-      <button onclick="openDiagramFullView()" style="background:${color}22;border:1px solid ${color}66;color:${color};border-radius:7px;padding:5px 11px;cursor:pointer;font-size:11.5px;font-weight:700;font-family:inherit;white-space:nowrap;">🔍 תצוגה מלאה</button>
+      <button onclick="openPRDFullPage()" style="background:#7c6af722;border:1px solid #7c6af7;color:#7c6af7;border-radius:7px;padding:5px 11px;cursor:pointer;font-size:11.5px;font-weight:700;font-family:inherit;white-space:nowrap;">🔗 פתח דף מלא</button>
     </div>
     <div style="overflow-x:auto;padding:4px 0;-webkit-overflow-scrolling:touch;">${svg}</div>
-    <div style="font-size:10.5px;color:var(--tx3);margin-top:4px;text-align:center;">לחץ "תצוגה מלאה" לצפייה ברורה בכל הסוכנים ←</div>
+    <div style="font-size:10.5px;color:var(--tx3);margin-top:4px;text-align:center;">לחץ "פתח דף מלא" לצפייה בכל האפיון בדף חדש וברור ←</div>
   </div>`;
 }
 
-// Opens the architecture diagram in a clean, spacious new window — each agent
-// as a full row with a colored badge, English title, and Hebrew description.
-function openDiagramFullView() {
-  if (!currentPRD || !currentPRD.architecture) return;
-  const arch = currentPRD.architecture;
-  const COLORS = { orchestrator:'#7c6af7', pipeline:'#4ecca3', hierarchical:'#f7c948', router:'#f7a26a', network:'#f76a9c', simple_automation:'#10b981' };
+// Opens the ENTIRE PRD as a full, elegant page in a new tab — purple accent,
+// every section, and an animated flowing architecture diagram (no static arrows).
+function openPRDFullPage() {
+  if (!currentPRD) return;
+  const prd = currentPRD;
+  const AC = '#7c6af7';        // brand purple — used for all titles
+  const AC2 = '#a78bfa';       // lighter purple
+  const arch = prd.architecture || {};
+  const ai = prd.aiDecision || {};
+  const ds = prd.dataSource || {};
+  const crm = prd.crm || {};
+  const ap = prd.automationPlatform || {};
+  const roi = prd.roi || {};
+  const cx = prd.complexity || {};
+  const tl = prd.timeline || {};
+  const budget = prd.budgetEstimate || {};
+  const comp = prd.compliance || {};
   const NAMES = { orchestrator:'Orchestrator — מתזמר', pipeline:'Pipeline — טורי', hierarchical:'Hierarchical — היררכי', router:'Router — נתב', network:'Network — רשת', simple_automation:'Automation — אוטומציה' };
-  const color = COLORS[arch.pattern] || '#7c6af7';
-  const components = (arch.components || []);
 
-  const cards = components.map((c, i) => {
+  // Animated agent flow — a glowing dot travels down the connector (no arrows).
+  const components = (arch.components || []);
+  const flowCards = components.map((c, i) => {
     const [title, desc] = splitComponentLabel(c);
     return `<div class="agent">
-      <div class="badge">${i + 1}</div>
-      <div class="agent-body">
-        <div class="agent-title">${esc(title)}</div>
-        ${desc ? `<div class="agent-desc">${esc(desc)}</div>` : ''}
+      <div class="abadge">${i + 1}</div>
+      <div class="abody">
+        <div class="atitle">${esc(title)}</div>
+        ${desc ? `<div class="adesc">${esc(desc)}</div>` : ''}
       </div>
-      ${i < components.length - 1 ? '<div class="flow">↓</div>' : ''}
-    </div>`;
+    </div>
+    ${i < components.length - 1 ? '<div class="conn"><span class="spark"></span></div>' : ''}`;
   }).join('');
 
-  const w = window.open('', '_blank', 'width=820,height=860');
+  const list = (arr, cls) => (arr || []).map(x => `<li class="${cls||''}">${esc(x)}</li>`).join('');
+  const sec = (title, inner) => inner ? `<section><h2>${title}</h2>${inner}</section>` : '';
+
+  const mvpHtml = (prd.mvp || []).map((s,i) => `<li><b>שלב ${i+1}:</b> ${esc(s)}</li>`).join('');
+  const techHtml = (prd.techStack || []).map(t =>
+    `<div class="tool"><b>${esc(t.tool)}</b><span>${esc(t.role||'')}</span>${t.cost?`<em>${esc(t.cost)}</em>`:''}</div>`).join('');
+  const dbAlt = (ds.alternatives || []).map(a =>
+    `<div class="alt"><b>${esc(a.name)}</b> ${a.pros?`<span class="ok">✓ ${esc(a.pros)}</span>`:''} ${a.cons?`<span class="muted">· ${esc(a.cons)}</span>`:''}</div>`).join('');
+  const pitfalls = (prd.pitfalls || []).map(p =>
+    `<div class="pit">⚠️ <b>${esc(p.name)}:</b> ${esc(p.warning)}${p.mitigation?`<div class="ok">✅ ${esc(p.mitigation)}</div>`:''}</div>`).join('');
+  const secRisks = (comp.securityRisks||[]).map(r=>`<div class="risk">⚠️ ${esc(r)}</div>`).join('');
+  const secRecs = (comp.securityRecommendations||[]).map(r=>`<div class="ok">✅ ${esc(r)}</div>`).join('');
+
+  const w = window.open('', '_blank');
   if (!w) { alert('הדפדפן חסם את החלון. אפשר חלונות קופצים לאתר זה ונסה שוב.'); return; }
   w.document.write(`<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>דיאגרמת ארכיטקטורה — ${esc(currentPRD.projectName || 'פרויקט')}</title>
+<title>PRD — ${esc(prd.projectName || 'פרויקט')}</title>
 <style>
   *{box-sizing:border-box;}
-  body{font-family:'Segoe UI',Arial,sans-serif;direction:rtl;text-align:right;background:#0f172a;color:#e2e8f0;margin:0;padding:32px 20px;min-height:100vh;}
-  .wrap{max-width:680px;margin:0 auto;}
-  .head{text-align:center;margin-bottom:8px;}
-  h1{font-size:24px;font-weight:900;margin:0 0 4px;color:#fff;}
-  .pattern{display:inline-block;background:${color}22;border:1px solid ${color}88;color:${color};font-weight:800;font-size:14px;padding:6px 18px;border-radius:30px;margin:8px 0 6px;}
-  .reason{color:#94a3b8;font-size:13.5px;line-height:1.7;max-width:560px;margin:0 auto 26px;text-align:center;}
-  .agent{position:relative;}
-  .agent-body{display:flex;align-items:flex-start;gap:14px;background:linear-gradient(145deg,#1e293b,#172033);border:2px solid ${color}55;border-radius:16px;padding:16px 18px;}
-  .badge{position:absolute;top:-10px;right:18px;width:30px;height:30px;border-radius:50%;background:${color};color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 3px 10px ${color}88;z-index:2;}
-  .agent-title{font-size:18px;font-weight:800;color:${color};margin-bottom:5px;direction:ltr;text-align:left;}
-  .agent-desc{font-size:14px;color:#cbd5e1;line-height:1.6;}
-  .flow{text-align:center;color:${color};font-size:26px;font-weight:800;margin:6px 0;animation:bounce 1.4s ease-in-out infinite;}
-  @keyframes bounce{0%,100%{transform:translateY(0);opacity:.5}50%{transform:translateY(5px);opacity:1}}
-  .foot{text-align:center;margin-top:30px;color:#64748b;font-size:12.5px;}
-  .pad{height:14px;}
+  body{font-family:'Segoe UI',Arial,sans-serif;direction:rtl;text-align:right;background:#0f1021;color:#e2e8f0;margin:0;padding:34px 18px;min-height:100vh;}
+  .wrap{max-width:780px;margin:0 auto;}
+  .top{text-align:center;margin-bottom:24px;}
+  .tag{font-size:11px;font-weight:800;letter-spacing:2px;color:${AC2};text-transform:uppercase;}
+  h1{font-size:30px;font-weight:900;margin:6px 0 6px;color:#fff;}
+  .tagline{color:#a9b1c6;font-style:italic;font-size:15px;margin:0;}
+  .pattern{display:inline-block;background:${AC}22;border:1px solid ${AC};color:${AC2};font-weight:800;font-size:13px;padding:6px 16px;border-radius:30px;margin-top:12px;}
+  section{background:linear-gradient(145deg,#181830,#13132a);border:1px solid #2a2a4a;border-radius:16px;padding:18px 20px;margin-bottom:16px;}
+  h2{font-size:13px;font-weight:800;color:${AC2};text-transform:uppercase;letter-spacing:.6px;margin:0 0 12px;border-right:3px solid ${AC};padding-right:10px;}
+  p{line-height:1.75;color:#cbd5e1;margin:0 0 6px;}
+  ul,ol{margin:6px 0;padding-right:20px;color:#cbd5e1;line-height:1.7;}
+  li{margin-bottom:6px;}
+  b{color:#fff;}
+  .pill{display:inline-block;background:#10b98122;border:1px solid #10b98166;color:#34d399;border-radius:8px;padding:4px 10px;font-size:12.5px;margin:3px 4px 3px 0;}
+  .pill.pay{background:${AC}22;border-color:${AC}66;color:${AC2};}
+  .tool{display:flex;align-items:center;gap:8px;background:#0f0f22;border:1px solid #2a2a4a;border-radius:9px;padding:9px 12px;margin-bottom:7px;font-size:13.5px;}
+  .tool b{min-width:120px;} .tool span{color:#a9b1c6;flex:1;} .tool em{color:#34d399;font-style:normal;font-size:12px;}
+  .alt{background:#0f0f22;border:1px solid #2a2a4a;border-radius:8px;padding:7px 10px;margin-top:5px;font-size:12.5px;}
+  .ok{color:#34d399;} .muted{color:#8089a3;} .risk{color:#fb7185;font-size:13px;padding:2px 0;}
+  .pit{background:#1f1320;border:1px solid #5b2333;border-radius:9px;padding:9px 12px;margin-bottom:8px;font-size:13px;}
+  .grid{display:flex;gap:12px;flex-wrap:wrap;}
+  .box{flex:1;min-width:150px;background:#0f0f22;border:1px solid #2a2a4a;border-radius:11px;padding:12px 14px;}
+  .box .n{font-size:20px;font-weight:900;color:${AC2};} .box .l{font-size:11px;color:#8089a3;}
+  .big{font-size:22px;font-weight:900;color:#34d399;}
+  /* animated agent flow */
+  .arch-wrap{display:flex;flex-direction:column;align-items:stretch;}
+  .agent{position:relative;background:linear-gradient(145deg,#1c1c38,#15152e);border:2px solid ${AC}66;border-radius:14px;padding:15px 16px 15px 18px;display:flex;gap:14px;align-items:flex-start;box-shadow:0 4px 18px ${AC}22;}
+  .abadge{flex-shrink:0;width:30px;height:30px;border-radius:50%;background:linear-gradient(135deg,${AC},${AC2});color:#fff;font-weight:900;font-size:15px;display:flex;align-items:center;justify-content:center;box-shadow:0 0 14px ${AC}aa;}
+  .atitle{font-size:17px;font-weight:800;color:${AC2};direction:ltr;text-align:left;margin-bottom:4px;}
+  .adesc{font-size:13.5px;color:#cbd5e1;line-height:1.6;}
+  .conn{height:34px;position:relative;}
+  .conn::before{content:'';position:absolute;right:50%;top:0;bottom:0;width:3px;transform:translateX(50%);background:linear-gradient(${AC},${AC}33);border-radius:3px;}
+  .spark{position:absolute;right:50%;top:0;width:11px;height:11px;border-radius:50%;background:${AC2};transform:translateX(50%);box-shadow:0 0 14px 3px ${AC};animation:flowDown 1.5s ease-in-out infinite;}
+  @keyframes flowDown{0%{top:-3px;opacity:0;}15%{opacity:1;}85%{opacity:1;}100%{top:32px;opacity:0;}}
+  .cta{background:${AC}1a;border:1px solid ${AC}66;border-radius:14px;padding:18px;text-align:center;color:#e2e8f0;font-size:14px;line-height:1.7;}
+  pre{white-space:pre-wrap;word-break:break-word;background:#0a0a18;border:1px solid #2a2a4a;border-radius:10px;padding:12px;font-size:12.5px;color:#cbd5e1;line-height:1.6;direction:rtl;text-align:right;}
+  .foot{text-align:center;margin-top:24px;color:#64748b;font-size:12px;}
+  @media print{body{background:#fff;color:#222;} section{background:#fff;border-color:#ddd;} .spark{display:none;}}
 </style></head><body>
 <div class="wrap">
-  <div class="head">
-    <h1>${esc(currentPRD.projectName || 'דיאגרמת ארכיטקטורה')}</h1>
-    <div class="pattern">${NAMES[arch.pattern] || arch.pattern || ''}</div>
+  <div class="top">
+    <div class="tag">📋 PRD — מסמך דרישות מוצר</div>
+    <h1>${esc(prd.projectName || '')}</h1>
+    <p class="tagline">${esc(prd.tagline || '')}</p>
+    ${arch.pattern ? `<div class="pattern">${NAMES[arch.pattern] || arch.pattern}</div>` : ''}
   </div>
-  ${arch.reasoning ? `<div class="reason">${esc(arch.reasoning)}</div>` : '<div class="pad"></div>'}
-  ${cards}
-  <div class="foot">דיאגרמת ארכיטקטורה · נוצר על ידי סוכן האפיון של Molaly Mekonen</div>
+
+  ${prd.clientProfile ? sec('👤 פרופיל הלקוח', `<p>${esc(prd.clientProfile)}</p>`) : ''}
+  ${sec('🎯 הבעיה העסקית', prd.businessProblem ? `<p>${esc(prd.businessProblem)}</p>` : '')}
+  ${ai.reasoning ? sec(ai.recommendation === 'simple_automation' ? '⚙️ ההחלטה: אוטומציה פשוטה' : '🤖 ההחלטה: נדרש AI Agent', `<p>${esc(ai.reasoning)}</p>`) : ''}
+  ${cx.label ? sec('🎚️ מורכבות', `<p><b>${esc(cx.label)}</b> — ${esc(cx.explanation||'')}</p>`) : ''}
+
+  ${components.length ? sec('🏛️ ארכיטקטורה — פריסת הסוכנים', `${arch.reasoning?`<p>${esc(arch.reasoning)}</p>`:''}<div class="arch-wrap">${flowCards}</div>`) : ''}
+
+  ${ds.recommendation ? sec('🗄️ בסיס נתונים — ' + esc(ds.recommendation), `
+    ${ds.why?`<p>${esc(ds.why)}</p>`:''}
+    ${ds.freeTier?`<span class="pill">חינם: ${esc(ds.freeTier)}</span>`:''}
+    ${ds.paidTier?`<span class="pill pay">בתשלום: ${esc(ds.paidTier)}</span>`:''}
+    ${ds.schema?`<p class="muted" style="font-size:12.5px;margin-top:8px;">${esc(ds.schema)}</p>`:''}
+    ${dbAlt}`) : ''}
+
+  ${(crm.recommendation && crm.recommendation!=='N/A') ? sec('👥 CRM — ' + esc(crm.recommendation), `${crm.why?`<p>${esc(crm.why)}</p>`:''}${crm.freeTier?`<span class="pill">חינם: ${esc(crm.freeTier)}</span>`:''}`) : ''}
+
+  ${(ap.recommendation && ap.recommendation!=='N/A') ? sec('⚙️ פלטפורמת אוטומציה — ' + esc(ap.recommendation), `
+    ${ap.why?`<p>${esc(ap.why)}</p>`:''}
+    ${ap.freeTier?`<span class="pill">חינם: ${esc(ap.freeTier)}</span>`:''}
+    ${ap.paidTier?`<span class="pill pay">בתשלום: ${esc(ap.paidTier)}</span>`:''}`) : ''}
+
+  ${prd.prerequisites && prd.prerequisites.length ? sec('🔑 תנאי קדם', `<ul>${list(prd.prerequisites)}</ul>`) : ''}
+  ${mvpHtml ? sec('🚀 MVP — שלבי הבנייה', `<ol>${mvpHtml}</ol>`) : ''}
+  ${prd.fullScope && prd.fullScope.length ? sec('🔭 שלב 2 — לאחר MVP', `<ul>${list(prd.fullScope)}</ul>`) : ''}
+  ${techHtml ? sec('🛠️ Stack טכנולוגי', techHtml) : ''}
+
+  ${(tl.mvpWeeks||tl.fullScopeMonths) ? sec('📅 ציר זמן', `<div class="grid">
+      ${tl.mvpWeeks?`<div class="box"><div class="n">${esc(String(tl.mvpWeeks))}</div><div class="l">שבועות ל-MVP</div></div>`:''}
+      ${tl.fullScopeMonths?`<div class="box"><div class="n">${esc(String(tl.fullScopeMonths))}</div><div class="l">חודשים ל-scope מלא</div></div>`:''}
+    </div>${tl.notes?`<p class="muted" style="margin-top:8px;font-size:12.5px;">⚠️ ${esc(tl.notes)}</p>`:''}`) : ''}
+
+  ${budget.range ? sec('💰 הערכת עלות', `<div class="big">${esc(budget.range)}</div>${budget.breakdown?`<p style="margin-top:6px;">${esc(budget.breakdown)}</p>`:''}${budget.notes?`<p class="muted" style="font-size:12.5px;">${esc(budget.notes)}</p>`:''}`) : ''}
+
+  ${(roi.timeSaving||roi.costSaving||roi.businessImpact) ? sec('📊 ROI משוער', `<div class="grid">
+      ${roi.timeSaving?`<div class="box"><div class="l">⏱️ זמן</div><p style="margin:4px 0 0;font-size:13px;">${esc(roi.timeSaving)}</p></div>`:''}
+      ${roi.costSaving?`<div class="box"><div class="l">💰 עלות</div><p style="margin:4px 0 0;font-size:13px;">${esc(roi.costSaving)}</p></div>`:''}
+      ${roi.businessImpact?`<div class="box"><div class="l">📈 עסקי</div><p style="margin:4px 0 0;font-size:13px;">${esc(roi.businessImpact)}</p></div>`:''}
+    </div>`) : ''}
+
+  ${prd.successMetrics && prd.successMetrics.length ? sec('🎯 מדדי הצלחה', `<ul>${list(prd.successMetrics)}</ul>`) : ''}
+  ${pitfalls ? sec('⚠️ מלכודות ואיך להימנע', pitfalls) : ''}
+
+  ${(secRisks||comp.amendment13||comp.is5568) ? sec('🔐 אבטחה, פרטיות ונגישות', `
+    ${comp.amendment13&&comp.amendment13!=='N/A'?`<p><b>תיקון 13:</b> ${esc(comp.amendment13)}</p>`:''}
+    ${comp.is5568&&comp.is5568!=='N/A'?`<p><b>נגישות (IS 5568):</b> ${esc(comp.is5568)}</p>`:''}
+    ${secRisks}${secRecs}`) : ''}
+
+  ${prd.zikukSentence ? sec('💡 משפט הזיקוק', `<p style="font-style:italic;color:#fff;">"${esc(prd.zikukSentence)}"</p>`) : ''}
+  ${prd.devPrompt ? sec('🎁 פרומפט לפרוטוטייפ', `<pre>${esc(prd.devPrompt)}</pre>`) : ''}
+
+  ${prd.cta ? `<div class="cta">${esc(prd.cta)}<br><br>📞 <b style="color:#fff;">052-874-2884</b> · שיחת אפיון חינם עם Molaly</div>` : ''}
+
+  <div class="foot">נוצר על ידי סוכן האפיון של Molaly Mekonen · להדפסה כ-PDF: Ctrl+P</div>
 </div>
 </body></html>`);
   w.document.close();
