@@ -267,7 +267,7 @@ function saveAll(){
 function switchTab(tab){
   curTab=tab;
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
-  ['projects','services','articles','blueprints','architect','faq'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  ['projects','services','articles','blueprints','architect','faq'].forEach(t=>{const el=document.getElementById('tab-'+t);if(el)el.style.display=t===tab?'block':'none';});
   if(tab==='blueprints') {
     selectBlueprint('orchestrator');
   }
