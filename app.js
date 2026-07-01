@@ -1314,9 +1314,9 @@ function selectBlueprint(type) {
   if (descEl && BLUEPRINT_DESC[type]) {
     const d = BLUEPRINT_DESC[type];
     descEl.innerHTML = `
-      <div style="font-weight:800; font-size:15px; color:var(--tx); margin-bottom:6px;">${d.title}</div>
-      <div style="font-size:14px; color:var(--tx2); line-height:1.65; margin-bottom:6px;">${d.text}</div>
-      <div style="font-size:13px; color:var(--tx3);"><span style="color:var(--ac); font-weight:700;">דוגמאות: </span>${d.examples}</div>
+      <div style="font-weight:800; font-size:17px; color:var(--tx); margin-bottom:8px;">${d.title}</div>
+      <div style="font-size:15px; color:var(--tx2); line-height:1.7; margin-bottom:8px;">${d.text}</div>
+      <div style="font-size:14.5px; color:var(--tx2);"><span style="color:var(--ac); font-weight:700;">דוגמאות: </span>${d.examples}</div>
     `;
   }
 

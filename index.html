@@ -39,7 +39,7 @@
 </script>
 
 <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260701a">
+<link rel="stylesheet" href="style.css?v=20260701b">
 </head>
 <body>
 
@@ -61,7 +61,7 @@
       <div class="profile-img-overlay edit-only">📷</div>
     </div>
     <input type="file" accept="image/*" id="profile-img-input" onchange="handleProfileImg(this)" style="display:none">
-    <div class="profile-name" id="prof-name-disp" onclick="if(!isEdit())switchTab('projects')" style="cursor:pointer;" title="חזרה לדף הבית">Molaly <span>Mekonen</span></div>
+    <div class="profile-name" id="prof-name-disp" onclick="if(!isEdit()){switchTab('projects');window.scrollTo({top:0,behavior:'smooth'});}" style="cursor:pointer;" title="חזרה לדף הבית">Molaly <span>Mekonen</span></div>
     <div class="profile-role" id="prof-role-disp" contenteditable="false" onblur="saveAll()">AI Solutions Architect<br>Production Engineer @ Intel</div>
     <div style="margin-top:9px; display:flex; flex-direction:column; gap:8px; align-items:center;">
       <div class="avail-badge open" id="avail-badge" onclick="if(isEdit())toggleAvail()">פתוח לפרויקטים</div>
@@ -116,7 +116,7 @@
 
   <div class="hero-banner">
     <div class="hb-top">
-      <div class="hb-title" id="hb-title" contenteditable="false" onblur="saveAll()" onclick="if(!isEdit())switchTab('projects')" style="cursor:pointer;" title="חזרה לדף הבית">Molaly <span>Mekonen</span></div>
+      <div class="hb-title" id="hb-title" contenteditable="false" onblur="saveAll()" onclick="if(!isEdit()){switchTab('projects');window.scrollTo({top:0,behavior:'smooth'});}" style="cursor:pointer;" title="חזרה לדף הבית">Molaly <span>Mekonen</span></div>
       <div class="hb-badge">⬡ AI &amp; Automation Portfolio</div>
     </div>
     <div class="hb-sub" id="hb-sub" contenteditable="false" onblur="saveAll()" dir="auto">מומחה אוטומציה עם פריסות פרודקשן אמיתיות לעסקים. בנה ופרס פתרונות אוטומציה מקצה לקצה. שבע שנים באינטל בנו תשתית חזקה של חשיבה תהליכית ועבודה בתוך ארגונים גדולים.</div>
