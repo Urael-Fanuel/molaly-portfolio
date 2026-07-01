@@ -267,7 +267,7 @@ function saveAll(){
 function switchTab(tab){
   curTab=tab;
   document.querySelectorAll('.nav-tab').forEach(t=>t.classList.toggle('on',t.dataset.tab===tab));
-  ['projects','services','articles','blueprints','architect'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
+  ['projects','services','articles','blueprints','architect','faq'].forEach(t=>document.getElementById('tab-'+t).style.display=t===tab?'block':'none');
   if(tab==='blueprints') {
     selectBlueprint('orchestrator');
   }
@@ -275,10 +275,69 @@ function switchTab(tab){
     const btn = document.getElementById('btn-restore-prd');
     if (btn) btn.style.display = localStorage.getItem('molaly_last_prd') ? 'inline-flex' : 'none';
   }
+  if(tab==='faq') renderFAQ();
 }
 
 // ── RENDER ──
 function render(){renderSidebar();renderProjects();renderServices();renderArticles();updateTabCounts();}
+
+// ── FAQ ──
+const FAQ_ITEMS = [
+  {
+    q: '💰 כמה עולה פרויקט?',
+    a: 'תלוי בהיקף ובמורכבות. פרויקטים פשוטים מתחילים מ-₪4,500 ויכולים להגיע ל-₪25,000 עבור פתרונות ארגוניים מלאים. שיחת האפיון חינמית ולא מחייבת — בסופה תקבלו הצעת מחיר מדויקת.'
+  },
+  {
+    q: '⏱️ כמה זמן לוקח לבנות את הפתרון?',
+    a: 'ממוצע 2–6 שבועות, תלוי בסוג הפרויקט. אוטומציות פשוטות יכולות להיות מוכנות תוך שבוע. מערכות ארגוניות מורכבות לוקחות יותר. הערכת זמן מדויקת תינתן אחרי שיחת האפיון.'
+  },
+  {
+    q: '🏢 עם אילו סוגי עסקים אתה עובד?',
+    a: 'עסקים קטנים ובינוניים, חברות טכנולוגיה, קליניקות, עורכי דין, יועצים, סוכנויות שיווק — כל עסק שיש בו תהליכים חוזרים שאפשר לייעל. אם אתם מבזבזים שעות על עבודה ידנית — כנראה יש כאן מקום לאוטומציה.'
+  },
+  {
+    q: '🧠 האם אני צריך ידע טכני?',
+    a: 'בכלל לא. אתם מספרים לי מה אתם רוצים שיקרה בשפה פשוטה, ואני מתרגם את זה לפתרון טכני. לאורך כל הדרך אני מסביר בשפה ברורה מה נבנה ולמה.'
+  },
+  {
+    q: '🌐 עובד מרחוק או פנים אל פנים?',
+    a: 'רוב העבודה מתבצעת מרחוק, מה שמאפשר לי לעבוד עם לקוחות בכל הארץ. לקוחות באזור המרכז יכולים לבקש פגישת היכרות פנים אל פנים.'
+  },
+  {
+    q: '📞 מה כולל שיחת האפיון החינמית?',
+    a: 'שיחה של 30–45 דקות שבה נבין יחד מה התהליכים שאפשר לייעל, אילו כלים מתאימים לכם, ומה ציר הזמן והעלות המשוערים. ללא מחויבות וללא עלות.'
+  },
+  {
+    q: '🔧 מה קורה אחרי שהפרויקט מוכן?',
+    a: 'מעבר ידע מלא כדי שתדעו לעבוד עם המערכת. תמיכה ראשונית כלולה. לאחר מכן ניתן לרכוש חבילת תחזוקה שוטפת לעדכונים, שיפורים ותמיכה מתמשכת.'
+  },
+  {
+    q: '🤖 האם המערכת תמשיך לעבוד לבד?',
+    a: 'כן — זו כל הנקודה. כל הפתרונות שאני בונה פועלים 24/7 ללא התערבות ידנית. אתם ישנים, המערכת עובדת.'
+  }
+];
+
+function renderFAQ(){
+  const el = document.getElementById('faq-list');
+  if(!el || el.dataset.rendered) return;
+  el.dataset.rendered = '1';
+  el.innerHTML = FAQ_ITEMS.map((item,i)=>`
+    <div class="faq-item" id="faq-${i}" onclick="toggleFAQ(${i})">
+      <div class="faq-q">
+        <span class="faq-q-text">${item.q}</span>
+        <span class="faq-chevron">▾</span>
+      </div>
+      <div class="faq-a"><div class="faq-a-inner">${item.a}</div></div>
+    </div>
+  `).join('');
+}
+
+function toggleFAQ(i){
+  const item = document.getElementById('faq-'+i);
+  const wasOpen = item.classList.contains('open');
+  document.querySelectorAll('.faq-item.open').forEach(el=>el.classList.remove('open'));
+  if(!wasOpen) item.classList.add('open');
+}
 
 function updateTabCounts(){
   document.getElementById('tc-projects').textContent=D.projects.length;

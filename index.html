@@ -147,6 +147,7 @@
     <button class="nav-tab nav-tab-agent" data-tab="architect" onclick="switchTab('architect')">🤖 סוכן אפיון <span class="tab-count" id="tc-architect">★</span></button>
     <button class="nav-tab" data-tab="services" onclick="switchTab('services')">🛠️ שירותים <span class="tab-count" id="tc-services">0</span></button>
     <button class="nav-tab" data-tab="articles" onclick="switchTab('articles')">✍️ מאמרים <span class="tab-count" id="tc-articles">0</span></button>
+    <button class="nav-tab" data-tab="faq" onclick="switchTab('faq')">❓ שאלות נפוצות <span class="tab-count" id="tc-faq">8</span></button>
   </div>
 
   <!-- PROJECTS TAB -->
@@ -295,6 +296,35 @@
           </div>
         </div>
       </div>
+    </div>
+  </div>
+</div>
+
+<!-- FAQ TAB -->
+<div id="tab-faq" style="display:none">
+  <div class="sec-hdr">
+    <h2 class="sec-title">שאלות נפוצות</h2>
+  </div>
+
+  <div style="max-width:780px; margin:0 auto; direction:rtl;">
+
+    <!-- Intro card -->
+    <div style="background:linear-gradient(135deg,rgba(16,185,129,0.08) 0%,rgba(99,102,241,0.08) 100%); border:1px solid rgba(16,185,129,0.25); border-radius:20px; padding:22px 26px; margin-bottom:28px; text-align:right;">
+      <p style="color:var(--tx2); font-size:15px; line-height:1.7; margin:0;">
+        יש לכם שאלות לפני שמתקשרים? מצוין — זה הדף שלכם. אם לא מצאתם תשובה, תמיד אפשר
+        <button onclick="openVisitorContact()" style="background:none; border:none; color:var(--ac); font-weight:700; cursor:pointer; font-size:15px; padding:0; text-decoration:underline;">לשלוח שאלה ישירות</button>.
+      </p>
+    </div>
+
+    <!-- FAQ items -->
+    <div class="faq-list" id="faq-list"></div>
+
+    <!-- CTA bottom -->
+    <div style="text-align:center; margin-top:36px; padding:28px; background:var(--sur); border:1px solid var(--bor); border-radius:20px;">
+      <div style="font-size:22px; margin-bottom:10px;">🤝</div>
+      <div style="font-weight:800; font-size:17px; margin-bottom:6px;">עדיין לא בטוחים?</div>
+      <div style="color:var(--tx2); font-size:14px; margin-bottom:18px;">שיחת אפיון ראשונה — חינמית, לא מחייבת, ב-30 דקות תדעו אם יש כאן ערך לעסק שלכם.</div>
+      <button onclick="openVisitorContact('אשמח לשמוע יותר על השירותים שלך')" class="cta-p" style="padding:12px 28px; border-radius:12px; font-weight:700; font-size:15px; background:linear-gradient(135deg,#10b981 0%,#059669 100%); border:none; color:white; box-shadow:0 4px 15px rgba(16,185,129,0.3); cursor:pointer;">📞 קבע שיחת אפיון חינמית</button>
     </div>
   </div>
 </div>
