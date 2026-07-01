@@ -281,6 +281,17 @@ function switchTab(tab){
 // ── RENDER ──
 function render(){renderSidebar();renderProjects();renderServices();renderArticles();updateTabCounts();}
 
+// ── MAKE NAME CLICKABLE (JS-driven so cache doesn't matter) ──
+document.addEventListener('DOMContentLoaded', function(){
+  function goHome(){
+    if(!isEdit()){switchTab('projects');window.scrollTo({top:0,behavior:'smooth'});}
+  }
+  ['hb-title','prof-name-disp'].forEach(function(id){
+    const el = document.getElementById(id);
+    if(el){ el.style.cursor='pointer'; el.title='חזרה לדף הבית'; el.addEventListener('click', goHome); }
+  });
+});
+
 // ── FAQ ──
 const FAQ_ITEMS = [
   {
