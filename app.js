@@ -1282,6 +1282,44 @@ function selectBlueprint(type) {
     .ns { fill: #94a3b8; font-size: 9.5px; }
   </style>`;
 
+  const BLUEPRINT_DESC = {
+    orchestrator: {
+      title: '🤖 Orchestrator — סוכן מנצח',
+      text: 'סוכן מרכזי אחד ("המנצח") מקבל את המשימה הכוללת, מפרק אותה לתת-משימות, ומחלק כל תת-משימה לסוכן מתמחה. בסוף אוסף את כל התוצאות לפלט אחד.',
+      examples: 'שליחת פניות B2B אוטומטיות (סוכן לחיפוש לידים + סוכן לכתיבת מייל + סוכן לשליחה), ניהול תהליך גיוס עובדים מקצה לקצה.'
+    },
+    pipeline: {
+      title: '📄 Pipeline — פס ייצור',
+      text: 'שרשרת לינארית: כל סוכן מבצע שלב אחד ומעביר את הפלט שלו לסוכן הבא. אין חזרות — המידע זורם קדימה בלבד.',
+      examples: 'עיבוד חשבוניות (קריאת PDF ← חילוץ שדות ← אימות ← הכנסה ל-ERP), עיבוד טפסי הצטרפות לקוחות.'
+    },
+    hierarchical: {
+      title: '🏢 Hierarchical — היררכיה ארגונית',
+      text: 'ארכיטקטורת עץ: מנהל עליון מכוון מנהלי ביניים, שכל אחד מהם מנהל קבוצת פועלים. מתאים לפרויקטים מורכבים עם מספר מחלקות.',
+      examples: 'תפעול ארגוני מלא (מחלקת לקוחות + מחלקת לוגיסטיקה + מחלקת כספים), מערכת ניהול פרויקטים אוטומטית.'
+    },
+    router: {
+      title: '🔀 Router — נתב חכם',
+      text: 'סוכן ראשוני מנתח כל בקשה נכנסת ומפנה אותה לסוכן המתמחה הנכון. כל סוכן יעד טיפול רק בסוג הבקשה שלו.',
+      examples: 'שירות לקוחות (פנייה טכנית → סוכן טכני / תלונה → סוכן שימור / שאלת מחיר → סוכן מכירות), מיון פניות נכנסות.'
+    },
+    network: {
+      title: '🌐 Network — רשת עמיתים',
+      text: 'סוכנים מרובים שיכולים לתקשר ביניהם ללא היררכיה קשיחה. כל סוכן יכול לבקש עזרה מכל סוכן אחר ברשת.',
+      examples: 'תרגום ספר עם בקרת איכות (מתרגם ← עורך ← מבקר ← תיקון), פיתוח תוכן מחקרי מרובה מקורות.'
+    }
+  };
+
+  const descEl = document.getElementById('blueprint-desc');
+  if (descEl && BLUEPRINT_DESC[type]) {
+    const d = BLUEPRINT_DESC[type];
+    descEl.innerHTML = `
+      <div style="font-weight:800; font-size:15px; color:var(--tx); margin-bottom:6px;">${d.title}</div>
+      <div style="font-size:14px; color:var(--tx2); line-height:1.65; margin-bottom:6px;">${d.text}</div>
+      <div style="font-size:13px; color:var(--tx3);"><span style="color:var(--ac); font-weight:700;">דוגמאות: </span>${d.examples}</div>
+    `;
+  }
+
   let svg = '';
 
   if (type === 'orchestrator') {
