@@ -226,7 +226,8 @@ const DEF={
 let D={},editId=null,editSvcId=null,editArtId=null,af='all',projTags=[],artTags=[],curImg='',editStatIdx=-1,addType='',editMode=false,curTab='projects';
 
 function isAdmin(){
-  return localStorage.getItem('pf_admin') === 'true';
+  const pin=localStorage.getItem('pfv4_pin');
+  return !!pin && localStorage.getItem('pf_admin')===pin;
 }
 function load(){
   try {
@@ -280,17 +281,6 @@ function switchTab(tab){
 
 // ── RENDER ──
 function render(){renderSidebar();renderProjects();renderServices();renderArticles();updateTabCounts();}
-
-// ── MAKE NAME CLICKABLE (JS-driven so cache doesn't matter) ──
-document.addEventListener('DOMContentLoaded', function(){
-  function goHome(){
-    if(!isEdit()){switchTab('projects');window.scrollTo({top:0,behavior:'smooth'});}
-  }
-  ['hb-title','prof-name-disp'].forEach(function(id){
-    const el = document.getElementById(id);
-    if(el){ el.style.cursor='pointer'; el.title='חזרה לדף הבית'; el.addEventListener('click', goHome); }
-  });
-});
 
 // ── FAQ ──
 const FAQ_ITEMS = [
@@ -607,9 +597,15 @@ function toggleEdit(){
 }
 function checkPin(){
   const pin=document.getElementById('pin-inp').value;
-  const saved=localStorage.getItem('pfv4_pin')||'molaly2026';
+  const saved=localStorage.getItem('pfv4_pin');
+  if(!saved){
+    if(!pin||pin.length<4){document.getElementById('pin-err').textContent='הגדרה ראשונה: הכנס סיסמה חדשה (לפחות 4 תווים)';return;}
+    localStorage.setItem('pfv4_pin',pin);localStorage.setItem('pf_admin',pin);
+    editMode=true;document.body.classList.add('edit-mode');document.querySelector('.fab').textContent='✎';closePin();updateContentEditable();load();render();
+    return;
+  }
   if(pin===saved){
-    localStorage.setItem('pf_admin', 'true');
+    localStorage.setItem('pf_admin', pin);
     editMode=true;
     document.body.classList.add('edit-mode');
     document.querySelector('.fab').textContent='✎';
@@ -647,7 +643,7 @@ function renderTW(type){
   const inp=document.getElementById(type==='p'?'pti':'ati');
   const tags=type==='p'?projTags:artTags;
   wrap.querySelectorAll('.tt').forEach(t=>t.remove());
-  tags.forEach((t,i)=>{const el=document.createElement('span');el.className='tt';el.innerHTML=t+`<button onclick="rmTag('${type}',${i})" type="button">×</button>`;wrap.insertBefore(el,inp);});
+  tags.forEach((t,i)=>{const el=document.createElement('span');el.className='tt';const txt=document.createTextNode(t);el.appendChild(txt);const btn=document.createElement('button');btn.type='button';btn.onclick=()=>rmTag(type,i);btn.textContent='×';el.appendChild(btn);wrap.insertBefore(el,inp);});
 }
 function rmTag(type,i){if(type==='p')projTags.splice(i,1);else artTags.splice(i,1);renderTW(type);}
 
@@ -938,12 +934,13 @@ function sendContact(method){
     return;
   }
   
-  const myEmail = D.contact.email || 'moti.marva@gmail.com';
-  const myPhone = D.contact.phone || '052-874-2884';
-  
+  const myEmail = D.contact.email;
+  const myPhone = D.contact.phone;
+
   const textMsg = `שם: ${name}\nטלפון: ${phone || 'לא הוזן'}\nאימייל: ${email || 'לא הוזן'}\nפרטים: ${msg || 'לא הוזנו'}`;
-  
+
   if(method === 'whatsapp'){
+    if(!myPhone){alert('לא הוגדר מספר טלפון ביצירת קשר — ערוך בפרופיל');return;}
     const cleanPhone = myPhone.replace(/[^0-9]/g, '');
     const formattedPhone = cleanPhone.startsWith('0') ? '972' + cleanPhone.substring(1) : cleanPhone;
     const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent('היי Molaly, אשמח לשיחת אפיון.\n' + textMsg)}`;
@@ -952,6 +949,7 @@ function sendContact(method){
     showSuccessNotification();
     closeVisitorContact();
   } else {
+    if(!myEmail){alert('לא הוגדרה כתובת מייל ביצירת קשר — ערוך בפרופיל');return;}
     // AJAX email submission using FormSubmit.co
     const btn = document.querySelector('#ov-visitor-contact button[onclick="sendContact(\'email\')"]');
     const originalText = btn.innerHTML;
@@ -1179,8 +1177,8 @@ function importData(){
 }
 function changePin(){
   const old=prompt('סיסמה נוכחית:');if(old===null)return;
-  const saved=localStorage.getItem('pfv4_pin')||'molaly2026';
-  if(old!==saved){alert('סיסמה שגויה');return;}
+  const saved=localStorage.getItem('pfv4_pin');
+  if(!saved||old!==saved){alert('סיסמה שגויה');return;}
   const n1=prompt('סיסמה חדשה (לפחות 4 תווים):');
   if(!n1||n1.length<4){alert('סיסמה קצרה מדי');return;}
   const n2=prompt('אשר סיסמה חדשה:');

@@ -1,0 +1,4 @@
+User-agent: *
+Allow: /
+
+Sitemap: https://urael-fanuel.github.io/molaly-portfolio/sitemap.xml
