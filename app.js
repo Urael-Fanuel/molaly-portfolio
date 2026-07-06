@@ -279,6 +279,14 @@ function switchTab(tab){
   if(tab==='faq') renderFAQ();
 }
 
+function openSection(tab){
+  if(window.location.hash && window.location.hash.length>1){
+    switchTab(tab);
+  } else {
+    window.open(location.origin+location.pathname+'#'+tab,'_blank');
+  }
+}
+
 // ── RENDER ──
 function render(){renderSidebar();renderProjects();renderServices();renderArticles();updateTabCounts();}
 
@@ -1640,14 +1648,16 @@ function initBlueprintEvents() {
 
 function handleHashRoute() {
   const hash = window.location.hash;
+  const validTabs = ['projects','services','articles','blueprints','architect','faq'];
   if (hash && hash.startsWith('#project-')) {
     const id = parseInt(hash.replace('#project-', ''), 10);
     if (!isNaN(id)) {
       const p = D.projects && D.projects.find(x => x.id === id);
-      if (p) {
-        openCase(id);
-      }
+      if (p) { openCase(id); }
     }
+  } else if (hash) {
+    const tabName = hash.replace('#', '');
+    if (validTabs.includes(tabName)) { switchTab(tabName); }
   }
 }
 

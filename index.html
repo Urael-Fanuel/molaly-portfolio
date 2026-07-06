@@ -38,8 +38,8 @@
   gtag('config', 'G-SHNMDZLYWL');
 </script>
 
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="style.css?v=20260701b">
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="style.css?v=20260706b">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🤖</text></svg>">
 <script type="application/ld+json">
 {
@@ -148,19 +148,19 @@
   </div>
 
   <!-- AGENT INVITE -->
-  <div class="agent-invite" onclick="switchTab('architect')">
+  <div class="agent-invite" onclick="openSection('architect')">
     <span class="agent-invite-txt">🤖 לא בטוח איזה פתרון AI מתאים לעסק שלך?</span>
     <span class="agent-invite-cta">שוחח עם הסוכן ←</span>
   </div>
 
   <!-- NAV TABS -->
   <div class="nav-tabs">
-    <button class="nav-tab on" data-tab="projects" onclick="switchTab('projects')">📂 פרויקטים <span class="tab-count" id="tc-projects">0</span></button>
-    <button class="nav-tab" data-tab="blueprints" onclick="switchTab('blueprints')">🗺️ מפות מערכת <span class="tab-count" id="tc-blueprints">3</span></button>
-    <button class="nav-tab nav-tab-agent" data-tab="architect" onclick="switchTab('architect')">🤖 סוכן אפיון <span class="tab-count" id="tc-architect">★</span></button>
-    <button class="nav-tab" data-tab="services" onclick="switchTab('services')">🛠️ שירותים <span class="tab-count" id="tc-services">0</span></button>
-    <button class="nav-tab" data-tab="articles" onclick="switchTab('articles')">✍️ מאמרים <span class="tab-count" id="tc-articles">0</span></button>
-    <button class="nav-tab" data-tab="faq" onclick="switchTab('faq')">❓ שאלות נפוצות <span class="tab-count" id="tc-faq">8</span></button>
+    <button class="nav-tab on" data-tab="projects" onclick="openSection('projects')">📂 פרויקטים <span class="tab-count" id="tc-projects">0</span></button>
+    <button class="nav-tab" data-tab="blueprints" onclick="openSection('blueprints')">🗺️ מפות מערכת <span class="tab-count" id="tc-blueprints">3</span></button>
+    <button class="nav-tab nav-tab-agent" data-tab="architect" onclick="openSection('architect')">🤖 סוכן אפיון <span class="tab-count" id="tc-architect">★</span></button>
+    <button class="nav-tab" data-tab="services" onclick="openSection('services')">🛠️ שירותים <span class="tab-count" id="tc-services">0</span></button>
+    <button class="nav-tab" data-tab="articles" onclick="openSection('articles')">✍️ מאמרים <span class="tab-count" id="tc-articles">0</span></button>
+    <button class="nav-tab" data-tab="faq" onclick="openSection('faq')">❓ שאלות נפוצות <span class="tab-count" id="tc-faq">8</span></button>
   </div>
 
   <!-- PROJECTS TAB -->
@@ -709,6 +709,6 @@
   </div>
 </div>
 
-<script src="app.js?v=20260706a"></script>
+<script src="app.js?v=20260706b"></script>
 </body>
 </html>
