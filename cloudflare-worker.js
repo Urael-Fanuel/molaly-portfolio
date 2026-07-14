@@ -234,8 +234,8 @@ When generating the PRD, respond with ONLY this JSON (no text before or after):
     "compliance": {
       "amendment13": "relevant obligations under Israel's Privacy Protection Amendment 13 (2025) for THIS project — data collection notice, consent, privacy policy requirements, breach notification if applicable. Write N/A if no personal data is collected.",
       "is5568": "accessibility requirements under Israeli Standard IS 5568 (WCAG 2.0 AA) IF this project includes a web/app interface. Write N/A if no public-facing interface.",
-      "securityRisks": ["specific risk for this architecture — e.g. API key exposure, SQL injection, unencrypted PII"],
-      "securityRecommendations": ["specific mitigation — e.g. use env variables, encrypt at rest, validate inputs server-side"]
+      "securityRisks": ["AT LEAST 3 specific risks for this architecture — e.g. API key exposure, prompt injection, unencrypted PII", "risk 2", "risk 3"],
+      "securityRecommendations": ["AT LEAST 3 specific mitigations, each mapped to a risk above in the same order — e.g. use env variables, encrypt at rest, validate inputs server-side", "mitigation 2", "mitigation 3"]
     },
     "prerequisites": [
       "specific blocker or prerequisite that must be resolved before building"
@@ -323,6 +323,12 @@ SECURITY RISKS — always flag risks specific to this architecture:
 - WhatsApp bots: session hijacking
 - Any public API: rate limiting, input validation
 
+⚠️ MINIMUM SECURITY DEPTH (hard requirement):
+- "securityRisks" MUST contain AT LEAST 3 risks, each specific to THIS project's actual architecture, data sources and integrations — never generic filler.
+- "securityRecommendations" MUST contain AT LEAST 3 concrete mitigations, each one mapped to a listed risk (same order), actionable enough that a developer knows exactly what to implement (e.g. "store the Green API token in environment variables on the server, never in client code" — not just "secure your keys").
+- If the project handles personal data (names, phones, emails, health, finance): explicitly cover data encryption at rest, access control (who sees what), and data retention/deletion policy in the risks/recommendations.
+- A PRD with fewer than 3 specific risks + 3 mapped mitigations is INVALID — do not emit it.
+
 === HARD BOUNDARY — NO DEVELOPMENT ===
 If the user asks you to BUILD, DEVELOP, CODE, CREATE, or WRITE AN APP/WEBSITE — respond with ONLY this JSON:
 {
@@ -352,7 +358,7 @@ When generating PRD — respond with EXACTLY this structure (all fields required
     "dataSource": {"recommendation": "שם DB", "why": "למה זה DB הנכון", "freeTier": "מה כולל החינם", "paidTier": "מחיר בתשלום", "schema": "טבלאות ושדות מרכזיים", "alternatives": [{"name": "חלופה", "pros": "יתרון", "cons": "חיסרון"}]},
     "crm": {"recommendation": "שם CRM או N/A", "why": "נימוק", "freeTier": "מה כולל", "alternatives": []},
     "automationPlatform": {"recommendation": "Make/n8n/Zapier/Activepieces או N/A", "why": "נימוק", "freeTier": "תפעולות חינם", "paidTier": "מחיר"},
-    "compliance": {"amendment13": "חובות תיקון 13 רלוונטיות לפרויקט זה או N/A", "is5568": "דרישות נגישות אם יש ממשק ציבורי או N/A", "securityRisks": ["סיכון ספציפי 1"], "securityRecommendations": ["המלצת אבטחה 1"]},
+    "compliance": {"amendment13": "חובות תיקון 13 רלוונטיות לפרויקט זה או N/A", "is5568": "דרישות נגישות אם יש ממשק ציבורי או N/A", "securityRisks": ["סיכון ספציפי 1","סיכון ספציפי 2","סיכון ספציפי 3"], "securityRecommendations": ["המלצת אבטחה 1 (מותאמת לסיכון 1)","המלצת אבטחה 2","המלצת אבטחה 3"]},
     "prerequisites": ["תנאי קדם 1"],
     "mvp": ["שלב MVP 1","שלב MVP 2","שלב MVP 3"],
     "fullScope": ["פיצ'ר שלב 2"],
@@ -410,7 +416,7 @@ OUTPUT EXACTLY THIS STRUCTURE (all fields required):
     "dataSource": {"recommendation": "שם DB", "why": "למה זה DB הנכון", "freeTier": "מה כולל החינם", "paidTier": "מחיר בתשלום", "schema": "טבלאות ושדות מרכזיים", "alternatives": [{"name": "חלופה", "pros": "יתרון", "cons": "חיסרון"}]},
     "crm": {"recommendation": "שם CRM או N/A", "why": "נימוק", "freeTier": "מה כולל", "alternatives": []},
     "automationPlatform": {"recommendation": "Make/n8n/Zapier/Activepieces או N/A", "why": "נימוק", "freeTier": "תפעולות חינם", "paidTier": "מחיר"},
-    "compliance": {"amendment13": "חובות תיקון 13 רלוונטיות או N/A", "is5568": "דרישות נגישות אם יש ממשק ציבורי או N/A", "securityRisks": ["סיכון ספציפי 1"], "securityRecommendations": ["המלצת אבטחה 1"]},
+    "compliance": {"amendment13": "חובות תיקון 13 רלוונטיות או N/A", "is5568": "דרישות נגישות אם יש ממשק ציבורי או N/A", "securityRisks": ["סיכון ספציפי 1","סיכון ספציפי 2","סיכון ספציפי 3"], "securityRecommendations": ["המלצת אבטחה 1 (מותאמת לסיכון 1)","המלצת אבטחה 2","המלצת אבטחה 3"]},
     "prerequisites": ["תנאי קדם 1"],
     "mvp": ["שלב MVP 1","שלב MVP 2","שלב MVP 3"],
     "fullScope": ["פיצ'ר שלב 2"],

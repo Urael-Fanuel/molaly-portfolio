@@ -1989,30 +1989,14 @@ function renderPRD(prd) {
       <ul style="margin:0;padding-right:18px;">${prereqHtml}</ul>
     </div>` : ''}
 
-    <div class="prd-sb">
-      <div class="prd-lbl">🗄️ בסיס נתונים — ${esc(ds.recommendation || 'Single Source of Truth')}</div>
-      ${ds.why ? `<p style="margin:0 0 8px;color:var(--tx2);line-height:1.6;">${esc(ds.why)}</p>` : ''}
-      <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:8px;">
-        ${ds.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(ds.freeTier)}</div>` : ''}
-        ${ds.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(ds.paidTier)}</div>` : ''}
+    ${(ds.recommendation || (crm.recommendation && crm.recommendation !== 'N/A') || (autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A')) ? `<div class="prd-sb">
+      <div class="prd-lbl">🧰 כלים נבחרים</div>
+      <div style="display:flex;flex-direction:column;gap:5px;color:var(--tx2);font-size:13px;">
+        ${ds.recommendation ? `<div>🗄️ <strong>בסיס נתונים:</strong> ${esc(ds.recommendation)}</div>` : ''}
+        ${(crm.recommendation && crm.recommendation !== 'N/A') ? `<div>👥 <strong>CRM:</strong> ${esc(crm.recommendation)}</div>` : ''}
+        ${(autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A') ? `<div>⚙️ <strong>אוטומציה:</strong> ${esc(autoPlatform.recommendation)}</div>` : ''}
       </div>
-      ${ds.schema ? `<p style="margin:0 0 4px;color:var(--tx3);font-size:12px;font-style:italic;">${esc(ds.schema)}</p>` : ''}
-      ${dbAltHtml ? `<div style="margin-top:8px;"><div style="font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px;">חלופות:</div>${dbAltHtml}</div>` : ''}
-    </div>
-
-    ${(crm.recommendation && crm.recommendation !== 'N/A') ? `<div class="prd-sb">
-      <div class="prd-lbl">👥 CRM מומלץ — ${esc(crm.recommendation)}</div>
-      ${crm.why ? `<p style="margin:0 0 8px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(crm.why)}</p>` : ''}
-      ${crm.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;display:inline-block;"><strong>חינם:</strong> ${esc(crm.freeTier)}</div>` : ''}
-    </div>` : ''}
-
-    ${(autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A') ? `<div class="prd-sb">
-      <div class="prd-lbl">⚙️ פלטפורמת אוטומציה — ${esc(autoPlatform.recommendation)}</div>
-      ${autoPlatform.why ? `<p style="margin:0 0 8px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(autoPlatform.why)}</p>` : ''}
-      <div style="display:flex;gap:8px;flex-wrap:wrap;">
-        ${autoPlatform.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(autoPlatform.freeTier)}</div>` : ''}
-        ${autoPlatform.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(autoPlatform.paidTier)}</div>` : ''}
-      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--tx3);">📎 הנמקות מלאות, מחירים וחלופות — בנספח בסוף המסמך</div>
     </div>` : ''}
 
     <div class="prd-sb">
@@ -2060,6 +2044,11 @@ function renderPRD(prd) {
       <div style="display:flex;flex-direction:column;">${metricsHtml}</div>
     </div>` : ''}
 
+    <div class="prd-sb" style="background:rgba(124,106,247,0.07);border-right:3px solid var(--ac);border-radius:0 10px 10px 0;padding:12px 14px;">
+      <div class="prd-lbl">💡 משפט הזיקוק</div>
+      <p style="margin:0;color:var(--tx);font-style:italic;font-size:13.5px;line-height:1.7;">"${esc(prd.zikukSentence || '')}"</p>
+    </div>
+
     ${pitfallsHtml ? `<div class="prd-sb">
       <div class="prd-lbl" style="color:#ef4444;">⚠️ מלכודות ואיך להימנע מהן</div>
       <div style="display:flex;flex-direction:column;gap:8px;">${pitfallsHtml}</div>
@@ -2079,10 +2068,35 @@ function renderPRD(prd) {
       ${secRecsHtml ? `<div>${secRecsHtml}</div>` : ''}
     </div>` : ''}
 
-    <div class="prd-sb" style="background:rgba(124,106,247,0.07);border-right:3px solid var(--ac);border-radius:0 10px 10px 0;padding:12px 14px;">
-      <div class="prd-lbl">💡 משפט הזיקוק</div>
-      <p style="margin:0;color:var(--tx);font-style:italic;font-size:13.5px;line-height:1.7;">"${esc(prd.zikukSentence || '')}"</p>
-    </div>
+    ${(ds.recommendation || (crm.recommendation && crm.recommendation !== 'N/A') || (autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A')) ? `<div class="prd-sb" style="background:rgba(255,255,255,0.02);border:1px dashed var(--bor2);">
+      <div class="prd-lbl">📎 נספח — פירוט כלים, מחירים וחלופות</div>
+
+      ${ds.recommendation ? `<div style="margin-bottom:12px;">
+        <div style="font-size:12.5px;font-weight:800;color:var(--tx);margin-bottom:5px;">🗄️ בסיס נתונים — ${esc(ds.recommendation)}</div>
+        ${ds.why ? `<p style="margin:0 0 8px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(ds.why)}</p>` : ''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:6px;">
+          ${ds.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(ds.freeTier)}</div>` : ''}
+          ${ds.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(ds.paidTier)}</div>` : ''}
+        </div>
+        ${ds.schema ? `<p style="margin:0 0 4px;color:var(--tx3);font-size:12px;font-style:italic;">${esc(ds.schema)}</p>` : ''}
+        ${dbAltHtml ? `<div style="margin-top:6px;"><div style="font-size:11px;font-weight:700;color:var(--tx3);margin-bottom:4px;">חלופות:</div>${dbAltHtml}</div>` : ''}
+      </div>` : ''}
+
+      ${(crm.recommendation && crm.recommendation !== 'N/A') ? `<div style="margin-bottom:12px;">
+        <div style="font-size:12.5px;font-weight:800;color:var(--tx);margin-bottom:5px;">👥 CRM — ${esc(crm.recommendation)}</div>
+        ${crm.why ? `<p style="margin:0 0 6px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(crm.why)}</p>` : ''}
+        ${crm.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;display:inline-block;"><strong>חינם:</strong> ${esc(crm.freeTier)}</div>` : ''}
+      </div>` : ''}
+
+      ${(autoPlatform.recommendation && autoPlatform.recommendation !== 'N/A') ? `<div>
+        <div style="font-size:12.5px;font-weight:800;color:var(--tx);margin-bottom:5px;">⚙️ פלטפורמת אוטומציה — ${esc(autoPlatform.recommendation)}</div>
+        ${autoPlatform.why ? `<p style="margin:0 0 6px;color:var(--tx2);font-size:12.5px;line-height:1.6;">${esc(autoPlatform.why)}</p>` : ''}
+        <div style="display:flex;gap:8px;flex-wrap:wrap;">
+          ${autoPlatform.freeTier ? `<div style="padding:5px 10px;background:rgba(16,185,129,0.08);border:1px solid rgba(16,185,129,0.2);border-radius:7px;font-size:11.5px;color:#10b981;"><strong>חינם:</strong> ${esc(autoPlatform.freeTier)}</div>` : ''}
+          ${autoPlatform.paidTier ? `<div style="padding:5px 10px;background:rgba(124,106,247,0.08);border:1px solid rgba(124,106,247,0.2);border-radius:7px;font-size:11.5px;color:var(--ac);"><strong>בתשלום:</strong> ${esc(autoPlatform.paidTier)}</div>` : ''}
+        </div>
+      </div>` : ''}
+    </div>` : ''}
 
     ${prd.devPrompt ? `<div class="prd-sb" style="background:rgba(16,185,129,0.04);border:1px solid rgba(16,185,129,0.2);border-radius:12px;padding:14px;">
       <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;">
@@ -2418,19 +2432,11 @@ function openPRDFullPage() {
 
   ${components.length ? sec('🏛️ ארכיטקטורה — פריסת הסוכנים', `${arch.reasoning?`<p>${esc(arch.reasoning)}</p>`:''}<div class="arch-wrap">${flowCards}</div>`) : ''}
 
-  ${ds.recommendation ? sec('🗄️ בסיס נתונים — ' + esc(ds.recommendation), `
-    ${ds.why?`<p>${esc(ds.why)}</p>`:''}
-    ${ds.freeTier?`<span class="pill">חינם: ${esc(ds.freeTier)}</span>`:''}
-    ${ds.paidTier?`<span class="pill pay">בתשלום: ${esc(ds.paidTier)}</span>`:''}
-    ${ds.schema?`<p class="muted" style="font-size:12.5px;margin-top:8px;">${esc(ds.schema)}</p>`:''}
-    ${dbAlt}`) : ''}
-
-  ${(crm.recommendation && crm.recommendation!=='N/A') ? sec('👥 CRM — ' + esc(crm.recommendation), `${crm.why?`<p>${esc(crm.why)}</p>`:''}${crm.freeTier?`<span class="pill">חינם: ${esc(crm.freeTier)}</span>`:''}`) : ''}
-
-  ${(ap.recommendation && ap.recommendation!=='N/A') ? sec('⚙️ פלטפורמת אוטומציה — ' + esc(ap.recommendation), `
-    ${ap.why?`<p>${esc(ap.why)}</p>`:''}
-    ${ap.freeTier?`<span class="pill">חינם: ${esc(ap.freeTier)}</span>`:''}
-    ${ap.paidTier?`<span class="pill pay">בתשלום: ${esc(ap.paidTier)}</span>`:''}`) : ''}
+  ${(ds.recommendation || (crm.recommendation && crm.recommendation!=='N/A') || (ap.recommendation && ap.recommendation!=='N/A')) ? sec('🧰 כלים נבחרים', `
+    ${ds.recommendation?`<p>🗄️ <b>בסיס נתונים:</b> ${esc(ds.recommendation)}</p>`:''}
+    ${(crm.recommendation && crm.recommendation!=='N/A')?`<p>👥 <b>CRM:</b> ${esc(crm.recommendation)}</p>`:''}
+    ${(ap.recommendation && ap.recommendation!=='N/A')?`<p>⚙️ <b>אוטומציה:</b> ${esc(ap.recommendation)}</p>`:''}
+    <p class="muted" style="font-size:12px;">📎 הנמקות מלאות, מחירים וחלופות — בנספח בסוף המסמך</p>`) : ''}
 
   ${prd.prerequisites && prd.prerequisites.length ? sec('🔑 תנאי קדם', `<ul>${list(prd.prerequisites)}</ul>`) : ''}
   ${mvpHtml ? sec('🚀 MVP — שלבי הבנייה', `<ol>${mvpHtml}</ol>`) : ''}
@@ -2451,6 +2457,7 @@ function openPRDFullPage() {
     </div>`) : ''}
 
   ${prd.successMetrics && prd.successMetrics.length ? sec('🎯 מדדי הצלחה', `<ul>${list(prd.successMetrics)}</ul>`) : ''}
+  ${prd.zikukSentence ? sec('💡 משפט הזיקוק', `<p style="font-style:italic;color:#fff;">"${esc(prd.zikukSentence)}"</p>`) : ''}
   ${pitfalls ? sec('⚠️ מלכודות ואיך להימנע', pitfalls) : ''}
 
   ${(secRisks||comp.amendment13||comp.is5568) ? sec('🔐 אבטחה, פרטיות ונגישות', `
@@ -2458,7 +2465,21 @@ function openPRDFullPage() {
     ${comp.is5568&&comp.is5568!=='N/A'?`<p><b>נגישות (IS 5568):</b> ${esc(comp.is5568)}</p>`:''}
     ${secRisks}${secRecs}`) : ''}
 
-  ${prd.zikukSentence ? sec('💡 משפט הזיקוק', `<p style="font-style:italic;color:#fff;">"${esc(prd.zikukSentence)}"</p>`) : ''}
+  ${(ds.recommendation || (crm.recommendation && crm.recommendation!=='N/A') || (ap.recommendation && ap.recommendation!=='N/A')) ? sec('📎 נספח — פירוט כלים, מחירים וחלופות', `
+    ${ds.recommendation ? `<p><b>🗄️ בסיס נתונים — ${esc(ds.recommendation)}</b></p>
+    ${ds.why?`<p>${esc(ds.why)}</p>`:''}
+    ${ds.freeTier?`<span class="pill">חינם: ${esc(ds.freeTier)}</span>`:''}
+    ${ds.paidTier?`<span class="pill pay">בתשלום: ${esc(ds.paidTier)}</span>`:''}
+    ${ds.schema?`<p class="muted" style="font-size:12.5px;margin-top:8px;">${esc(ds.schema)}</p>`:''}
+    ${dbAlt}` : ''}
+    ${(crm.recommendation && crm.recommendation!=='N/A') ? `<p style="margin-top:14px;"><b>👥 CRM — ${esc(crm.recommendation)}</b></p>
+    ${crm.why?`<p>${esc(crm.why)}</p>`:''}
+    ${crm.freeTier?`<span class="pill">חינם: ${esc(crm.freeTier)}</span>`:''}` : ''}
+    ${(ap.recommendation && ap.recommendation!=='N/A') ? `<p style="margin-top:14px;"><b>⚙️ פלטפורמת אוטומציה — ${esc(ap.recommendation)}</b></p>
+    ${ap.why?`<p>${esc(ap.why)}</p>`:''}
+    ${ap.freeTier?`<span class="pill">חינם: ${esc(ap.freeTier)}</span>`:''}
+    ${ap.paidTier?`<span class="pill pay">בתשלום: ${esc(ap.paidTier)}</span>`:''}` : ''}`) : ''}
+
   ${prd.devPrompt ? sec('🎁 פרומפט לפרוטוטייפ', `<pre>${esc(prd.devPrompt)}</pre>`) : ''}
 
   ${prd.cta ? `<div class="cta">${esc(prd.cta)}<br><br>📞 <b style="color:#fff;">052-874-2884</b> · שיחת אפיון חינם עם Molaly</div>` : ''}
@@ -2502,6 +2523,9 @@ function downloadPRDasPDF() {
   const ai = prd.aiDecision || {};
   const ds = prd.dataSource || {};
   const roi = prd.roi || {};
+  const comp = prd.compliance || {};
+  const crm = prd.crm || {};
+  const ap = prd.automationPlatform || {};
   const color = PATTERN_COLORS[arch.pattern] || '#6d28d9';
   const isAI = !ai.recommendation || ai.recommendation !== 'simple_automation';
 
@@ -2512,6 +2536,8 @@ function downloadPRDasPDF() {
   const pitfallsHtml = (prd.pitfalls || []).map(p =>
     `<div class="pf">⚠️ <strong>${esc(p.name)}:</strong> ${esc(p.warning)}</div>`).join('');
   const compsHtml = (arch.components || []).map(c => `<li>${esc(c)}</li>`).join('');
+  const secRisksPdf = (comp.securityRisks || []).map(r => `<div class="pf">⚠️ ${esc(r)}</div>`).join('');
+  const secRecsPdf = (comp.securityRecommendations || []).map(r => `<div style="color:#065f46;font-size:13px;padding:2px 0;">✅ ${esc(r)}</div>`).join('');
 
   const pw = window.open('', '_blank', 'width=900,height=700');
   pw.document.write(`<!DOCTYPE html><html dir="rtl" lang="he"><head><meta charset="UTF-8">
@@ -2576,12 +2602,26 @@ ${techHtml ? `<div class="sec"><div class="sec-lbl">🛠️ Stack טכנולוג
 </div>
 </div>
 
-${pitfallsHtml ? `<div class="sec"><div class="sec-lbl" style="color:#dc2626;">⚠️ מלכודות</div>${pitfallsHtml}</div>` : ''}
-
 <div class="zikuk">
 <div class="sec-lbl">💡 משפט הזיקוק</div>
 <p style="margin:0;font-size:14px;">"${esc(prd.zikukSentence || '')}"</p>
 </div>
+
+${pitfallsHtml ? `<div class="sec"><div class="sec-lbl" style="color:#dc2626;">⚠️ מלכודות</div>${pitfallsHtml}</div>` : ''}
+
+${(secRisksPdf || secRecsPdf || (comp.amendment13 && comp.amendment13 !== 'N/A') || (comp.is5568 && comp.is5568 !== 'N/A')) ? `<div class="sec">
+<div class="sec-lbl" style="color:#dc2626;">🔐 אבטחה, פרטיות ונגישות</div>
+${(comp.amendment13 && comp.amendment13 !== 'N/A') ? `<p style="margin:0 0 8px;"><strong>תיקון 13 — חוק הגנת הפרטיות:</strong> ${esc(comp.amendment13)}</p>` : ''}
+${(comp.is5568 && comp.is5568 !== 'N/A') ? `<p style="margin:0 0 8px;"><strong>נגישות (IS 5568):</strong> ${esc(comp.is5568)}</p>` : ''}
+${secRisksPdf}${secRecsPdf}
+</div>` : ''}
+
+${(ds.recommendation || (crm.recommendation && crm.recommendation !== 'N/A') || (ap.recommendation && ap.recommendation !== 'N/A')) ? `<div class="sec">
+<div class="sec-lbl">📎 נספח — פירוט כלים, מחירים וחלופות</div>
+${ds.recommendation ? `<p style="margin:0 0 4px;"><strong>🗄️ בסיס נתונים — ${esc(ds.recommendation)}</strong></p>${ds.why ? `<p style="margin:0 0 4px;font-size:13px;color:#555;">${esc(ds.why)}</p>` : ''}${ds.freeTier ? `<p style="margin:0 0 8px;font-size:12px;color:#065f46;">חינם: ${esc(ds.freeTier)}${ds.paidTier ? ` · בתשלום: ${esc(ds.paidTier)}` : ''}</p>` : ''}` : ''}
+${(crm.recommendation && crm.recommendation !== 'N/A') ? `<p style="margin:8px 0 4px;"><strong>👥 CRM — ${esc(crm.recommendation)}</strong></p>${crm.why ? `<p style="margin:0 0 4px;font-size:13px;color:#555;">${esc(crm.why)}</p>` : ''}${crm.freeTier ? `<p style="margin:0 0 8px;font-size:12px;color:#065f46;">חינם: ${esc(crm.freeTier)}</p>` : ''}` : ''}
+${(ap.recommendation && ap.recommendation !== 'N/A') ? `<p style="margin:8px 0 4px;"><strong>⚙️ אוטומציה — ${esc(ap.recommendation)}</strong></p>${ap.why ? `<p style="margin:0 0 4px;font-size:13px;color:#555;">${esc(ap.why)}</p>` : ''}${ap.freeTier ? `<p style="margin:0;font-size:12px;color:#065f46;">חינם: ${esc(ap.freeTier)}${ap.paidTier ? ` · בתשלום: ${esc(ap.paidTier)}` : ''}</p>` : ''}` : ''}
+</div>` : ''}
 
 <div class="cta">${esc(prd.cta || '')}</div>
 
