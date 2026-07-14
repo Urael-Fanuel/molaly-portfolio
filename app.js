@@ -1,3 +1,4 @@
+function trackEvent(name, params){ try{ if(typeof gtag === 'function') gtag('event', name, params || {}); }catch(e){} }
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function safeUrl(u){if(!u)return'';const s=String(u).trim();return/^javascript:/i.test(s)?'#':s;}
 function imgErr(el,col,icon){el.outerHTML='<div class="card-img-ph" style="--cc:'+col+'">'+icon+'</div>';}
@@ -280,6 +281,7 @@ function switchTab(tab){
 }
 
 function openSection(tab){
+  trackEvent('tab_open', { tab_name: tab });
   if(window.location.hash && window.location.hash.length>1){
     switchTab(tab);
   } else {
@@ -916,6 +918,7 @@ function openCase(id){
 function closeCase(){document.getElementById('ov-case').classList.remove('open');}
 
 function openVisitorContact(defaultMsg){
+  trackEvent('contact_form_open', { source_tab: curTab });
   document.getElementById('v-name').value = '';
   document.getElementById('v-email').value = '';
   document.getElementById('v-phone').value = '';
@@ -952,8 +955,9 @@ function sendContact(method){
     const cleanPhone = myPhone.replace(/[^0-9]/g, '');
     const formattedPhone = cleanPhone.startsWith('0') ? '972' + cleanPhone.substring(1) : cleanPhone;
     const url = `https://wa.me/${formattedPhone}?text=${encodeURIComponent('היי Molaly, אשמח לשיחת אפיון.\n' + textMsg)}`;
+    trackEvent('contact_whatsapp_sent', { source_tab: curTab });
     window.open(url, '_blank');
-    
+
     showSuccessNotification();
     closeVisitorContact();
   } else {
@@ -985,6 +989,7 @@ function sendContact(method){
     .then(data => {
       btn.disabled = false;
       btn.innerHTML = originalText;
+      trackEvent('contact_email_sent', { source_tab: curTab });
       showSuccessNotification();
       closeVisitorContact();
     })
@@ -1764,6 +1769,7 @@ async function sendArchMessage() {
     return;
   }
 
+  trackEvent('architect_message_sent', { message_number: archMessages.filter(m => m.role === 'user').length + 1 });
   input.value = '';
   addChatMessage('user', text);
   archMessages.push({ role: 'user', content: text });
@@ -1850,6 +1856,10 @@ function handleClaudeResponse(text) {
 
   if (parsed && parsed.type === 'prd' && parsed.prd) {
     currentPRD = parsed.prd;
+    trackEvent('architect_prd_generated', {
+      architecture_pattern: (parsed.prd.architecture && parsed.prd.architecture.pattern) || 'unknown',
+      ai_decision: (parsed.prd.aiDecision && parsed.prd.aiDecision.recommendation) || 'unknown',
+    });
     addChatMessage('agent', '✅ <strong>האפיון הושלם!</strong> ה-PRD המלא שלך מוכן — ראה מצד שמאל.', true);
     renderPRD(parsed.prd);
   } else if (parsed && parsed.type === 'question' && parsed.content) {
@@ -2329,6 +2339,7 @@ function buildArchDiagramHTML(prd) {
 // every section, and an animated flowing architecture diagram (no static arrows).
 function openPRDFullPage() {
   if (!currentPRD) return;
+  trackEvent('prd_full_page_open', { project_name: currentPRD.projectName || 'unknown' });
   const prd = currentPRD;
   const AC = '#7c6af7';        // brand purple — used for all titles
   const AC2 = '#a78bfa';       // lighter purple
@@ -2513,6 +2524,7 @@ function openVisitorContactFromPRD() {
 
 function downloadPRDasPDF() {
   if (!currentPRD) return;
+  trackEvent('prd_pdf_download', { project_name: currentPRD.projectName || 'unknown' });
   const prd = currentPRD;
   const PATTERN_COLORS = {
     orchestrator: '#6d28d9', pipeline: '#0d9488',
