@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>מערכת אוטומציה לעיבוד חשבוניות – ארכיטקטורת AI חסינת כפילויות לענף הבנייה</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700;800&family=DM+Serif+Display:ital@0;1&family=Outfit:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg: #030712;
+  --sur: rgba(17, 24, 39, 0.7);
+  --sur2: rgba(31, 41, 55, 0.65);
+  --sur3: rgba(55, 65, 81, 0.5);
+  --bor: rgba(255, 255, 255, 0.08);
+  --bor2: rgba(255, 255, 255, 0.15);
+  --ac: #6366f1; /* Indigo */
+  --ac2: #10b981; /* Emerald */
+  --ac3: #f59e0b; /* Amber */
+  --tx: #f9fafb;
+  --tx2: #d1d5db;
+  --tx3: #9ca3af;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  font-family: 'Outfit', 'Space Grotesk', sans-serif;
+  background: radial-gradient(circle at 50% 0%, #1e1b4b 0%, #030712 50%);
+  color: var(--tx);
+  min-height: 100vh;
+  direction: rtl;
+  line-height: 1.65;
+  overflow-x: hidden;
+}
+
+header {
+  position: sticky;
+  top: 0;
+  background: rgba(3, 7, 18, 0.75);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border-bottom: 1px solid var(--bor);
+  z-index: 100;
+}
+
+.nav-container {
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: 18px 24px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.logo {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  font-weight: 700;
+  text-decoration: none;
+  color: var(--tx);
+}
+
+.logo span { color: var(--ac); font-style: italic; }
+
+.btn-back {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  color: var(--tx2);
+  border: 1px solid var(--bor2);
+  padding: 8px 18px;
+  border-radius: 10px;
+  text-decoration: none;
+  font-size: 13.5px;
+  font-weight: 600;
+  transition: all 0.25s ease;
+}
+
+.btn-back:hover {
+  background: rgba(99, 102, 241, 0.08);
+  border-color: var(--ac);
+  color: var(--tx);
+  transform: translateY(-1px);
+}
+
+main { max-width: 900px; margin: 0 auto; padding: 40px 24px 80px; }
+
+.hero { text-align: center; margin-bottom: 48px; animation: fadeIn 0.8s ease; }
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 2px;
+  text-transform: uppercase;
+  color: var(--ac2);
+  background: rgba(16, 185, 129, 0.08);
+  padding: 6px 14px;
+  border-radius: 20px;
+  border: 1px solid rgba(16, 185, 129, 0.25);
+  margin-bottom: 16px;
+}
+
+.badge.live {
+  color: #f59e0b;
+  background: rgba(245, 158, 11, 0.08);
+  border-color: rgba(245, 158, 11, 0.25);
+  margin-inline-start: 8px;
+}
+
+h1 {
+  font-family: 'DM Serif Display', serif;
+  font-size: clamp(28px, 4.5vw, 42px);
+  line-height: 1.25;
+  margin-bottom: 18px;
+  color: var(--tx);
+  letter-spacing: -0.5px;
+}
+
+.hero-sub {
+  font-size: 18px;
+  color: var(--tx2);
+  max-width: 720px;
+  margin: 0 auto 28px;
+  font-weight: 300;
+}
+
+.cta-group { display: flex; justify-content: center; gap: 14px; }
+
+.btn-primary {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: linear-gradient(135deg, var(--ac) 0%, #4f46e5 100%);
+  color: #fff;
+  border: none;
+  padding: 12px 28px;
+  border-radius: 12px;
+  font-size: 15px;
+  font-weight: 700;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+  box-shadow: 0 4px 14px rgba(99, 102, 241, 0.3);
+}
+
+.btn-primary:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(99, 102, 241, 0.45);
+}
+
+section {
+  margin-bottom: 40px;
+  background: var(--sur);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid var(--bor);
+  border-radius: 24px;
+  padding: 32px;
+}
+
+h2 {
+  font-family: 'DM Serif Display', serif;
+  font-size: 22px;
+  margin-bottom: 18px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  color: var(--tx);
+}
+
+.pain-section {
+  border-color: rgba(239, 68, 68, 0.15);
+  background: linear-gradient(180deg, rgba(239, 68, 68, 0.03) 0%, rgba(3, 7, 18, 0) 100%);
+}
+
+.pain-grid { display: grid; gap: 16px; margin-top: 20px; }
+
+.pain-card {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid rgba(239, 68, 68, 0.08);
+  border-radius: 16px;
+  padding: 20px;
+  display: flex;
+  gap: 14px;
+}
+
+.pain-icon { font-size: 20px; color: #ef4444; flex-shrink: 0; margin-top: 2px; }
+.pain-content h3 { font-size: 16px; color: var(--tx); margin-bottom: 6px; font-weight: 700; }
+.pain-content p { font-size: 14.5px; color: var(--tx2); line-height: 1.6; }
+
+.architecture-timeline { display: grid; gap: 20px; margin-top: 24px; }
+
+.step-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--bor);
+  border-radius: 16px;
+  padding: 20px;
+  position: relative;
+  transition: all 0.3s ease;
+}
+
+.step-card:hover { border-color: var(--bor2); background: rgba(255, 255, 255, 0.03); }
+
+.step-header { display: flex; align-items: center; gap: 12px; margin-bottom: 8px; }
+
+.step-num {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(99, 102, 241, 0.15);
+  border: 1px solid rgba(99, 102, 241, 0.3);
+  color: var(--ac);
+  font-weight: 700;
+  font-size: 13.5px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.step-card:nth-child(2) .step-num { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--ac2); }
+.step-card:nth-child(3) .step-num { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: var(--ac3); }
+.step-card:nth-child(4) .step-num { background: rgba(99, 102, 241, 0.15); border-color: rgba(99, 102, 241, 0.3); color: var(--ac); }
+.step-card:nth-child(5) .step-num { background: rgba(16, 185, 129, 0.15); border-color: rgba(16, 185, 129, 0.3); color: var(--ac2); }
+.step-card:nth-child(6) .step-num { background: rgba(245, 158, 11, 0.15); border-color: rgba(245, 158, 11, 0.3); color: var(--ac3); }
+
+.step-title { font-size: 16px; font-weight: 700; color: var(--tx); }
+.step-desc { font-size: 14.5px; color: var(--tx2); padding-right: 40px; }
+
+.defense-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.defense-card {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid rgba(99, 102, 241, 0.1);
+  border-radius: 16px;
+  padding: 20px;
+  transition: all 0.3s ease;
+}
+
+.defense-card:hover { border-color: rgba(99, 102, 241, 0.3); transform: translateY(-2px); }
+
+.defense-num {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 8px;
+  background: rgba(99, 102, 241, 0.15);
+  color: var(--ac);
+  font-weight: 800;
+  font-size: 12px;
+  margin-bottom: 10px;
+}
+
+.defense-card h3 { font-size: 15px; color: var(--tx); margin-bottom: 6px; font-weight: 700; }
+.defense-card p { font-size: 13.5px; color: var(--tx2); line-height: 1.55; }
+
+.dual-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 18px;
+  margin-top: 20px;
+}
+
+.dual-card {
+  background: rgba(255, 255, 255, 0.015);
+  border: 1px solid var(--bor);
+  border-radius: 16px;
+  padding: 22px;
+}
+
+.dual-card h3 {
+  font-size: 16px;
+  color: var(--tx);
+  margin-bottom: 10px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.dual-card p { font-size: 14px; color: var(--tx2); line-height: 1.6; }
+
+.results-section {
+  border-color: rgba(16, 185, 129, 0.15);
+  background: linear-gradient(180deg, rgba(16, 185, 129, 0.03) 0%, rgba(3, 7, 18, 0) 100%);
+}
+
+.results-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+  gap: 16px;
+  margin-top: 20px;
+}
+
+.result-card {
+  background: rgba(3, 7, 18, 0.4);
+  border: 1px solid rgba(16, 185, 129, 0.08);
+  border-radius: 16px;
+  padding: 22px;
+  text-align: center;
+  transition: all 0.3s ease;
+}
+
+.result-card:hover { transform: translateY(-2px); border-color: rgba(16, 185, 129, 0.25); }
+.result-icon { font-size: 28px; margin-bottom: 12px; }
+.result-title { font-size: 17px; font-weight: 700; color: var(--ac2); margin-bottom: 6px; }
+.result-desc { font-size: 14px; color: var(--tx2); line-height: 1.5; }
+
+.stack-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 18px;
+}
+
+.stack-chip {
+  background: rgba(99, 102, 241, 0.08);
+  border: 1px solid rgba(99, 102, 241, 0.25);
+  color: var(--tx2);
+  font-size: 13px;
+  font-weight: 600;
+  padding: 7px 14px;
+  border-radius: 20px;
+}
+
+.footer-cta {
+  text-align: center;
+  padding: 48px 32px;
+  background: linear-gradient(135deg, rgba(31, 41, 55, 0.5) 0%, rgba(17, 24, 39, 0.6) 100%);
+  border: 1px solid var(--bor);
+  border-radius: 24px;
+  margin-top: 48px;
+}
+
+.footer-cta h2 { font-size: 24px; justify-content: center; margin-bottom: 10px; }
+.footer-cta p { font-size: 15px; color: var(--tx2); max-width: 600px; margin: 0 auto 28px; }
+
+footer { text-align: center; padding: 24px; font-size: 13px; color: var(--tx3); border-top: 1px solid var(--bor); }
+
+@media (max-width: 768px) {
+  section { padding: 24px; }
+  .results-grid, .defense-grid, .dual-grid { grid-template-columns: 1fr; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav-container">
+    <a href="./index.html" class="logo">Molaly <span>Mekonen</span></a>
+    <a href="./index.html" class="btn-back">
+      <span>חזרה לפורטפוליו</span>
+      <span>←</span>
+    </a>
+  </div>
+</header>
+
+<main>
+  <div class="hero">
+    <div class="badge">⬡ פרויקט AI &amp; אוטומציה</div>
+    <div class="badge live">🟢 בשימוש חי בייצור</div>
+    <h1>מערכת אוטומציה לעיבוד חשבוניות ותעודות משלוח – ארכיטקטורת AI חסינת כפילויות וטעויות</h1>
+    <p class="hero-sub">נבנתה עבור חברת בנייה ופיתוח פעילה, ורצה כיום כל יום באופן אוטונומי: קולטת סריקות חשבוניות, מפרקת, מקשרת תעודות משלוח, מחלצת נתונים לפורמט מובנה, ומעדכנת ארכיון וחיפוש חי — הכל ללא נגיעת יד אדם, ועם מסלול בקרה אנושית מובנה לכל מקרה גבולי.</p>
+    <div class="cta-group">
+      <a href="https://wa.me/972528742884?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%9E%D7%95%D7%9C%D7%9C%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98%20%D7%94%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%99%D7%95%D7%AA" target="_blank" rel="noopener" class="btn-primary">✉️ שיחת אפיון חינם</a>
+    </div>
+  </div>
+
+  <!-- THE PAIN -->
+  <section class="pain-section">
+    <h2>הבעיה בשטח: הנהלת חשבונות בענף שרץ על ניירת</h2>
+    <p style="color: var(--tx2); font-size: 15px; margin-bottom: 8px;">חברת בנייה עובדת מול עשרות ספקים במקביל — חומרי בניין, קבלני משנה, ציוד מושכר. כל אספקה מגיעה עם חשבונית, ולעיתים גם עם תעודות משלוח נפרדות שצריך לשייך אליה נכון. הטיפול הידני בזה יוצר שלושה כשלים חוזרים:</p>
+    <div class="pain-grid">
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>כפילויות שנכנסות בשקט</h3>
+          <p>אותה חשבונית נסרקת פעמיים על ידי שני אנשים שונים, או נשמרת תחת שם קובץ אחר — ונכנסת פעמיים להנהלת החשבונות מבלי שאף אחד ישים לב.</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>תעודות משלוח שהולכות לאיבוד מהשיוך</h3>
+          <p>חשבונית עם 7 תעודות משלוח מצורפות — ואם אחת מהן לא משוייכת נכון, אין דרך פשוטה לדעת שהיא בכלל קיימת בלי לעבור ידנית על כל העמודים.</p>
+        </div>
+      </div>
+      <div class="pain-card">
+        <div class="pain-icon">🔻</div>
+        <div class="pain-content">
+          <h3>תלות מוחלטת באדם אחד</h3>
+          <p>כשמנהלת המשרד היחידה שמכירה את כל הספקים והפורמטים בחופשה או עמוסה — כל התהליך נעצר.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- THE SOLUTION -->
+  <section>
+    <h2>💡 הפתרון: סוכן AI מוגבל היטב, לא "קופסה שחורה" שמנחשת</h2>
+    <p style="margin-bottom: 14px; font-size: 15px; color: var(--tx2);">
+      העיקרון המנחה בבניית המערכת: <strong>סוכן AI שמטפל בכסף של מישהו אחר אסור לו לנחש — לעולם.</strong> כל שלב בתהליך תוכנן כך שברגע שיש אי-ודאות אמיתית (קריאה לא ברורה, שיוך לא חד-משמעי, פילוח מסמכים מסובך), התהליך לא ממשיך על דעת עצמו — הוא עוצר, מתעד בדיוק מה לא ברור, ומעביר להחלטה אנושית.
+    </p>
+    <p style="font-size: 15px; color: var(--tx2);">
+      התוצאה: מערכת שמנהלת המשרד סומכת עליה, כי היא יודעת שכל מספר שיוצא ממנה כבר עבר שכבת בקרת איכות עצמאית, ושדבר לא "נבלע" בשקט.
+    </p>
+  </section>
+
+  <!-- ARCHITECTURE -->
+  <section>
+    <h2>⚙️ ארכיטקטורה: מה קורה בפועל, שלב אחר שלב</h2>
+    <p style="font-size: 15px; color: var(--tx2); margin-bottom: 8px;">נקודת הכניסה היחידה היא תיקיית קליטה אחת — מכאן והלאה הכל אוטומטי:</p>
+    <div class="architecture-timeline">
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">1</div><div class="step-title">פילוח מסמכים מתוך סריקה מרובת עמודים</div></div>
+        <div class="step-desc">קובץ סריקה יחיד יכול להכיל חשבונית ועד עשרות תעודות משלוח יחד. המערכת מזהה איפה מסתיים כל מסמך לוגי ומפרקת אותו נכון — כולל במקרים גבוליים שמסומנים לבדיקה ולא מנוחשים.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">2</div><div class="step-title">קישור תעודות משלוח לחשבונית הנכונה</div></div>
+        <div class="step-desc">שיוך נעשה אך ורק לפי מזהה אמיתי שמופיע בשני המסמכים — לא לפי קרבה בעמוד או ניחוש הסתברותי.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">3</div><div class="step-title">חילוץ נתונים + QA עצמאי חובה</div></div>
+        <div class="step-desc">כל שדה נקרא פעמיים באופן בלתי-תלוי (קריאה ראשונית + בדיקת QA נפרדת שמאתגרת אותה), כולל אימות חשבונאי אוטומטי (סכומים, מע"מ, הנחות) לפני שהתוצאה נחשבת סופית.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">4</div><div class="step-title">מניעת כפילויות — הגנה תלת-שכבתית</div></div>
+        <div class="step-desc">שכבה 1: טביעת אצבע דיגיטלית (SHA-256) לכל קובץ. שכבה 2: מפתח עסקי (ספק + מספר מסמך) — כי מספר מסמך לבדו אינו ייחודי גלובלית בין ספקים שונים. שכבה 3: הזזה פיזית של כל קובץ שטופל לארכיון ייעודי, כך שגם תקלה בלוגיקה לא תגרום לעיבוד כפול.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">5</div><div class="step-title">מסלול חריגים מנוהל — לא "תקלה שקטה"</div></div>
+        <div class="step-desc">כל אי-ודאות (חמישה סוגים מסווגים: קריאה, שיוך, פילוח, מסמך חסר, כפילות אפשרית) נפתחת ככרטיס עם תיאור ברור בעברית פשוטה, וממתינה להחלטה אנושית מפורשת — מעולם לא מוכרעת אוטומטית.</div>
+      </div>
+      <div class="step-card">
+        <div class="step-header"><div class="step-num">6</div><div class="step-title">ריצה יומית עצמאית + אינדקס חי לחיפוש</div></div>
+        <div class="step-desc">משימה מתוזמנת מריצה את כל התהליך אוטומטית מדי יום, ובונה מחדש אינדקס מרכזי (חשבוניות, תעודות משלוח, שורות פריטים, טקסט מלא) כך שכל שאלה על הנתונים נענית מיידית.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DUPLICATE PREVENTION DEEP DIVE -->
+  <section>
+    <h2>🛡️ למה "לפי מספר חשבונית" זה לא מספיק</h2>
+    <p style="font-size: 15px; color: var(--tx2); margin-bottom: 4px;">החלטת ארכיטקטורה מרכזית בפרויקט: דחיתי גישת דדופ פשוטה (רק hash, או רק מספר מסמך) לטובת שילוב שמבטל את החולשות של כל שיטה בנפרד.</p>
+    <div class="defense-grid">
+      <div class="defense-card"><div class="defense-num">1</div><h3>SHA-256 Hash</h3><p>תופס קובץ זהה בייט-לבייט, גם אם שונה שם הקובץ — אך לא תופס אותו מסמך שנסרק פעמיים באיכות שונה.</p></div>
+      <div class="defense-card"><div class="defense-num">2</div><h3>מפתח עסקי: ספק + מספר מסמך</h3><p>תופס גם סריקות חוזרות עם רזולוציה שונה — אך דורש טיפול זהיר, כי מספרי מסמך אינם ייחודיים גלובלית בין ספקים שונים.</p></div>
+      <div class="defense-card"><div class="defense-num">3</div><h3>הזזה פיזית לאחר עיבוד</h3><p>שכבת ביטחון מבנית, בלתי תלויה בלוגיקת הקוד: קובץ שכבר טופל פיזית לא נמצא יותר בתיקיית הקלט — לא משנה מה קרה בשכבות הקודמות.</p></div>
+    </div>
+  </section>
+
+  <!-- DUAL CHANNEL / EXTENSIBILITY (the important part per user request) -->
+  <section>
+    <h2>🔌 לא "עוד צ'אטבוט לחיפוש" — תשתית מוכנה לחיבורים</h2>
+    <p style="font-size: 15px; color: var(--tx2); margin-bottom: 8px;">
+      הנקודה הקריטית בעיצוב המערכת: היכולת לשאול שאלות בשפה טבעית היא <strong>תוצר לוואי</strong> של ארכיטקטורת נתונים מסודרת — לא המוצר עצמו. כל חשבונית שמעובדת נשמרת כ-JSON קנוני מובנה עם סכימה קבועה, מה שהופך כל היחידה במערכת (אינדקס, מניפסט, ארכיון) למקור נתונים שאפשר לחבר אליו כל מערכת חיצונית.
+    </p>
+    <div class="dual-grid">
+      <div class="dual-card">
+        <h3>🖥️ ערוץ עבודה מקומי (Claude Cowork)</h3>
+        <p>מריץ את כל לוגיקת העיבוד ישירות מול קבצי הארגון על המחשב המקומי — ללא צורך בהעלאת מסמכים פיננסיים לענן חיצוני, דרישה מפורשת של הנהלת החברה.</p>
+      </div>
+      <div class="dual-card">
+        <h3>☁️ ערוץ שרת עצמאי (n8n, Hetzner Cloud + Docker)</h3>
+        <p>שרת n8n עצמאי עם Webhook מאובטח (Header Auth) שמאפשר לצוות תפעולי פחות טכני להפעיל את אותה לוגיקה בדיוק מממשק חזותי — מבלי לשכפל אף חלק מהלוגיקה העסקית.</p>
+      </div>
+    </div>
+    <p style="font-size: 14.5px; color: var(--tx2); margin-top: 18px;">
+      השילוב הזה מדגים עיקרון ארכיטקטוני מרכזי: מקור אמת יחיד ללוגיקה, עם שני ממשקי כניסה שונים לפי צרכי המשתמש — בדיוק כמו שמערכת ייצור אמיתית צריכה להיבנות לפני חיבור עתידי למערכת הנהלת חשבונות, ERP, או קליטת חשבוניות ישירות מתיבת מייל ארגונית.
+    </p>
+  </section>
+
+  <!-- RESULTS -->
+  <section class="results-section">
+    <h2>🎯 התוצאה בשטח</h2>
+    <div class="results-grid">
+      <div class="result-card"><div class="result-icon">🔁</div><div class="result-title">אפס כפילויות</div><div class="result-desc">הגנה תלת-שכבתית שנבדקה בתרחישי אמת, לא רק בתיאוריה.</div></div>
+      <div class="result-card"><div class="result-icon">🧾</div><div class="result-title">שיוך מדויק</div><div class="result-desc">תעודות משלוח מרובות מקושרות אוטומטית לחשבונית הנכונה, כולל תרחישי 7+ תעודות למסמך אחד.</div></div>
+      <div class="result-card"><div class="result-icon">🕵️</div><div class="result-title">אין "ניחושים שקטים"</div><div class="result-desc">כל אי-ודאות מתועדת ככרטיס אנושי במקום להיעלם בתוך התוצאה הסופית.</div></div>
+    </div>
+  </section>
+
+  <!-- STACK -->
+  <section>
+    <h2>🧰 טכנולוגיות</h2>
+    <div class="stack-row">
+      <span class="stack-chip">Claude Agent (Cowork)</span>
+      <span class="stack-chip">n8n</span>
+      <span class="stack-chip">Docker</span>
+      <span class="stack-chip">Hetzner Cloud VPS</span>
+      <span class="stack-chip">Webhook + Header Auth</span>
+      <span class="stack-chip">JSON Schema קנוני</span>
+      <span class="stack-chip">SHA-256 Deduplication</span>
+      <span class="stack-chip">Scheduled Automation</span>
+    </div>
+  </section>
+
+  <!-- FOOTER CTA -->
+  <div class="footer-cta">
+    <h2>מוכנים להוציא את הנהלת החשבונות מהניירת?</h2>
+    <p>אני Molaly מקונן, ארכיטקט פתרונות AI ואוטומציה. בואו נזהה יחד את צווארי הבקבוק בעסק שלכם, ונבנה מערכת שלא מנחשת — לעולם.</p>
+    <a href="https://wa.me/972528742884?text=%D7%A9%D7%9C%D7%95%D7%9D%20%D7%9E%D7%95%D7%9C%D7%9C%D7%99%2C%20%D7%90%D7%A9%D7%9E%D7%97%20%D7%9C%D7%A9%D7%9E%D7%95%D7%A2%20%D7%A2%D7%95%D7%93%20%D7%A4%D7%A8%D7%95%D7%99%D7%A7%D7%98%20%D7%94%D7%97%D7%A9%D7%91%D7%95%D7%A0%D7%99%D7%95%D7%AA" target="_blank" rel="noopener" class="btn-primary">✉️ צרו קשר לשיחת אפיון חינם</a>
+  </div>
+</main>
+
+<footer>
+  <p>© 2026 Molaly Mekonen – AI Solutions Architect. כל הזכויות שמורות.</p>
+</footer>
+
+</body>
+</html>
