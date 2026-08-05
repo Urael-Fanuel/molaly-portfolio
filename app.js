@@ -1,4 +1,23 @@
 function trackEvent(name, params){ try{ if(typeof gtag === 'function') gtag('event', name, params || {}); }catch(e){} }
+// Fire-and-forget security alert email via FormSubmit.co (same channel already used by the contact form).
+// Never blocks/throws — a failed alert must not prevent a legitimate login or password change.
+function sendSecurityAlert(reason){
+  try{
+    const toEmail = (D && D.contact && D.contact.email) || DEF.contact.email;
+    if(!toEmail) return;
+    const now = new Date().toLocaleString('he-IL', {timeZone:'Asia/Jerusalem'});
+    const ua = navigator.userAgent || 'לא ידוע';
+    fetch(`https://formsubmit.co/ajax/${toEmail}`, {
+      method:'POST',
+      headers:{'Content-Type':'application/json','Accept':'application/json'},
+      body:JSON.stringify({
+        name:'התראת אבטחה — פורטפוליו',
+        message:`${reason}\n\nזמן: ${now}\nדפדפן/מכשיר: ${ua}\nכתובת: ${window.location.href}`,
+        _subject:`🔐 התראת אבטחה: ${reason}`
+      })
+    }).catch(()=>{});
+  }catch(e){}
+}
 function esc(s){return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;');}
 function safeUrl(u){if(!u)return'';const s=String(u).trim();return/^javascript:/i.test(s)?'#':s;}
 function imgErr(el,col,icon){el.outerHTML='<div class="card-img-ph" style="--cc:'+col+'">'+icon+'</div>';}
@@ -612,6 +631,7 @@ function checkPin(){
   if(!saved){
     if(!pin||pin.length<4){document.getElementById('pin-err').textContent='הגדרה ראשונה: הכנס סיסמה חדשה (לפחות 4 תווים)';return;}
     localStorage.setItem('pfv4_pin',pin);localStorage.setItem('pf_admin',pin);
+    sendSecurityAlert('נקבעה סיסמת עריכה חדשה ממכשיר/דפדפן שלא הייתה בו סיסמה קודם');
     editMode=true;document.body.classList.add('edit-mode');document.querySelector('.fab').textContent='✎';closePin();updateContentEditable();load();render();
     return;
   }
@@ -1197,7 +1217,9 @@ function changePin(){
   if(!n1||n1.length<4){alert('סיסמה קצרה מדי');return;}
   const n2=prompt('אשר סיסמה חדשה:');
   if(n1!==n2){alert('הסיסמאות לא תואמות');return;}
-  localStorage.setItem('pfv4_pin',n1);alert('הסיסמה שונתה בהצלחה!');
+  localStorage.setItem('pfv4_pin',n1);
+  sendSecurityAlert('סיסמת העריכה שונתה');
+  alert('הסיסמה שונתה בהצלחה!');
 }
 function resetData(){
   if(confirm('האם אתה בטוח שברצונך לשחזר את נתוני ברירת המחדל? פעולה זו תמחק את כל השינויים שביצעת.')){
